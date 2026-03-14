@@ -9,11 +9,6 @@ relaxedAutoImplicit = false
 weak.linter.mathlibStandardSet = true
 maxSynthPendingDepth = 3
 
-[[require]]
-name = "mathlib"
-scope = "leanprover-community"
-rev = "v4.29.0-rc6"
-
 
 [[require]]
 name = "checkdecls"
@@ -25,3 +20,8 @@ git = "https://github.com/leanprover/doc-gen4"
 rev = "main"
 [[lean_lib]]
 name = "LeanLiebConcavity"
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "v4.29.0-rc6"
