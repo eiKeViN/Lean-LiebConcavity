@@ -1,4 +1,4 @@
-# CLAUDE.local.md — Lieb Concavity Formalization Project
+# CLAUDE.local.For md — Lieb Concavity Formalization Project
 
 ## Project Overview
 
@@ -13,7 +13,7 @@ proof strategy of:
 
 The project is structured around a **Lean Blueprint** (`lieb_blueprint.tex`) which is
 the source of truth for the dependency graph. Every Lean declaration should correspond
-to a labelled node in the blueprint.
+to a labelled node in the blueprint. The blueprint architecture and plugin used in this project is **leanblueprint** (`https://github.com/PatrickMassot/leanblueprint?tab=readme-ov-file`).
 
 ---
 
