@@ -1,6 +1,9 @@
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 import Mathlib.Analysis.Convex.Function
 
+
+noncomputable section
+
 namespace CFC
 
 /-- `f : ℝ → ℝ` is *operator convex* on `I : Set ℝ` if, for every unital C⋆-algebra `B`
@@ -18,3 +21,7 @@ def OperatorConcaveOn (I : Set ℝ) (f : ℝ → ℝ) : Prop :=
     ConcaveOn ℝ {a : B | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f)
 
 end CFC
+
+variable (a : ℝ)
+
+example : ℝ → ℝ := fun x ↦ x ^ a
