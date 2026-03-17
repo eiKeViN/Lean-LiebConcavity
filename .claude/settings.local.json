@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(leanblueprint:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib -name *Convex* -type f)",
+      "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib -name \"*.lean\" -exec grep -l \"def ConvexOn\" {})",
+      "Bash(lake build:*)",
+      "Bash(find .lake/packages/mathlib/Mathlib/Analysis/CStarAlgebra -name *.lean)",
+      "Bash(xargs grep:*)"
     ]
   }
 }
