@@ -44,8 +44,9 @@ theorem JensenOperator2012'
 open NNReal
 
 /-- A version of the theorem applies to positive elements of the C* algebra,
-which is useful for our application -/
-theorem JensenOperator2012''
+which is useful for our application.
+A positive element is always self-adjoint. -/
+theorem JensenOperator2012_pos
     {f : ℝ → ℝ} (hf : ContinuousOn f {x : ℝ | 0 ≤ x} ∧ f 0 ≤ 0)
     (hf_opconvex : OperatorConvexOn {x : ℝ | 0 ≤ x} f)
     {a₁ a₂ : A} (ha₁ : 0 ≤ a₁) (ha₂ : 0 ≤ a₂)
@@ -57,6 +58,23 @@ theorem JensenOperator2012''
     (IsSelfAdjoint.of_nonneg ha₁) (IsSelfAdjoint.of_nonneg ha₂)
     (fun _ h => spectrum_nonneg_of_nonneg ha₁ h) (fun _ h => spectrum_nonneg_of_nonneg ha₂ h)
     hb
+
+theorem JensenOperator2012_pos_noStar
+    {f : ℝ → ℝ} (hf : ContinuousOn f {x : ℝ | 0 ≤ x} ∧ f 0 ≤ 0)
+    (hf_opconvex : OperatorConvexOn {x : ℝ | 0 ≤ x} f)
+    {a₁ a₂ : A} (ha₁ : 0 ≤ a₁) (ha₂ : 0 ≤ a₂)
+    {b₁ b₂ : A} (hb₁ : 0 ≤ b₁) (hb₂ : 0 ≤ b₂)
+    (hb : b₁ * b₁ + b₂ * b₂ ≤ 1) :
+    cfc f (b₁ * a₁ * b₁ + b₂ * a₂ * b₂) ≤
+      b₁ * cfc f a₁ * b₁ + b₂ * cfc f a₂ * b₂ := by
+    replace hb₁ : star b₁ = b₁ := IsSelfAdjoint.of_nonneg hb₁
+    replace hb₂ : star b₂ = b₂ := IsSelfAdjoint.of_nonneg hb₂
+    suffices h :
+        cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) ≤
+        star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂
+      by simpa [hb₁, hb₂] using h
+    exact JensenOperator2012_pos hf hf_opconvex ha₁ ha₂
+      (by simpa only [hb₁, hb₂] using hb)
 
 end CFC
 
