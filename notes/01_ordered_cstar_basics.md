@@ -164,6 +164,60 @@ For non-invertible `0 ≤ a`, `a ^ y = 0` when `y < 0` (since `ℝ≥0` rpow set
 For `0 < a` (strictly positive), `a ^ y > 0` and all the usual rpow identities
 (`rpow_add`, `rpow_mul`, etc.) apply.
 
+### 3.5 Exponent identity lemmas
+
+All from `Analysis/SpecialFunctions/ContinuousFunctionalCalculus/Rpow/Basic.lean`.
+
+| Lemma | Signature | Requirement |
+|-------|-----------|-------------|
+| `rpow_add` | `a ^ (x + y) = a ^ x * a ^ y` | `IsUnit a` (works for negative exponents) — line ~454 |
+| `nnrpow_add` | `a ^ (x + y) = a ^ x * a ^ y` | `0 < x, 0 < y` (ℝ≥0 exponents, no `IsUnit`) — line ~119 |
+| `rpow_rpow` | `(a ^ x) ^ y = a ^ (x * y)` | `IsUnit a`, `x ≠ 0` — line ~464 |
+| `rpow_rpow_of_exponent_nonneg` | `(a ^ x) ^ y = a ^ (x * y)` | `0 ≤ x, 0 ≤ y`, no `IsUnit` — line ~483 |
+| `rpow_mul_rpow_neg` | `a ^ x * a ^ (-x) = 1` | `IsUnit a` — line ~490 |
+| `rpow_neg_mul_rpow` | `a ^ (-x) * a ^ x = 1` | `IsUnit a` — line ~490 |
+| `nnrpow_eq_rpow` | `a ^ (x : ℝ≥0) = a ^ (x : ℝ)` | `0 < x` — line ~624 |
+| `rpow_natCast` | `a ^ (n : ℝ) = a ^ n` | — line ~444 |
+
+**Key distinction:**
+- `IsUnit a` (≡ strictly positive in a C⋆-algebra) → use `rpow_add`
+- Only `0 ≤ a` with nonneg exponents → use `rpow_rpow_of_exponent_nonneg`
+
+### 3.6 Strict positivity `IsStrictlyPositive`
+
+Definition (`Analysis/CStarAlgebra/ContinuousFunctionalCalculus/Unital.lean`):
+```
+IsStrictlyPositive a  ↔  0 ≤ a ∧ IsUnit a
+```
+
+Spectrum characterization:
+```
+CStarAlgebra.isStrictlyPositive_iff_isSelfAdjoint_and_spectrum_pos  (line ~946)
+  IsStrictlyPositive a ↔ IsSelfAdjoint a ∧ ∀ x ∈ spectrum ℝ a, 0 < x
+```
+
+CFC characterization:
+```
+cfc_isStrictlyPositive_iff f a hf_cont ha_sa  (line ~940)
+  IsStrictlyPositive (cfc f a) ↔ ∀ x ∈ spectrum ℝ a, 0 < f x
+```
+
+Accessors / combinators (`Analysis/CStarAlgebra/ContinuousFunctionalCalculus/Order.lean`):
+```
+IsStrictlyPositive.nonneg  : IsStrictlyPositive a → 0 ≤ a
+IsStrictlyPositive.isUnit  : IsStrictlyPositive a → IsUnit a
+IsStrictlyPositive.smul    : 0 < c → IsStrictlyPositive a → IsStrictlyPositive (c • a)
+  (requires [Semifield 𝕜] [PosSMulMono 𝕜 A])
+IsStrictlyPositive.add_nonneg : IsStrictlyPositive a → 0 ≤ b → IsStrictlyPositive (a + b)
+  (line ~389)
+```
+
+Common proof pattern for convex combinations:
+```lean
+-- (a • x + b • y) strictly positive when 0 < a and x, y strictly positive:
+(hx.smul ha_pos).add_nonneg (smul_nonneg hb hy.nonneg)
+```
+
 ---
 
 ## 4. Quick reference
@@ -178,6 +232,13 @@ For `0 < a` (strictly positive), `a ^ y > 0` and all the usual rpow identities
 | `0 ≤ a ^ y` for any `y : ℝ` | `rpow_nonneg` (simp lemma) | `CFC/Rpow/Basic.lean:419` |
 | `IsSelfAdjoint (a ^ y)` | `IsSelfAdjoint.of_nonneg rpow_nonneg` | combined |
 | `0 ≤ a⁻¹` (when `a` is a unit) | `CFC.inv_nonneg_of_nonneg a ha` | `CFC/Unital.lean:1011` |
+| `IsStrictlyPositive a` (spectrum criterion) | `CStarAlgebra.isStrictlyPositive_iff_isSelfAdjoint_and_spectrum_pos` | `CFC/Unital.lean:~946` |
+| `IsStrictlyPositive (cfc f a)` | `cfc_isStrictlyPositive_iff` | `CFC/Unital.lean:~940` |
+| `IsStrictlyPositive (c • a)` when `0 < c` | `IsStrictlyPositive.smul` | `CFC/Order.lean` |
+| `IsStrictlyPositive (a + b)` when `0 ≤ b` | `IsStrictlyPositive.add_nonneg` | `CFC/Order.lean:~389` |
+| `a ^ (x + y) = a ^ x * a ^ y` (`IsUnit a`) | `rpow_add` | `Rpow/Basic.lean:~454` |
+| `a ^ (x + y) = a ^ x * a ^ y` (ℝ≥0 exp) | `nnrpow_add` | `Rpow/Basic.lean:~119` |
+| `(a ^ x) ^ y = a ^ (x * y)` (nonneg exp, no `IsUnit`) | `rpow_rpow_of_exponent_nonneg` | `Rpow/Basic.lean:~483` |
 
 ---
 
