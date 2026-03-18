@@ -142,3 +142,56 @@ Do **not** attempt to fill in any proofs during scaffolding.
   what they have sorry'd and ensure no duplication.
 - When a proof is complete, update `lieb_blueprint.tex` by adding `\leanok` to the
   corresponding environment.
+
+---
+
+## Lean Patterns Quick Reference
+
+### Minimal typeclass stack for ordered CFC
+
+```lean
+variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+```
+
+`CStarAlgebra A` subsumes `Ring`, `StarRing`, `TopologicalSpace`, `NormedAlgebra ℂ A`,
+`ContinuousFunctionalCalculus ℝ A IsSelfAdjoint`, and `T2Space`. The two extra instances
+add the partial order and cone axiom. This is the pattern from `ExpLog/Order.lean`.
+
+### Key Mathlib paths (relative to `.lake/packages/mathlib/Mathlib/`)
+
+| Topic | Path |
+|-------|------|
+| CFC unital | `Analysis/CStarAlgebra/ContinuousFunctionalCalculus/Unital.lean` |
+| CFC order | `Analysis/CStarAlgebra/ContinuousFunctionalCalculus/Order.lean` |
+| CFC uniqueness / `StarAlgHom.map_cfc` | `Analysis/CStarAlgebra/ContinuousFunctionalCalculus/Unique.lean` |
+| rpow (`a ^ y` for `y : ℝ`) | `Analysis/SpecialFunctions/ContinuousFunctionalCalculus/Rpow/Basic.lean` |
+| Ordered star rings | `Algebra/Order/Star/Basic.lean` |
+| Self-adjoint submodule | `Algebra/Star/Module.lean` |
+| `Algebra.lmul`, `pow_mulLeft` | `Algebra/Algebra/Bilinear.lean` |
+| Convexity basics | `Analysis/Convex/Basic.lean` |
+| `NonnegSpectrumClass` instance | `Analysis/CStarAlgebra/ContinuousFunctionalCalculus/Basic.lean` |
+
+### Standard import block for CFC work
+
+```lean
+import LeanLiebConcavity.Defs
+-- Defs transitively imports:
+--   Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+--   Mathlib.Analysis.Convex.Function
+-- For rpow (a ^ y for y : ℝ), add:
+--   import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic
+```
+
+### Key facts (see `notes/01_ordered_cstar_basics.md` for full details)
+
+- `0 ≤ a → IsSelfAdjoint a`: `IsSelfAdjoint.of_nonneg ha` (or `ha.isSelfAdjoint`)
+- `0 ≤ a → spectrum ℝ a ⊆ [0,∞)`: `spectrum_nonneg_of_nonneg ha hx` (via `NonnegSpectrumClass`)
+- `0 ≤ cfc f a` when `f ≥ 0` on spectrum: `cfc_nonneg (fun x hx => ...)`
+- `0 ≤ a ^ y` for any `y : ℝ` (even negative): `rpow_nonneg` (`@[simp]`)
+- Positive cone is convex: `convex_Ici 0`
+- Self-adjoint elements form ℝ-subspace: `selfAdjoint.submodule ℝ A`
+
+### Slash commands available in this project
+
+- `/mathlib-search [concept]` — structured Mathlib search, updates memory with new paths
+- `/formalize [blueprint-label] [informal description]` — produces a correct Lean stub

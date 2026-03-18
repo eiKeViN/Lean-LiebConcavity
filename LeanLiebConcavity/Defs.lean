@@ -1,5 +1,6 @@
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 import Mathlib.Analysis.Convex.Function
+import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic
 
 
 noncomputable section
@@ -20,6 +21,37 @@ def OperatorConcaveOn (I : Set ℝ) (f : ℝ → ℝ) : Prop :=
   ∀ {B : Type*} [CStarAlgebra B] [PartialOrder B] [StarOrderedRing B],
     ConcaveOn ℝ {a : B | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f)
 
+--helpful definition for operator convexity of positive elements only
+def OperatorConvexOn_pos (f : ℝ → ℝ) : Prop :=
+  ∀ {B : Type*} [CStarAlgebra B] [PartialOrder B] [StarOrderedRing B],
+    ConvexOn ℝ {a : B | 0 ≤ a} (cfc f)
+
+def OperatorConcaveOn_pos (f : ℝ → ℝ) : Prop :=
+  ∀ {B : Type*} [CStarAlgebra B] [PartialOrder B] [StarOrderedRing B],
+    ConcaveOn ℝ {a : B | 0 ≤ a} (cfc f)
+
+theorem OperatorConvexOn_infer_pos (f : ℝ → ℝ) (h: OperatorConvexOn {x : ℝ | 0 ≤ x} f) :
+  OperatorConvexOn_pos f := by
+  rw [OperatorConvexOn_pos]
+  intros B _ _ _
+  rw [OperatorConvexOn] at h
+
+
+
+
+-- [def:gen_perspective] Ebadian–Nikoufar–Eshaghi Gordji 2011, generalized perspective function
+-- (f △ h)(L, R) ≔ h(R)^{1/2} f(h(R)^{-1/2} L h(R)^{-1/2}) h(R)^{1/2}
+/-- The *generalized perspective function* associated to `f h : ℝ → ℝ`.-/
+def GenPerspective {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+    (f g : ℝ → ℝ) : A × A → A :=
+  fun (L, R) ↦
+    let gR := cfc g R
+    gR ^ (1 / 2 : ℝ) * cfc f (gR ^ (- 1 / 2 : ℝ) * L * gR ^ (- 1 / 2 : ℝ)) * gR ^ (1 / 2 : ℝ)
+
+variable (f h : ℝ → ℝ)
+variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+variable (L R : A)
+#check (GenPerspective f h)
 end CFC
 
 variable (a : ℝ)
