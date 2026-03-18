@@ -7,7 +7,12 @@
       "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib -name \"*.lean\" -exec grep -l \"def ConvexOn\" {})",
       "Bash(lake build:*)",
       "Bash(find .lake/packages/mathlib/Mathlib/Analysis/CStarAlgebra -name *.lean)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib/Algebra/Order/Star -name *.lean)",
+      "Read(//c/tmp/**)",
+      "Read(//mnt/c/Users/eiKevinZ/.lake/packages/mathlib/Mathlib/Analysis/**)",
+      "Bash(find c:UserseiKevinZmy_courseworkLean-LiebConcavity.lakepackagesmathlibMathlibAnalysisSpecialFunctionsContinuousFunctionalCalculusRpow -name *.lean)",
+      "Bash(find .lake/packages/mathlib/Mathlib -path */Analysis/SpecialFunctions/Pow* -name *.lean -type f)"
     ]
   }
 }

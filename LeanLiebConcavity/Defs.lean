@@ -7,6 +7,7 @@ noncomputable section
 
 namespace CFC
 
+section nonpositive
 /-- `f : ℝ → ℝ` is *operator convex* on `I : Set ℝ` if, for every unital C⋆-algebra `B`
 with a compatible partial order, `cfc f` is convex on the set of self-adjoint elements of
 `B` whose spectrum is contained in `I`. -/
@@ -18,40 +19,39 @@ def OperatorConvexOn (I : Set ℝ) (f : ℝ → ℝ) : Prop :=
 with a compatible partial order, `cfc f` is concave on the set of self-adjoint elements of
 `B` whose spectrum is contained in `I`. -/
 def OperatorConcaveOn (I : Set ℝ) (f : ℝ → ℝ) : Prop :=
-  ∀ {B : Type*} [CStarAlgebra B] [PartialOrder B] [StarOrderedRing B],
+  ∀ ⦃B : Type*⦄ [CStarAlgebra B] [PartialOrder B] [StarOrderedRing B],
     ConcaveOn ℝ {a : B | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f)
 
+end nonpositive
+
+section positive
+open NNReal
 --helpful definition for operator convexity of positive elements only
-def OperatorConvexOn_pos (f : ℝ → ℝ) : Prop :=
+def OperatorConvexOn_pos (f : ℝ≥0 → ℝ≥0) : Prop :=
   ∀ {B : Type*} [CStarAlgebra B] [PartialOrder B] [StarOrderedRing B],
     ConvexOn ℝ {a : B | 0 ≤ a} (cfc f)
 
-def OperatorConcaveOn_pos (f : ℝ → ℝ) : Prop :=
+def OperatorConcaveOn_pos (f : ℝ≥0 → ℝ≥0) : Prop :=
   ∀ {B : Type*} [CStarAlgebra B] [PartialOrder B] [StarOrderedRing B],
     ConcaveOn ℝ {a : B | 0 ≤ a} (cfc f)
 
-theorem OperatorConvexOn_infer_pos (f : ℝ → ℝ) (h: OperatorConvexOn {x : ℝ | 0 ≤ x} f) :
-  OperatorConvexOn_pos f := by
-  rw [OperatorConvexOn_pos]
-  intros B _ _ _
-  rw [OperatorConvexOn] at h
-
-
+end positive
 
 
 -- [def:gen_perspective] Ebadian–Nikoufar–Eshaghi Gordji 2011, generalized perspective function
 -- (f △ h)(L, R) ≔ h(R)^{1/2} f(h(R)^{-1/2} L h(R)^{-1/2}) h(R)^{1/2}
 /-- The *generalized perspective function* associated to `f h : ℝ → ℝ`.-/
-def GenPerspective {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+def GenPerspective (A : Type*) [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
     (f g : ℝ → ℝ) : A × A → A :=
   fun (L, R) ↦
     let gR := cfc g R
-    gR ^ (1 / 2 : ℝ) * cfc f (gR ^ (- 1 / 2 : ℝ) * L * gR ^ (- 1 / 2 : ℝ)) * gR ^ (1 / 2 : ℝ)
+    gR ^ (1/2 : ℝ) * cfc f (gR ^ (-1/2 : ℝ) * L * gR ^ (-1/2 : ℝ)) * gR ^ (1/2 : ℝ)
 
 variable (f h : ℝ → ℝ)
 variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
 variable (L R : A)
-#check (GenPerspective f h)
+#check (GenPerspective A f h)
+
 end CFC
 
 variable (a : ℝ)
