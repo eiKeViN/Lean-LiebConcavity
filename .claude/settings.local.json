@@ -12,7 +12,11 @@
       "Read(//c/tmp/**)",
       "Read(//mnt/c/Users/eiKevinZ/.lake/packages/mathlib/Mathlib/Analysis/**)",
       "Bash(find c:UserseiKevinZmy_courseworkLean-LiebConcavity.lakepackagesmathlibMathlibAnalysisSpecialFunctionsContinuousFunctionalCalculusRpow -name *.lean)",
-      "Bash(find .lake/packages/mathlib/Mathlib -path */Analysis/SpecialFunctions/Pow* -name *.lean -type f)"
+      "Bash(find .lake/packages/mathlib/Mathlib -path */Analysis/SpecialFunctions/Pow* -name *.lean -type f)",
+      "Bash(grep -r \"cfc_comp_smul\\\\|cfc_smul_id\" c:/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib/ --include=*.lean -l)",
+      "Bash(grep -r \"theorem Rat.mul_nonneg\\\\|lemma Rat.mul_nonneg\\\\|protected.*mul_nonneg.*ha.*hb\" .lake/packages/mathlib/Mathlib/ --include=*.lean)",
+      "Bash(find .lake/packages/mathlib -name *.lean -exec grep -l Rat.mul_nonneg {})",
+      "Bash(2)"
     ]
   }
 }
