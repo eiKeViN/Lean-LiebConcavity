@@ -12,15 +12,19 @@ namespace CFC
 open Set
 
 --namespace IsSelfAdjoint
-variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A] [NonnegSpectrumClass ℝ A]
+universe u
+
+variable {A : Type u} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
 variable {L₁ L₂ R₁ R₂ : A}
 variable {f g : ℝ → ℝ}
+
+local notation "½" => (1/2 : ℝ)
 
 theorem PerspectiveJointConvex
     (hf : ContinuousOn f (Ici 0) ∧ f 0 ≤ 0)
     (hg : ContinuousOn g (Ici 0) ∧ ∀ ⦃x : ℝ⦄, 0 < x → 0 < g x)
-    (h_opconvex : OperatorConvexOn (Ici 0) f)
-    (hg_opconcav : OperatorConcaveOn (Ici 0) g)
+    (hf_opconvex : OperatorConvexOn.{u} (Ici 0) f)
+    (hg_opconcav : OperatorConcaveOn.{u} (Ici 0) g)
     (hL : 0 ≤ L₁ ∧ 0 ≤ L₂)
     (hR₁ : IsStrictlyPositive R₁) (hR₂ : IsStrictlyPositive R₂) :
     ∀⦃a b : ℝ⦄, 0 ≤ a → 0 ≤ b → a + b = 1 →
@@ -29,63 +33,152 @@ theorem PerspectiveJointConvex
     intros a b ha hb hab
     rcases ha.eq_or_lt_dec with rfl | ha'
     · -- a = 0
-      simp at *; simp [hab]
+      simp_all
     rcases hb.eq_or_lt_dec with rfl | hb'
     · -- b = 0
-      simp at *; simp [hab]
-
-    simp only [GenPerspective]
+      simp_all
+    -- the main case: 0 < a and 0 < b
+    let F : A → A := cfc f
+    let G : A → A := cfc g
+    -- abbrev + strict positivity of main terms
+    have hgR₁ : IsStrictlyPositive (G R₁) := cfc_isStrictlyPositive_of_nonneg hg.1 hg.2 hR₁
+    have hgR₂ : IsStrictlyPositive (G R₂) := cfc_isStrictlyPositive_of_nonneg hg.1 hg.2 hR₂
+    have hagR₁ : IsStrictlyPositive (a • cfc g R₁) :=
+      IsStrictlyPositive.smul ha' hgR₁
+    have hbgR₂ : IsStrictlyPositive (b • cfc g R₂) :=
+      IsStrictlyPositive.smul hb' hgR₂
     let R := a • R₁ + b • R₂
-    let T₁ := (a • cfc g R₁) ^ (1/2 : ℝ) * (cfc g R) ^ (-1/2 : ℝ)
-    let T₂ := (b • cfc g R₂) ^ (1/2 : ℝ) * (cfc g R) ^ (-1/2 : ℝ)
-    have hT₁_star : star T₁ = (cfc g R) ^ (-1/2 : ℝ) * (a • cfc g R₁) ^ (1/2 : ℝ) := by
-      grind [IsSelfAdjoint.of_nonneg, IsSelfAdjoint.star_mul_eq]
-    have hT₂_star : star T₂ = (cfc g R) ^ (-1/2 : ℝ) * (b • cfc g R₂) ^ (1/2 : ℝ) := by
-      grind [IsSelfAdjoint.of_nonneg, IsSelfAdjoint.star_mul_eq]
     have hR : IsStrictlyPositive R := by grind only [isStrictlyPositive_convex_combination]
     have hgR : IsStrictlyPositive (cfc g R) :=
-      cfc_isStrictlyPositive_of_pos hR hg.2
-      (hg.1.mono (fun x hx => spectrum_nonneg_of_nonneg hR.nonneg hx))
-    have : IsStrictlyPositive (cfc g R₁) :=
-      cfc_isStrictlyPositive_of_pos hR₁ hg.2
-      (hg.1.mono (fun x hx => spectrum_nonneg_of_nonneg hR₁.nonneg hx))
-    have hagR₁ : IsStrictlyPositive (a • cfc g R₁) :=
-      IsStrictlyPositive.smul ha' this
-    have : IsStrictlyPositive (cfc g R₂) :=
-      cfc_isStrictlyPositive_of_pos hR₂ hg.2
-      (hg.1.mono (fun x hx => spectrum_nonneg_of_nonneg hR₂.nonneg hx))
-    have hbgR₂ : IsStrictlyPositive (b • cfc g R₂) :=
-      IsStrictlyPositive.smul hb' this
-    have : a • cfc g R₁ + b • cfc g R₂ ≤ cfc g R := sorry
+      (cfc_isStrictlyPositive_of_nonneg hg.1 hg.2 hR)
+    let T₁ := (a • G R₁) ^ ½ * G R ^ (-½)
+    let T₂ := (b • G R₂) ^ ½ * G R ^ (-½)
+    have hT₁_star : star T₁ = G R ^ (-½) * (a • G R₁) ^ ½ := by
+      grind only [hagR₁.isSelfAdjoint,
+                  IsSelfAdjoint.star_mul_eq, rpow_nonneg, IsSelfAdjoint.of_nonneg]
+    have hT₂_star : star T₂ = G R ^ (-½) * (b • G R₂) ^ ½ := by
+      grind only [hbgR₂.isSelfAdjoint,
+                  IsSelfAdjoint.star_mul_eq, rpow_nonneg, IsSelfAdjoint.of_nonneg]
+    -- uses g's concavity
+    have : a • G R₁ + b • G R₂ ≤ G R := by
+      have : ConcaveOn ℝ {a : A | 0 ≤ a} (G) := operatorConcave_on_nonneg hg_opconcav
+      grind only [ConcaveOn, mem_setOf_eq, hR₁.nonneg, hR₂.nonneg]
+    -- hT: important condition to apply Jensen
     have hT : star T₁ * T₁ + star T₂ * T₂ ≤ 1 := by
       calc
-        star T₁ * T₁ + star T₂ * T₂
-        = (cfc g R) ^ (-1/2 : ℝ) * (a • cfc g R₁) ^ (1/2 : ℝ)
-          * (a • cfc g R₁) ^ (1/2 : ℝ) * (cfc g R) ^ (-1/2 : ℝ)
-          + (cfc g R) ^ (-1/2 : ℝ) * (b • cfc g R₂) ^ (1/2 : ℝ)
-          * (b • cfc g R₂) ^ (1/2 : ℝ) * (cfc g R) ^ (-1/2 : ℝ) := by
+          star T₁ * T₁ + star T₂ * T₂
+        = G R ^ (-½) * (a • G R₁) ^ ½ * (a • G R₁) ^ ½ * G R ^ (-½)
+        + G R ^ (-½) * (b • G R₂) ^ ½ * (b • G R₂) ^ ½ * G R ^ (-½) := by
             grind only
-      _ = (cfc g R) ^ (-1/2 : ℝ) * (a • cfc g R₁) ^ (1/2 + 1/2 : ℝ)
-          * (cfc g R) ^ (-1/2 : ℝ)
-          + (cfc g R) ^ (-1/2 : ℝ) * (b • cfc g R₂) ^ (1/2 + 1/2 : ℝ)
-          * (cfc g R) ^ (-1/2 : ℝ) := by
+      _ = G R ^ (-½) * (a • G R₁) ^ (½ + ½) * G R ^ (-½)
+        + G R ^ (-½) * (b • G R₂) ^ (½ + ½) * G R ^ (-½) := by
             grind only [rpow_add, hagR₁.isUnit, hbgR₂.isUnit]
-      _ = (cfc g R) ^ (-1/2 : ℝ) * (a • cfc g R₁) * (cfc g R) ^ (-1/2 : ℝ)
-          + (cfc g R) ^ (-1/2 : ℝ) * (b • cfc g R₂) * (cfc g R) ^ (-1/2 : ℝ) := by
+      _ = G R ^ (-½) * (a • G R₁) * G R ^ (-½)
+        + G R ^ (-½) * (b • G R₂) * G R ^ (-½) := by
             grind only [rpow_one, hagR₁.nonneg, hbgR₂.nonneg]
-      _ = (cfc g R) ^ (-1/2 : ℝ) * (a • cfc g R₁ + b • cfc g R₂) * (cfc g R) ^ (-1/2 : ℝ) := by
+      _ = G R ^ (-½) * (a • G R₁ + b • G R₂) * G R ^ (-½) := by
             grind only
-      _ ≤ (cfc g R) ^ (-1/2 : ℝ) * (cfc g R) * (cfc g R) ^ (-1/2 : ℝ) := by
-            have : IsSelfAdjoint ((cfc g R) ^ (-1/2 : ℝ)) := IsSelfAdjoint.of_nonneg (by simp)
+      _ ≤ G R ^ (-½) * G R * G R ^ (-½) := by
+            have : IsSelfAdjoint (G R ^ (-½)) := IsSelfAdjoint.of_nonneg (by simp)
             grind only [this.conjugate_le_conjugate]
-      _ = (cfc g R) ^ (-1/2 : ℝ) * (cfc g R) ^ (1 : ℝ) * (cfc g R) ^ (-1/2 : ℝ) := by
-            simp only [rpow_one, hgR.nonneg]
-      _ = (cfc g R) ^ (-1/2 + 1 + -1/2 : ℝ) := by
-            simp only [rpow_add, hgR.isUnit]
-      _ = (cfc g R) ^ (0 : ℝ) := by ring_nf
-      _ = (1 : A) := by simp only [rpow_zero, hgR.nonneg]
-    have : 1 + 2 = 3 := by norm_num
-    sorry
+      _ = G R ^ (-½ + 1 + -½) := by
+            grind only [rpow_one, hgR.nonneg, rpow_add, hgR.isUnit]
+      _ = (1 : A) := by grind only [rpow_zero, hgR.nonneg]
+    have hT₁L₁ :
+        star T₁ * (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
+        = G R ^ (-½) * (a • L₁) * G R ^ (-½) := by
+      calc
+          star T₁ * (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
+          = G R ^ (-½) * (a • G R₁) ^ ½ * G R₁ ^ (-½)
+          * L₁ * G R₁ ^ (-½) * (a • G R₁) ^ ½ * G R ^ (-½) := by
+            grind only
+        _ = G R ^ (-½) * (a ^ ½ • G R₁ ^ ½) * G R₁ ^ (-½)
+          * L₁ * G R₁ ^ (-½) * (a ^ ½ • G R₁ ^ ½) * G R ^ (-½) := by
+            rw [CFC.smul_pow ha hgR₁.nonneg (by linarith)]
+        _ = G R ^ (-½) * G R₁ ^ ½ * G R₁ ^ (-½)
+          * ((a ^ ½ * a ^ ½) • L₁) * G R₁ ^ (-½) * (G R₁ ^ ½ * G R ^ (-½)) := by
+            simp [smul_smul, mul_assoc]
+        _ = G R ^ (-½) * (a ^ (½ + ½) • L₁) * G R ^ (-½) := by
+            grind only [= Real.rpow_add, rpow_neg_mul_rpow, rpow_mul_rpow_neg,
+              IsStrictlyPositive.iff_of_unital]
+        _ = G R ^ (-½) * (a • L₁) * G R ^ (-½) := by
+            grind only [Real.rpow_one]
+    have hT₂L₂ :
+        star T₂ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂
+        = G R ^ (-½) * (b • L₂) * G R ^ (-½) := by
+      calc
+          star T₂ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂
+          = G R ^ (-½) * (b • G R₂) ^ ½ * G R₂ ^ (-½)
+          * L₂ * G R₂ ^ (-½) * (b • G R₂) ^ ½ * G R ^ (-½) := by
+            grind only
+        _ = G R ^ (-½) * (b ^ ½ • G R₂ ^ ½) * G R₂ ^ (-½)
+          * L₂ * G R₂ ^ (-½) * (b ^ ½ • G R₂ ^ ½) * G R ^ (-½) := by
+            rw [CFC.smul_pow hb hgR₂.nonneg (by linarith)]
+        _ = G R ^ (-½) * G R₂ ^ ½ * G R₂ ^ (-½)
+          * ((b ^ ½ * b ^ ½) • L₂) * G R₂ ^ (-½) * (G R₂ ^ ½ * G R ^ (-½)) := by
+            simp [smul_smul, mul_assoc]
+        _ = G R ^ (-½) * (b • L₂) * G R ^ (-½) := by
+            grind only [= mul_self_half, rpow_neg_mul_rpow, rpow_mul_rpow_neg,
+              IsStrictlyPositive.iff_of_unital]
+    -- final lemma: applying Jensen
+    have hF_jensen :
+        F (star T₁ * (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
+          + star T₂ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂)
+        ≤ star T₁ * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
+          + star T₂ * F (G R₂ ^ (-½) * L₂ * (G R₂) ^ (-½)) * T₂ := by
+      refine JensenOperator2012_nonneg hf hf_opconvex ⟨?_, ?_⟩ hT
+      · exact conjugate_nonneg_of_nonneg hL.1 (by simp)
+      · exact conjugate_nonneg_of_nonneg hL.2 (by simp)
+    -- main step
+    calc
+        (GenPerspective A f g) (a • L₁ + b • L₂, a • R₁ + b • R₂)
+        = G R ^ ½ * F (G R ^ (-½) * (a • L₁ + b • L₂) * G R ^ (-½)) * G R ^ ½ := by
+          grind only [GenPerspective]
+      _ = G R ^ ½ * F (G R ^ (-½) * (a • L₁) * G R ^ (-½)
+                      + G R ^ (-½) * (b • L₂) * G R ^ (-½))
+                  * G R ^ ½ := by
+          congr; grind only
+      _ = G R ^ ½ * F (star T₁ * (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
+                          + star T₂ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂)
+                  * G R ^ ½ := by
+          simp_rw [hT₁L₁, hT₂L₂]
+      _ ≤ G R ^ ½ * (star T₁ * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
+                      + star T₂ * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂)
+                  * G R ^ ½ := by
+          have : IsSelfAdjoint (G R ^ ½) := IsSelfAdjoint.of_nonneg (by simp)
+          grind only [this.conjugate_le_conjugate]
+      _ = G R ^ ½
+        * ( G R ^ (-½) * (a • G R₁) ^ ½
+            * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½))
+            * (a • G R₁) ^ ½ * G R ^ (-½)
+          + G R ^ (-½) * (b • G R₂) ^ ½
+            * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½))
+            * (b • G R₂) ^ ½ * G R ^ (-½))
+        * G R ^ ½ := by
+          grind only
+      _ = G R ^ ½ * G R ^ (-½) * (a • G R₁) ^ ½
+            * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½))
+            * (a • G R₁) ^ ½
+            * (G R ^ (-½) * G R ^ ½)
+        + G R ^ ½ * G R ^ (-½) * (b • G R₂) ^ ½
+            * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½))
+            * (b • G R₂) ^ ½
+            * (G R ^ (-½) * G R ^ ½) := by
+          grind only
+      _ = (a • G R₁) ^ ½ * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * (a • G R₁) ^ ½
+        + (b • G R₂) ^ ½ * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * (b • G R₂) ^ ½ := by
+          grind only [= IsStrictlyPositive.iff_of_unital, rpow_neg_mul_rpow, rpow_mul_rpow_neg]
+      _ = (a ^ ½ • G R₁ ^ ½) * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * (a ^ ½ • G R₁ ^ ½)
+        + (b ^ ½ • G R₂ ^ ½) * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * (b ^ ½ • G R₂ ^ ½) := by
+          grind only [= CFC.smul_pow, hgR₁.nonneg, hgR₂.nonneg]
+      _ = ((a ^ ½ * a ^ ½) • G R₁ ^ ½) * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * G R₁ ^ ½
+        + ((b ^ ½ * b ^ ½) • G R₂ ^ ½) * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * G R₂ ^ ½ := by
+          simp [smul_smul, mul_assoc]
+      _ = a • (G R₁ ^ ½ * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * G R₁ ^ ½)
+        + b • (G R₂ ^ ½ * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * G R₂ ^ ½) := by
+          grind [mul_self_half, smul_mul_assoc]
+      _ = a • (GenPerspective A f g) (L₁, R₁) + b • (GenPerspective A f g) (L₂, R₂) := by
+          grind only [GenPerspective]
 
 
 
@@ -102,6 +195,7 @@ example {a b c d : A} : a * b * d + a * c * d= a * (b + c) * d := by grind only
 example {a : A} (ha : IsUnit a) (ha' : 0 ≤ a := by cfc_tac) : a ^ (1 : ℝ) * a ^ (-1 : ℝ) = 1 := by
   grind [rpow_neg_mul_rpow (-1) ha ha']
 example {a : A} (ha : IsStrictlyPositive a) : IsUnit a := IsStrictlyPositive.isUnit ha
+example : 0 ≤ ½ := by linarith
 
 theorem PerspectiveJointConcave : 1 + 1 = 2 := by rfl
 
