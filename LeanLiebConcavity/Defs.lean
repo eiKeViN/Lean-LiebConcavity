@@ -93,7 +93,7 @@ def GenPerspective (A : Type*) [CStarAlgebra A] [PartialOrder A] [StarOrderedRin
 
 variable (f g : ℝ → ℝ)
 variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
-variable (a : A × A)
+variable {a : A × A}
 
 /-- Negating `f` negates the generalized perspective:
     `((-f) △ g)(L, R) = -(f △ g)(L, R)`. -/
@@ -101,7 +101,7 @@ theorem GenPerspective_neg :
     GenPerspective A (fun x ↦ -(f x)) g a = - GenPerspective A f g a := by
   simp_rw [GenPerspective, cfc_neg]; simp
 
-example : GenPerspective A (-f) g a = - GenPerspective A f g a := GenPerspective_neg f g a
+example : GenPerspective A (-f) g a = - GenPerspective A f g a := GenPerspective_neg f g
 
 end CFC
 

@@ -20,6 +20,7 @@ namespace IsSelfAdjoint
 variable {A : Type*} [Mul A] [StarMul A]
 
 /-- If `a` and `b` are self-adjoint, then `star (a * b) = b * a`. -/
+@[simp]
 lemma star_mul_eq {a b : A} (ha : IsSelfAdjoint a) (hb : IsSelfAdjoint b) :
     star (a * b) = b * a := by
   grind only [star_mul, star_eq]

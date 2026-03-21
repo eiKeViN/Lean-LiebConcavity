@@ -64,7 +64,7 @@ theorem PerspectiveJointConvex
   let R := a • R₁ + b • R₂
   have hR : IsStrictlyPositive R := by grind only [isStrictlyPositive_convex_combination]
   have hgR : IsStrictlyPositive (cfc g R) :=
-    (cfc_isStrictlyPositive_of_nonneg hg.1 hg.2 hR)
+    cfc_isStrictlyPositive_of_nonneg hg.1 hg.2 hR
   let T₁ := (a • G R₁) ^ ½ * G R ^ (-½)
   let T₂ := (b • G R₂) ^ ½ * G R ^ (-½)
   have hT₁_star : star T₁ = G R ^ (-½) * (a • G R₁) ^ ½ := by
@@ -90,7 +90,7 @@ theorem PerspectiveJointConvex
     _ = G R ^ (-½) * (a • G R₁ + b • G R₂) * G R ^ (-½) := by
           grind only
     _ ≤ G R ^ (-½) * G R * G R ^ (-½) := by
-          exact (IsSelfAdjoint.of_nonneg (by simp)).conjugate_le_conjugate (this)
+          exact (IsSelfAdjoint.of_nonneg (by simp)).conjugate_le_conjugate this
     _ = 1 := by
           grind only [mul_self_rpow_half, rpow_neg_mul_rpow', rpow_mul_rpow_neg']
   have hT₁L₁ :
@@ -170,6 +170,28 @@ theorem PerspectiveJointConvex
     _ = a • (GenPerspective A f g) (L₁, R₁) + b • (GenPerspective A f g) (L₂, R₂) := by
           grind only [GenPerspective]
 
+/- the negation trick gets concave version for free -/
+theorem PerspectiveJointConcave
+    (hf : ContinuousOn f (Ici 0) ∧ f 0 ≥ 0)
+    (hg : ContinuousOn g (Ici 0) ∧ ∀ ⦃x : ℝ⦄, 0 < x → 0 < g x)
+    (hf_opconcave : OperatorConcaveOn.{u} (Ici 0) f)
+    (hg_opconcav : OperatorConcaveOn.{u} (Ici 0) g)
+    (hL : 0 ≤ L₁ ∧ 0 ≤ L₂)
+    (hR₁ : IsStrictlyPositive R₁) (hR₂ : IsStrictlyPositive R₂) :
+    ∀⦃a b : ℝ⦄, 0 ≤ a → 0 ≤ b → a + b = 1 →
+      a • (GenPerspective A f g) (L₁, R₁) + b • (GenPerspective A f g) (L₂, R₂)
+      ≤ (GenPerspective A f g) (a • L₁ + b • L₂, a • R₁ + b • R₂) := by
+  intros a b ha hb hab
+  have h := PerspectiveJointConvex
+    ⟨hf.1.neg, neg_nonpos.mpr hf.2⟩ hg
+    (operatorConcaveOn_neg_iff_convexOn.mp hf_opconcave)
+    hg_opconcav hL hR₁ hR₂ ha hb hab
+  have key : ∀ (p : A × A),
+      GenPerspective A (fun x ↦ -(f x)) g p = -(GenPerspective A f g p) :=
+    fun p => GenPerspective_neg f g p
+  simp only [key, smul_neg, ← neg_add] at h
+  exact neg_le_neg_iff.mp h
+
 
 variable (r : ℝ)
 example : 0 ≤ L₁ ^ r := by simp
@@ -184,8 +206,6 @@ example {a : A} (ha : IsUnit a) (ha' : 0 ≤ a := by cfc_tac) : a ^ (1 : ℝ) * 
   grind [rpow_neg_mul_rpow (-1) ha ha']
 example {a : A} (ha : IsStrictlyPositive a) : IsUnit a := IsStrictlyPositive.isUnit ha
 example : 0 ≤ ½ := by linarith
-
-theorem PerspectiveJointConcave : 1 + 1 = 2 := by rfl
 
 
 end CFC

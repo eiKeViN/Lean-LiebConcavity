@@ -6,7 +6,7 @@ noncomputable section
 namespace CFC
 
 universe u
-variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+variable {A : Type u} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
 variable {a₁ a₂ b₁ b₂ : A}
 variable {f : ℝ → ℝ} {I : Set ℝ}
 
@@ -24,7 +24,7 @@ Then:
 -- [thm:jensen_2012] Li-Wu 2012, Operator Jensen's Inequality on C*-algebras
 theorem JensenOperator2012_convex
     (hI : Convex ℝ I)
-    (hf : ContinuousOn f I) (hf_opconvex : OperatorConvexOn I f)
+    (hf : ContinuousOn f I) (hf_opconvex : OperatorConvexOn.{u} I f)
     (ha : IsSelfAdjoint a₁ ∧ IsSelfAdjoint a₂)
     (ha_spec : spectrum ℝ a₁ ⊆ I ∧ spectrum ℝ a₂ ⊆ I)
     (hb : star b₁ * b₁ + star b₂ * b₂ = 1) :
@@ -43,15 +43,18 @@ theorem JensenOperator2012_convex'
   sorry
 
 
-  theorem JensenOperator2012_concave
+theorem JensenOperator2012_concave
     (hI : Convex ℝ I)
-    (hf : ContinuousOn f I) (hf_opconcave : OperatorConcaveOn I f)
+    (hf : ContinuousOn f I) (hf_opconcave : OperatorConcaveOn.{u} I f)
     (ha : IsSelfAdjoint a₁ ∧ IsSelfAdjoint a₂)
     (ha_spec : spectrum ℝ a₁ ⊆ I ∧ spectrum ℝ a₂ ⊆ I)
     (hb : star b₁ * b₁ + star b₂ * b₂ = 1) :
     star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ ≤
       cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) := by
-  sorry
+  have h := JensenOperator2012_convex hI hf.neg
+    (operatorConcaveOn_neg_iff_convexOn.mp hf_opconcave) ha ha_spec hb
+  simp only [cfc_neg, mul_neg, neg_mul, ← neg_add] at h
+  exact neg_le_neg_iff.mp h
 
 
 
@@ -62,8 +65,12 @@ theorem JensenOperator2012_concave'
     (ha_spec : spectrum ℝ a₁ ⊆ I ∧ spectrum ℝ a₂ ⊆ I)
     (hb : star b₁ * b₁ + star b₂ * b₂ ≤ 1) :
     star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ ≤
-      cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) :=
-  sorry
+      cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) := by
+  have h := JensenOperator2012_convex' hI
+    ⟨hf.1.neg, neg_nonpos.mpr hf.2⟩
+    (operatorConcaveOn_neg_iff_convexOn.mp hf_opconcave) ha ha_spec hb
+  simp only [cfc_neg, mul_neg, neg_mul, ← neg_add] at h
+  exact neg_le_neg_iff.mp h
 
 open NNReal
 open Set
@@ -89,8 +96,13 @@ theorem JensenOperator2012_concave_nonneg
     (ha : 0 ≤ a₁ ∧ 0 ≤ a₂)
     (hb : star b₁ * b₁ + star b₂ * b₂ ≤ 1) :
       star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ ≤
-      cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) := by
-    sorry
+      cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) :=
+  JensenOperator2012_concave'
+    ⟨convex_Ici 0, Set.self_mem_Ici⟩
+    hf hf_opconcave
+    ⟨IsSelfAdjoint.of_nonneg ha.1, IsSelfAdjoint.of_nonneg ha.2⟩
+    ⟨fun _ h => spectrum_nonneg_of_nonneg ha.1 h, fun _ h => spectrum_nonneg_of_nonneg ha.2 h⟩
+    hb
 /-
 theorem JensenOperator2012_nonneg_noStar
     (hf : ContinuousOn f (Ici 0) ∧ f 0 ≤ 0) (hf_opconvex : OperatorConvexOn.{u} (Ici 0) f)
