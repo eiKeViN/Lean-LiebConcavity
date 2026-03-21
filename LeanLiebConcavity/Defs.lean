@@ -103,6 +103,11 @@ theorem GenPerspective_neg :
 
 example : GenPerspective A (-f) g a = - GenPerspective A f g a := GenPerspective_neg f g
 
+/-- Function-level version of `GenPerspective_neg`. -/
+theorem GenPerspective_neg' :
+    GenPerspective A (-f) g = -(GenPerspective A f g) :=
+  funext fun _ => GenPerspective_neg f g
+
 end CFC
 
 variable (a : ℝ)

@@ -119,4 +119,14 @@ theorem isStrictlyPositive_convex :
     fun _ hx _ hy _ _ ha hb hab =>
       isStrictlyPositive_convex_combination ha hb hab hx hy
 
+/-- The product set `{(L, R) | 0 ≤ L ∧ IsStrictlyPositive R}` is convex,
+used in statement of joint concavity/convexity -/
+theorem convex_nonneg_strictlyPositive :
+    Convex ℝ {p : A × A | 0 ≤ p.1 ∧ IsStrictlyPositive p.2} := by
+  have : {p : A × A | 0 ≤ p.1 ∧ IsStrictlyPositive p.2}
+      = Set.Ici 0 ×ˢ {a : A | IsStrictlyPositive a} :=
+    Set.ext fun _ => Iff.rfl
+  rw [this]
+  exact (convex_Ici 0).prod isStrictlyPositive_convex
+
 end StrictPositivity

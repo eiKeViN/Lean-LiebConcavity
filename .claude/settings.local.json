@@ -16,7 +16,8 @@
       "Bash(grep -r \"cfc_comp_smul\\\\|cfc_smul_id\" c:/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib/ --include=*.lean -l)",
       "Bash(grep -r \"theorem Rat.mul_nonneg\\\\|lemma Rat.mul_nonneg\\\\|protected.*mul_nonneg.*ha.*hb\" .lake/packages/mathlib/Mathlib/ --include=*.lean)",
       "Bash(find .lake/packages/mathlib -name *.lean -exec grep -l Rat.mul_nonneg {})",
-      "Bash(2)"
+      "Bash(2)",
+      "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib -name *.lean -type f -exec grep -l \"instance.*Prod.*SMul\\\\|instance.*SMul.*Prod.*:\" {})"
     ]
   }
 }

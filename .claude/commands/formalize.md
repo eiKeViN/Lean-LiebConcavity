@@ -25,6 +25,7 @@ Produce a self-contained Lean 4 code block with:
 ### 1. Imports
 Use the minimal import set. Standard baseline:
 ```lean
+import LeanLiebConcavity.ForMathlib
 import LeanLiebConcavity.Defs
 -- add further imports only if required (e.g. Rpow/Basic for rpow)
 ```
