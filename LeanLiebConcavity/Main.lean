@@ -117,7 +117,7 @@ theorem PerspectiveJointConvex
         + star T₂ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂)
       ≤ star T₁ * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
         + star T₂ * F (G R₂ ^ (-½) * L₂ * (G R₂) ^ (-½)) * T₂ := by
-    refine JensenOperator2012_convex_nonneg hf hf_opconvex ⟨?_, ?_⟩ hT
+    refine JensenOperator_convex_nonneg hf hf_opconvex ⟨?_, ?_⟩ hT
     · exact conjugate_nonneg_of_nonneg hL₁ (by simp)
     · exact conjugate_nonneg_of_nonneg hL₂ (by simp)
   -- main step
