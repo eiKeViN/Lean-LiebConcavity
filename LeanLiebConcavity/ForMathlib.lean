@@ -1,8 +1,11 @@
-import LeanLiebConcavity.Defs
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+import Mathlib.Analysis.Convex.Function
+import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic
 
 /-!
 # Candidates for upstream contribution.
 -/
+
 /-- harmless but convenient: (0 < a) : a ^ half * a ^ half = a -/
 @[simp]
 theorem mul_self_half {a : ℝ} (ha : 0 < a) :
@@ -19,18 +22,37 @@ variable {A : Type*} [Mul A] [StarMul A]
 /-- If `a` and `b` are self-adjoint, then `star (a * b) = b * a`. -/
 lemma star_mul_eq {a b : A} (ha : IsSelfAdjoint a) (hb : IsSelfAdjoint b) :
     star (a * b) = b * a := by
-  grind [star_mul, IsSelfAdjoint.star_eq]
+  grind only [star_mul, star_eq]
 
 variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
 
 end IsSelfAdjoint
 
 -- TODO: ? upstream to Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unital
-
 namespace CFC
 
-universe u
-variable {A : Type u} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+
+/-- CFC analogue of `mul_self_half`: for strictly positive `x`, `x ^ ½ * x ^ ½ = x`. -/
+@[simp]
+theorem mul_self_rpow_half
+    {x : A} (hx : IsStrictlyPositive x) :
+    x ^ (1/2 : ℝ) * x ^ (1/2 : ℝ) = x := by
+  rw [← rpow_add hx.isUnit]
+  ring_nf
+  exact rpow_one x
+
+/-- versions of `rpow_mul_rpow_neg` and `rpow_neg_mul_rpow`
+that takes single hypothesis: strict positive -/
+@[simp]
+theorem rpow_mul_rpow_neg' (x : ℝ) {a : A} (ha : IsStrictlyPositive a) :
+    a ^ x * a ^ (-x) = 1 :=
+  rpow_mul_rpow_neg x ha.isUnit
+
+@[simp]
+theorem rpow_neg_mul_rpow' (x : ℝ) {a : A} (ha : IsStrictlyPositive a) :
+    a ^ (-x) * a ^ x = 1 :=
+  rpow_neg_mul_rpow x ha.isUnit
 
 /-- If `a` is strictly positive and `f` is continuous and maps positive reals to positive reals,
 then `cfc f a` is strictly positive. -/
@@ -74,21 +96,6 @@ lemma nonneg_iff_spec_nonneg :
       ⟨fun ⟨ha, hs⟩ => (StarOrderedRing.nonneg_iff_spectrum_nonneg a ha).mpr (by simpa using hs),
       fun h => ⟨h.isSelfAdjoint,
                 by simpa using (StarOrderedRing.nonneg_iff_spectrum_nonneg a).mp h⟩⟩
-
---- non-mathlib
-theorem operatorConvex_on_nonneg
-    {f : ℝ → ℝ} (hf : OperatorConvexOn.{u} (Ici 0) f) :
-    ConvexOn ℝ {a : A | 0 ≤ a} (cfc f) := by
-  have : {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ Ici 0} = {a : A | 0 ≤ a} :=
-    ext nonneg_iff_spec_nonneg
-  exact this ▸ operatorConvex_apply hf
-
-theorem operatorConcave_on_nonneg
-    {f : ℝ → ℝ} (hf : OperatorConcaveOn.{u} (Ici 0) f) :
-    ConcaveOn ℝ {a : A | 0 ≤ a} (cfc f) := by
-  have : {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ Ici 0} = {a : A | 0 ≤ a} :=
-    ext nonneg_iff_spec_nonneg
-  exact this ▸ operatorConcave_apply hf
 
 end CFC
 
