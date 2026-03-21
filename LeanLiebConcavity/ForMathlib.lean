@@ -46,12 +46,12 @@ theorem mul_self_rpow_half
 /-- versions of `rpow_mul_rpow_neg` and `rpow_neg_mul_rpow`
 that takes single hypothesis: strict positive -/
 @[simp]
-theorem rpow_mul_rpow_neg' (x : ℝ) {a : A} (ha : IsStrictlyPositive a) :
+theorem rpow_mul_rpow_neg' {x : ℝ} {a : A} (ha : IsStrictlyPositive a) :
     a ^ x * a ^ (-x) = 1 :=
   rpow_mul_rpow_neg x ha.isUnit
 
 @[simp]
-theorem rpow_neg_mul_rpow' (x : ℝ) {a : A} (ha : IsStrictlyPositive a) :
+theorem rpow_neg_mul_rpow' {x : ℝ} {a : A} (ha : IsStrictlyPositive a) :
     a ^ (-x) * a ^ x = 1 :=
   rpow_neg_mul_rpow x ha.isUnit
 

@@ -25,13 +25,12 @@ private lemma smul_rpow_conj
     (c • S) ^ ½ * (S ^ (-½) * L * S ^ (-½)) * (c • S) ^ ½ = c • L := by
   calc (c • S) ^ ½ * (S ^ (-½) * L * S ^ (-½)) * (c • S) ^ ½
       = (c ^ ½ • S ^ ½) * S ^ (-½) * L * S ^ (-½) * (c ^ ½ • S ^ ½) := by
-          rw [CFC.smul_pow (le_of_lt hc) hS.nonneg (by linarith)]; grind only
+          rw [CFC.smul_pow (le_of_lt hc) hS.nonneg (by linarith)]
+          simp only [mul_assoc]
     _ = S ^ ½ * S ^ (-½) * ((c ^ ½ * c ^ ½) • L) * S ^ (-½) * S ^ ½ := by
-          simp [smul_smul, mul_assoc]
-    _ = c ^ (½ + ½) • L := by
-          grind only [= Real.rpow_add, rpow_neg_mul_rpow, rpow_mul_rpow_neg,
-            IsStrictlyPositive.iff_of_unital]
-    _ = c • L := by grind only [Real.rpow_one]
+          simp only [smul_mul_assoc, mul_assoc, mul_smul_comm, smul_smul]
+    _ = c • L := by
+          grind only [mul_self_half, rpow_neg_mul_rpow', rpow_mul_rpow_neg']
 
 
 
@@ -62,7 +61,7 @@ theorem PerspectiveJointConvex
   have hbgR₂ : IsStrictlyPositive (b • cfc g R₂) :=
     IsStrictlyPositive.smul hb' hgR₂
   let R := a • R₁ + b • R₂
-  have hR : IsStrictlyPositive R := by grind only [isStrictlyPositive_convex_combination]
+  have hR : IsStrictlyPositive R := isStrictlyPositive_convex_combination ha hb hab hR₁ hR₂
   have hgR : IsStrictlyPositive (cfc g R) :=
     cfc_isStrictlyPositive_of_nonneg hg.1 hg.2 hR
   let T₁ := (a • G R₁) ^ ½ * G R ^ (-½)
@@ -88,7 +87,7 @@ theorem PerspectiveJointConvex
       + G R ^ (-½) * (b • G R₂) * G R ^ (-½) := by
           grind only [mul_self_rpow_half hagR₁, mul_self_rpow_half hbgR₂]
     _ = G R ^ (-½) * (a • G R₁ + b • G R₂) * G R ^ (-½) := by
-          grind only
+          rw [mul_add, add_mul]
     _ ≤ G R ^ (-½) * G R * G R ^ (-½) :=
           (IsSelfAdjoint.of_nonneg (by simp)).conjugate_le_conjugate this
     _ = 1 := by
@@ -124,15 +123,15 @@ theorem PerspectiveJointConvex
   calc
       (GenPerspective A f g) (a • L₁ + b • L₂, a • R₁ + b • R₂)
       = G R ^ ½ * F (G R ^ (-½) * (a • L₁ + b • L₂) * G R ^ (-½)) * G R ^ ½ := by
-          grind only [GenPerspective]
+          dsimp only [GenPerspective]
     _ = G R ^ ½ * F (G R ^ (-½) * (a • L₁) * G R ^ (-½)
                     + G R ^ (-½) * (b • L₂) * G R ^ (-½))
                 * G R ^ ½ := by
-          congr; grind only
+          rw [mul_add, add_mul]
     _ = G R ^ ½ * F (star T₁ * (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
                         + star T₂ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂)
                 * G R ^ ½ := by
-          simp_rw [hT₁L₁, hT₂L₂]
+          rw [hT₁L₁, hT₂L₂]
     _ ≤ G R ^ ½ * (star T₁ * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
                     + star T₂ * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂)
                 * G R ^ ½ :=
@@ -154,7 +153,7 @@ theorem PerspectiveJointConvex
         * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½))
         * (b • G R₂) ^ ½
         * (G R ^ (-½) * G R ^ ½) := by
-          grind only
+          simp only [mul_add, add_mul, mul_assoc]
     _ = (a • G R₁) ^ ½ * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * (a • G R₁) ^ ½
         + (b • G R₂) ^ ½ * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * (b • G R₂) ^ ½ := by
           grind only [rpow_neg_mul_rpow', rpow_mul_rpow_neg']
@@ -168,7 +167,7 @@ theorem PerspectiveJointConvex
         + b • (G R₂ ^ ½ * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * G R₂ ^ ½) := by
           grind [mul_self_half, smul_mul_assoc]
     _ = a • (GenPerspective A f g) (L₁, R₁) + b • (GenPerspective A f g) (L₂, R₂) := by
-          grind only [GenPerspective]
+          dsimp only [GenPerspective]
 
 -- [cor:gen_perspective_jointly_concave] Eba2011 Cor 2.6(i), generalized perspective jointly concave
 theorem PerspectiveJointConcave
@@ -242,6 +241,8 @@ example {a : A} (ha : IsUnit a) (ha' : 0 ≤ a := by cfc_tac) : a ^ (1 : ℝ) * 
   grind [rpow_neg_mul_rpow (-1) ha ha']
 example {a : A} (ha : IsStrictlyPositive a) : IsUnit a := IsStrictlyPositive.isUnit ha
 example : 0 ≤ ½ := by linarith
+example {a b c d : A} : a * b * d + a * c * d= a * (b + c) * d := by
+  simp [mul_add, add_mul]
 
 
 end CFC
