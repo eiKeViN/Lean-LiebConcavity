@@ -34,6 +34,7 @@ theorem operatorConcave_apply
     ConcaveOn ℝ {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f) :=
   @hf A _ _ _
 
+/-- TODO: put to ForMathlib, reconfiguring typeclass -/
 lemma cfc_neg' (f : ℝ → ℝ) : cfc (-f) = - (cfc f : A → A) :=
   funext fun a => cfc_neg f a
 
@@ -42,12 +43,11 @@ theorem operatorConvexOn_neg_iff_concaveOn {I : Set ℝ} {f : ℝ → ℝ} :
     OperatorConvexOn.{u} I f ↔ OperatorConcaveOn.{u} I (-f) := by
   constructor
   · intro h B _ _ _
-    have : cfc (-f) = -(cfc f : B → B) := funext fun a => cfc_neg f a
-    rw [this]; exact neg_concaveOn_iff.mpr (@h B _ _ _)
+    rw [cfc_neg']; exact neg_concaveOn_iff.mpr (@h B _ _ _)
   · intro h B _ _ _
     have hB := @h B _ _ _
-    rw [show cfc (-f) = -(cfc f : B → B) from funext fun a => cfc_neg f a] at hB
-    exact neg_concaveOn_iff.mp hB
+    apply neg_concaveOn_iff.mp
+    rwa [cfc_neg'] at hB
 
 theorem operatorConcaveOn_neg_iff_convexOn {I : Set ℝ} {f : ℝ → ℝ} :
     OperatorConcaveOn.{u} I f ↔ OperatorConvexOn.{u} I (-f) := by
@@ -69,9 +69,32 @@ theorem operatorConcave_on_nonneg
     ext nonneg_iff_spec_nonneg
   exact this ▸ operatorConcave_apply hf
 
+
+/-- If `f` is operator convex on `I`, it is operator convex on any convex subset `J` of `I`. -/
+theorem OperatorConvexOn.subset
+    {I J : Set ℝ} {f : ℝ → ℝ}
+    (hf : OperatorConvexOn.{u} I f)
+    (hJ : Convex ℝ J) (hJI : J ⊆ I) :
+    OperatorConvexOn.{u} J f :=
+  fun {B} [_] [_] [_] =>
+    ConvexOn.subset (@hf B _ _ _)
+      (fun _ ⟨h_sa, h_spec⟩ => ⟨h_sa, h_spec.trans hJI⟩)
+      (convex_selfAdjoint_spectrum_subset hJ)
+
+/-- If `f` is operator concave on `I`, it is operator concave on any subset `J ⊆ I`. -/
+theorem OperatorConcaveOn.subset
+    {I J : Set ℝ} {f : ℝ → ℝ}
+    (hf : OperatorConcaveOn.{u} I f)
+    (hJ : Convex ℝ J) (hJI : J ⊆ I) :
+    OperatorConcaveOn.{u} J f :=
+  fun {B} [_] [_] [_] =>
+    ConcaveOn.subset (@hf B _ _ _)
+      (fun _ ⟨h_sa, h_spec⟩ => ⟨h_sa, h_spec.trans hJI⟩)
+      (convex_selfAdjoint_spectrum_subset hJ)
+
 section positive
 open NNReal
---helpful definition for operator convexity of positive elements only
+--helpful? definition for operator convexity of positive elements only
 
 def OperatorConcaveOn_pos (f : ℝ≥0 → ℝ≥0) : Prop :=
   ∀ {B : Type*} [CStarAlgebra B] [PartialOrder B] [StarOrderedRing B],

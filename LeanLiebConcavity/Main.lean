@@ -56,14 +56,11 @@ theorem PerspectiveJointConvex
   -- abbrev + strict positivity of main terms
   have hgR₁ : IsStrictlyPositive (G R₁) := cfc_isStrictlyPositive_of_nonneg hg.1 hg.2 hR₁
   have hgR₂ : IsStrictlyPositive (G R₂) := cfc_isStrictlyPositive_of_nonneg hg.1 hg.2 hR₂
-  have hagR₁ : IsStrictlyPositive (a • cfc g R₁) :=
-    IsStrictlyPositive.smul ha' hgR₁
-  have hbgR₂ : IsStrictlyPositive (b • cfc g R₂) :=
-    IsStrictlyPositive.smul hb' hgR₂
+  have hagR₁ : IsStrictlyPositive (a • G R₁) := IsStrictlyPositive.smul ha' hgR₁
+  have hbgR₂ : IsStrictlyPositive (b • G R₂) := IsStrictlyPositive.smul hb' hgR₂
   let R := a • R₁ + b • R₂
   have hR : IsStrictlyPositive R := isStrictlyPositive_convex_combination ha hb hab hR₁ hR₂
-  have hgR : IsStrictlyPositive (cfc g R) :=
-    cfc_isStrictlyPositive_of_nonneg hg.1 hg.2 hR
+  have hgR : IsStrictlyPositive (G R) := cfc_isStrictlyPositive_of_nonneg hg.1 hg.2 hR
   let T₁ := (a • G R₁) ^ ½ * G R ^ (-½)
   let T₂ := (b • G R₂) ^ ½ * G R ^ (-½)
   have hT₁_star : star T₁ = G R ^ (-½) * (a • G R₁) ^ ½ := by
@@ -73,9 +70,9 @@ theorem PerspectiveJointConvex
     grind only [hbgR₂.isSelfAdjoint,
                 IsSelfAdjoint.star_mul_eq, rpow_nonneg, IsSelfAdjoint.of_nonneg]
   -- uses g's concavity
-  have : a • G R₁ + b • G R₂ ≤ G R := by
-    have : ConcaveOn ℝ {a : A | 0 ≤ a} (G) := operatorConcave_on_nonneg hg_opconcav
-    grind only [ConcaveOn, mem_setOf_eq, hR₁.nonneg, hR₂.nonneg]
+  have hg_leq : a • G R₁ + b • G R₂ ≤ G R := by
+    grind only [show ConcaveOn ℝ {a : A | 0 ≤ a} G from operatorConcave_on_nonneg hg_opconcav,
+                ConcaveOn, mem_setOf_eq, hR₁.nonneg, hR₂.nonneg]
   -- hT: important condition to apply Jensen
   have hT : star T₁ * T₁ + star T₂ * T₂ ≤ 1 := by
     calc
@@ -89,14 +86,15 @@ theorem PerspectiveJointConvex
     _ = G R ^ (-½) * (a • G R₁ + b • G R₂) * G R ^ (-½) := by
           rw [mul_add, add_mul]
     _ ≤ G R ^ (-½) * G R * G R ^ (-½) :=
-          (IsSelfAdjoint.of_nonneg (by simp)).conjugate_le_conjugate this
+          (IsSelfAdjoint.of_nonneg (by simp)).conjugate_le_conjugate hg_leq
     _ = 1 := by
           grind only [mul_self_rpow_half, rpow_neg_mul_rpow', rpow_mul_rpow_neg']
   have hT₁L₁ :
       star T₁ * (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
       = G R ^ (-½) * (a • L₁) * G R ^ (-½) := by
     calc star T₁ * (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
-        = G R ^ (-½) * ((a • G R₁) ^ ½ * (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * (a • G R₁) ^ ½)
+        = G R ^ (-½)
+          * ((a • G R₁) ^ ½ * (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * (a • G R₁) ^ ½)
           * G R ^ (-½) := by
             grind only
       _ = G R ^ (-½) * (a • L₁) * G R ^ (-½) := by
@@ -105,7 +103,8 @@ theorem PerspectiveJointConvex
       star T₂ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂
       = G R ^ (-½) * (b • L₂) * G R ^ (-½) := by
     calc star T₂ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂
-        = G R ^ (-½) * ((b • G R₂) ^ ½ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * (b • G R₂) ^ ½)
+        = G R ^ (-½)
+          * ((b • G R₂) ^ ½ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * (b • G R₂) ^ ½)
           * G R ^ (-½) := by
             grind only
       _ = G R ^ (-½) * (b • L₂) * G R ^ (-½) := by
@@ -124,17 +123,19 @@ theorem PerspectiveJointConvex
       (GenPerspective A f g) (a • L₁ + b • L₂, a • R₁ + b • R₂)
       = G R ^ ½ * F (G R ^ (-½) * (a • L₁ + b • L₂) * G R ^ (-½)) * G R ^ ½ := by
           dsimp only [GenPerspective]
-    _ = G R ^ ½ * F (G R ^ (-½) * (a • L₁) * G R ^ (-½)
-                    + G R ^ (-½) * (b • L₂) * G R ^ (-½))
-                * G R ^ ½ := by
+    _ = G R ^ ½
+        * F (G R ^ (-½) * (a • L₁) * G R ^ (-½) + G R ^ (-½) * (b • L₂) * G R ^ (-½))
+        * G R ^ ½ := by
           rw [mul_add, add_mul]
-    _ = G R ^ ½ * F (star T₁ * (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
-                        + star T₂ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂)
-                * G R ^ ½ := by
+    _ = G R ^ ½
+        * F (star T₁ * (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
+            + star T₂ * (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂)
+        * G R ^ ½ := by
           rw [hT₁L₁, hT₂L₂]
-    _ ≤ G R ^ ½ * (star T₁ * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
-                    + star T₂ * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂)
-                * G R ^ ½ :=
+    _ ≤ G R ^ ½
+        * (star T₁ * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
+          + star T₂ * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂)
+        * G R ^ ½ :=
           (IsSelfAdjoint.of_nonneg (by simp)).conjugate_le_conjugate hF_jensen
     _ = G R ^ ½
         * ( G R ^ (-½) * (a • G R₁) ^ ½
@@ -185,14 +186,14 @@ theorem PerspectiveJointConcave
       hg_opconcav
   rwa [GenPerspective_neg' f g, neg_convexOn_iff] at this
 
--- [cor:power_fn_convex] Löwner, x ↦ x^r is operator convex on [0,∞) for 1 ≤ r ≤ 2
-theorem PowerFnMatrixConvex
+-- [cor:power_convex] Löwner, x ↦ x^r is operator convex on [0,∞) for 1 ≤ r ≤ 2
+theorem PowerOperatorConvex
     {r : ℝ} (hr : 1 ≤ r ∧ r ≤ 2) :
     OperatorConvexOn.{u} (Ici 0) (· ^ r) := by
   sorry
 
--- [cor:power_fn_concave] Löwner, x ↦ x^r is operator concave on [0,∞) for 0 < r ≤ 1
-theorem PowerFnMatrixConcave
+-- [cor:power_concave] Löwner, x ↦ x^r is operator concave on [0,∞) for 0 < r ≤ 1
+theorem PowerOperatorConcave
     {r : ℝ} (hr : 0 < r ∧ r ≤ 1) :
     OperatorConcaveOn.{u} (Ici 0) (· ^ r) := by
   sorry
@@ -214,8 +215,8 @@ theorem PowerMeanJointlyConcave
   PerspectiveJointConcave
     ⟨(Real.continuous_rpow_const hα.1.le).continuousOn, by simp [Real.zero_rpow hα.1.ne']⟩
     ⟨(Real.continuous_rpow_const hβ.1.le).continuousOn, fun {_} hx => Real.rpow_pos_of_pos hx β⟩
-    (PowerFnMatrixConcave hα)
-    (PowerFnMatrixConcave hβ)
+    (PowerOperatorConcave hα)
+    (PowerOperatorConcave hβ)
 
 -- [thm:power_mean_jointly_convex] Nik2013 Thm 1.1,
 -- (α,β)-power mean is jointly convex for 1 ≤ α ≤ 2 and 0 < β ≤ 1
@@ -227,8 +228,8 @@ theorem PowerMeanJointlyConvex
     ⟨(Real.continuous_rpow_const (by linarith)).continuousOn,
      by simp [Real.zero_rpow (by linarith : α ≠ 0)]⟩
     ⟨(Real.continuous_rpow_const hβ.1.le).continuousOn, fun {_} hx => Real.rpow_pos_of_pos hx β⟩
-    (PowerFnMatrixConvex hα)
-    (PowerFnMatrixConcave hβ)
+    (PowerOperatorConvex hα)
+    (PowerOperatorConcave hβ)
 
 variable {L₁ : A} (r : ℝ)
 example : 0 ≤ L₁ ^ r := by simp

@@ -112,7 +112,7 @@ theorem isStrictlyPositive_convex_combination
     IsStrictlyPositive (a • x + b • y) := by
   rcases eq_or_lt_of_le ha with rfl | ha_pos
   · simp only [zero_smul, zero_add] at hab ⊢; rwa [hab, one_smul]
-  · exact (hx.smul ha_pos).add_nonneg (smul_nonneg hb hy.nonneg)
+  · exact (hx.smul ha_pos).add_nonneg <| smul_nonneg hb hy.nonneg
 
 theorem isStrictlyPositive_convex :
   Convex ℝ {a : A | IsStrictlyPositive a} :=
@@ -130,3 +130,77 @@ theorem convex_nonneg_strictlyPositive :
   exact (convex_Ici 0).prod isStrictlyPositive_convex
 
 end StrictPositivity
+
+section SpectrumConvexity
+
+variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+
+open Set
+
+/-- If `I ⊆ ℝ` is convex and `x, y` are self-adjoint with spectra in `I`, then any
+convex combination `a • x + b • y` also has spectrum in `I`. -/
+theorem spectrum_subset_convex_combination
+    {I : Set ℝ} (hI : Convex ℝ I)
+    {a b : ℝ} {x y : A}
+    (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : a + b = 1)
+    (hx_sa : IsSelfAdjoint x) (hy_sa : IsSelfAdjoint y)
+    (hx_spec : spectrum ℝ x ⊆ I) (hy_spec : spectrum ℝ y ⊆ I) :
+    spectrum ℝ (a • x + b • y) ⊆ I := by
+  -- handleing singleton algebra wherein all spectra are empty
+  by_cases hA : Nontrivial A
+  swap
+  · rw [not_nontrivial_iff_subsingleton] at hA; simp
+  -- remaining case: spectra are non-empty; also compact
+  let hxc := ContinuousFunctionalCalculus.isCompact_spectrum (R := ℝ) x
+  let hyc := ContinuousFunctionalCalculus.isCompact_spectrum (R := ℝ) y
+  -- algebraMap ordering bounds
+  have hx_lo : algebraMap ℝ A (sInf (spectrum ℝ x)) ≤ x :=
+    (algebraMap_le_iff_le_spectrum).mpr fun _ hs => csInf_le hxc.bddBelow hs
+  have hy_lo : algebraMap ℝ A (sInf (spectrum ℝ y)) ≤ y :=
+    (algebraMap_le_iff_le_spectrum).mpr fun _ hs => csInf_le hyc.bddBelow hs
+  have hx_hi : x ≤ algebraMap ℝ A (sSup (spectrum ℝ x)) :=
+    (le_algebraMap_iff_spectrum_le).mpr fun _ hs => le_csSup hxc.bddAbove hs
+  have hy_hi : y ≤ algebraMap ℝ A (sSup (spectrum ℝ y)) :=
+    (le_algebraMap_iff_spectrum_le).mpr fun _ hs => le_csSup hyc.bddAbove hs
+  have alg_eq : ∀ {r s : ℝ}, algebraMap ℝ A (a * r + b * s) =
+      a • algebraMap ℝ A r + b • algebraMap ℝ A s := by
+    intro r s; simp only [map_add, Algebra.algebraMap_eq_smul_one, smul_smul]
+  -- For any spectral value, it lies between the convex combinations of extrema
+  intro t ht
+  let hnx := CFC.spectrum_nonempty ℝ x
+  let hny := CFC.spectrum_nonempty ℝ y
+  have hl_I : a • sInf (spectrum ℝ x) + b • sInf (spectrum ℝ y) ∈ I := by
+    refine hI ?_ ?_ ha hb hab
+    · exact hx_spec <| hxc.sInf_mem <| hnx
+    · exact hy_spec <| hyc.sInf_mem <| hny
+  have hu_I : a • sSup (spectrum ℝ x) + b • sSup (spectrum ℝ y) ∈ I := by
+    refine hI ?_ ?_ ha hb hab
+    · exact hx_spec <| hxc.sSup_mem <| hnx
+    · exact hy_spec <| hyc.sSup_mem <| hny
+  have lower : algebraMap ℝ A (a * sInf (spectrum ℝ x) + b * sInf (spectrum ℝ y))
+      ≤ a • x + b • y := by
+    rw [alg_eq]
+    exact add_le_add (smul_le_smul_of_nonneg_left hx_lo ha)
+                     (smul_le_smul_of_nonneg_left hy_lo hb)
+  have upper : a • x + b • y
+      ≤ algebraMap ℝ A (a * sSup (spectrum ℝ x) + b * sSup (spectrum ℝ y)) := by
+    rw [alg_eq]
+    exact add_le_add (smul_le_smul_of_nonneg_left hx_hi ha)
+                     (smul_le_smul_of_nonneg_left hy_hi hb)
+  -- adding seld adjoint hypothesis for cfc_tac to infer
+  have : IsSelfAdjoint (a • x + b • y) := by
+    simp only [IsSelfAdjoint, star_add, star_smul, star_trivial, hx_sa.star_eq, hy_sa.star_eq]
+  refine hI.ordConnected.out hl_I hu_I ⟨?_, ?_⟩
+  · exact (algebraMap_le_iff_le_spectrum (ha := this)).mp lower t ht
+  · exact (le_algebraMap_iff_spectrum_le (ha := this)).mp upper t ht
+
+/-- The set of self-adjoint elements with spectrum in a convex set is convex. -/
+theorem convex_selfAdjoint_spectrum_subset
+    {I : Set ℝ} (hI : Convex ℝ I) :
+    Convex ℝ {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} :=
+  fun _ ⟨hx_sa, hx_spec⟩ _ ⟨hy_sa, hy_spec⟩ _ _ ha hb hab =>
+    ⟨by simp only [IsSelfAdjoint, star_add, star_smul, star_trivial,
+          hx_sa.star_eq, hy_sa.star_eq],
+     spectrum_subset_convex_combination hI ha hb hab hx_sa hy_sa hx_spec hy_spec⟩
+
+end SpectrumConvexity
