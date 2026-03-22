@@ -18,7 +18,13 @@
       "Bash(find .lake/packages/mathlib -name *.lean -exec grep -l Rat.mul_nonneg {})",
       "Bash(2)",
       "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib -name *.lean -type f -exec grep -l \"instance.*Prod.*SMul\\\\|instance.*SMul.*Prod.*:\" {})",
-      "Bash(lake env:*)"
+      "Bash(lake env:*)",
+      "Bash(grep -n \"theorem\\\\|def\\\\|lemma\" /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/LeanLiebConcavity/*.lean)",
+      "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/notes -type f -name *.md)",
+      "Read(//c/Users/eiKevinZ/.lake/packages/**)",
+      "Skill(update)",
+      "Skill(update:*)",
+      "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib -name *.lean -type f)"
     ]
   }
 }

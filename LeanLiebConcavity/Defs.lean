@@ -23,14 +23,15 @@ def OperatorConcaveOn (I : Set ℝ) (f : ℝ → ℝ) : Prop :=
 
 
  /-some useful(less) api -/
+
 variable {A : Type u} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
-theorem operatorConvex_apply
-    {f : ℝ → ℝ} {I : Set ℝ} (hf : OperatorConvexOn.{u} I f) :
+variable {f : ℝ → ℝ} {I J : Set ℝ}
+
+theorem operatorConvex_apply (hf : OperatorConvexOn.{u} I f) :
     ConvexOn ℝ {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f) :=
   @hf A _ _ _
 
-theorem operatorConcave_apply
-    {f : ℝ → ℝ} {I : Set ℝ} (hf : OperatorConcaveOn.{u} I f) :
+theorem operatorConcave_apply (hf : OperatorConcaveOn.{u} I f) :
     ConcaveOn ℝ {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f) :=
   @hf A _ _ _
 
@@ -39,7 +40,7 @@ lemma cfc_neg' (f : ℝ → ℝ) : cfc (-f) = - (cfc f : A → A) :=
   funext fun a => cfc_neg f a
 
 /-- `f` is operator convex on `I` iff `-f` is operator concave on `I`. -/
-theorem operatorConvexOn_neg_iff_concaveOn {I : Set ℝ} {f : ℝ → ℝ} :
+theorem operatorConvexOn_neg_iff_concaveOn :
     OperatorConvexOn.{u} I f ↔ OperatorConcaveOn.{u} I (-f) := by
   constructor
   · intro h B _ _ _
@@ -49,21 +50,19 @@ theorem operatorConvexOn_neg_iff_concaveOn {I : Set ℝ} {f : ℝ → ℝ} :
     apply neg_concaveOn_iff.mp
     rwa [cfc_neg'] at hB
 
-theorem operatorConcaveOn_neg_iff_convexOn {I : Set ℝ} {f : ℝ → ℝ} :
+theorem operatorConcaveOn_neg_iff_convexOn :
     OperatorConcaveOn.{u} I f ↔ OperatorConvexOn.{u} I (-f) := by
   rw [operatorConvexOn_neg_iff_concaveOn, neg_neg]
 
 open Set
 
-theorem operatorConvex_on_nonneg
-    {f : ℝ → ℝ} (hf : OperatorConvexOn.{u} (Ici 0) f) :
+theorem operatorConvex_on_nonneg (hf : OperatorConvexOn.{u} (Ici 0) f) :
     ConvexOn ℝ {a : A | 0 ≤ a} (cfc f) := by
   have : {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ Ici 0} = {a : A | 0 ≤ a} :=
     ext nonneg_iff_spec_nonneg
   exact this ▸ operatorConvex_apply hf
 
-theorem operatorConcave_on_nonneg
-    {f : ℝ → ℝ} (hf : OperatorConcaveOn.{u} (Ici 0) f) :
+theorem operatorConcave_on_nonneg (hf : OperatorConcaveOn.{u} (Ici 0) f) :
     ConcaveOn ℝ {a : A | 0 ≤ a} (cfc f) := by
   have : {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ Ici 0} = {a : A | 0 ≤ a} :=
     ext nonneg_iff_spec_nonneg
@@ -71,9 +70,7 @@ theorem operatorConcave_on_nonneg
 
 
 /-- If `f` is operator convex on `I`, it is operator convex on any convex subset `J` of `I`. -/
-theorem OperatorConvexOn.subset
-    {I J : Set ℝ} {f : ℝ → ℝ}
-    (hf : OperatorConvexOn.{u} I f)
+theorem OperatorConvexOn.subset (hf : OperatorConvexOn.{u} I f)
     (hJ : Convex ℝ J) (hJI : J ⊆ I) :
     OperatorConvexOn.{u} J f :=
   fun {B} [_] [_] [_] =>
@@ -82,9 +79,7 @@ theorem OperatorConvexOn.subset
       (convex_selfAdjoint_spectrum_subset hJ)
 
 /-- If `f` is operator concave on `I`, it is operator concave on any subset `J ⊆ I`. -/
-theorem OperatorConcaveOn.subset
-    {I J : Set ℝ} {f : ℝ → ℝ}
-    (hf : OperatorConcaveOn.{u} I f)
+theorem OperatorConcaveOn.subset (hf : OperatorConcaveOn.{u} I f)
     (hJ : Convex ℝ J) (hJI : J ⊆ I) :
     OperatorConcaveOn.{u} J f :=
   fun {B} [_] [_] [_] =>

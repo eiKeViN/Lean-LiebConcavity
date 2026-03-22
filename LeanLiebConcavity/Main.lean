@@ -7,8 +7,7 @@ noncomputable section
 
 
 namespace CFC
-open Set
-open NNReal
+open Set NNReal
 
 --namespace IsSelfAdjoint
 universe u
@@ -59,7 +58,7 @@ theorem PerspectiveJointConvex
   have hagR₁ : IsStrictlyPositive (a • G R₁) := IsStrictlyPositive.smul ha' hgR₁
   have hbgR₂ : IsStrictlyPositive (b • G R₂) := IsStrictlyPositive.smul hb' hgR₂
   let R := a • R₁ + b • R₂
-  have hR : IsStrictlyPositive R := isStrictlyPositive_convex_combination ha hb hab hR₁ hR₂
+  have hR : IsStrictlyPositive R := isStrictlyPositive_convex_comb ha hb hab hR₁ hR₂
   have hgR : IsStrictlyPositive (G R) := cfc_isStrictlyPositive_of_nonneg hg.1 hg.2 hR
   let T₁ := (a • G R₁) ^ ½ * G R ^ (-½)
   let T₂ := (b • G R₂) ^ ½ * G R ^ (-½)
@@ -71,7 +70,8 @@ theorem PerspectiveJointConvex
                 IsSelfAdjoint.star_mul_eq, rpow_nonneg, IsSelfAdjoint.of_nonneg]
   -- uses g's concavity
   have hg_leq : a • G R₁ + b • G R₂ ≤ G R := by
-    grind only [show ConcaveOn ℝ {a : A | 0 ≤ a} G from operatorConcave_on_nonneg hg_opconcav,
+    grind only [show ConcaveOn ℝ {a : A | 0 ≤ a} G from
+                operatorConcave_on_nonneg hg_opconcav,
                 ConcaveOn, mem_setOf_eq, hR₁.nonneg, hR₂.nonneg]
   -- hT: important condition to apply Jensen
   have hT : star T₁ * T₁ + star T₂ * T₂ ≤ 1 := by
@@ -86,7 +86,7 @@ theorem PerspectiveJointConvex
     _ = G R ^ (-½) * (a • G R₁ + b • G R₂) * G R ^ (-½) := by
           rw [mul_add, add_mul]
     _ ≤ G R ^ (-½) * G R * G R ^ (-½) :=
-          (IsSelfAdjoint.of_nonneg (by simp)).conjugate_le_conjugate hg_leq
+          IsSelfAdjoint.of_nonneg (by simp) |>.conjugate_le_conjugate hg_leq
     _ = 1 := by
           grind only [mul_self_rpow_half, rpow_neg_mul_rpow', rpow_mul_rpow_neg']
   have hT₁L₁ :
@@ -136,7 +136,7 @@ theorem PerspectiveJointConvex
         * (star T₁ * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½)) * T₁
           + star T₂ * F (G R₂ ^ (-½) * L₂ * G R₂ ^ (-½)) * T₂)
         * G R ^ ½ :=
-          (IsSelfAdjoint.of_nonneg (by simp)).conjugate_le_conjugate hF_jensen
+          IsSelfAdjoint.of_nonneg (by simp) |>.conjugate_le_conjugate hF_jensen
     _ = G R ^ ½
         * ( G R ^ (-½) * (a • G R₁) ^ ½
             * F (G R₁ ^ (-½) * L₁ * G R₁ ^ (-½))
