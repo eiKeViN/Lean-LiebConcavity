@@ -24,7 +24,8 @@
       "Read(//c/Users/eiKevinZ/.lake/packages/**)",
       "Skill(update)",
       "Skill(update:*)",
-      "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib -name *.lean -type f)"
+      "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib -name *.lean -type f)",
+      "Bash(grep -r ⟨.**.*,.*star .lake/packages/mathlib/Mathlib/Analysis --include=*.lean)"
     ]
   }
 }

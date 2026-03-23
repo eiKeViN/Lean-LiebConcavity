@@ -1,4 +1,33 @@
-# Abstract Approach: HilbertStarAlgebra (Avoiding the Two-Norm Problem)
+# Abstract Approach: HStarAlgebra (Avoiding the Two-Norm Problem)
+
+## Mathematical Background: H\*-algebras
+
+The structure we need has an established name in mathematics: **H\*-algebra** (Ambrose 1945).
+
+**Definition** (W. Ambrose, "Structure theorems for a special class of Banach algebras,"
+*Trans. AMS* 57 (1945), 364–386). An **H\*-algebra** is a Banach \*-algebra whose norm
+arises from a scalar-valued inner product satisfying:
+
+    ⟨a · x, y⟩ = ⟨x, a* · y⟩
+
+**Classification theorem** (Ambrose 1945): Every H\*-algebra decomposes as an orthogonal
+direct sum of simple H\*-algebras, and each simple H\*-algebra is isomorphic to the
+algebra of **Hilbert–Schmidt operators** on some Hilbert space (with the Hilbert–Schmidt /
+Frobenius inner product). For finite dimensions, every simple H\*-algebra is
+`Matrix (Fin n) (Fin n) ℂ` with trace inner product.
+
+**Related but distinct concepts:**
+
+| Name | Inner product values | Extra axioms | In Mathlib? |
+|------|---------------------|--------------|-------------|
+| **H\*-algebra** (Ambrose 1945) | Scalars (ℂ) | — | **No** |
+| **Hilbert algebra** (Dixmier/Tomita-Takesaki) | Scalars (ℂ) | ⟨x,y⟩ = ⟨y\*, x\*⟩ + bounded L_x + density | **No** |
+| **Hilbert C\*-module** (`CStarModule A E`) | Algebra A | ⟨x, a•y⟩\_A = a · ⟨x,y⟩\_A | **Yes** |
+| **C\*-algebra as module over itself** | Self (A) | ⟨x, y⟩\_A = x\* · y | **Yes** (instance) |
+
+The crucial distinction from `CStarModule`: CStarModule has an **A-valued** inner product
+and uses an external module action `•`, while an H\*-algebra has a **ℂ-valued** inner product
+and uses its own **ring multiplication**. These are genuinely different structures.
 
 ## The Key Insight
 
@@ -12,7 +41,7 @@ For `H`, we only need:
 - **Algebra ℂ** — coefficient ring
 - **StarModule ℂ** — `star (c • x) = conj c • star x`
 - **TopologicalRing** — so multiplication is continuous (needed for `L_a : H →L[ℂ] H`)
-- **Compatibility**: `⟪a * x, y⟫ = ⟪x, star a * y⟫` — the single axiom
+- **Compatibility**: `⟪a * x, y⟫ = ⟪x, star a * y⟫` — the single axiom (the H\*-algebra axiom)
 
 ---
 
@@ -21,7 +50,7 @@ For `H`, we only need:
 ### Option 1: `extends` (all-in-one)
 
 ```lean
-class HilbertStarAlgebra (H : Type*) extends
+class HStarAlgebra (H : Type*) extends
     InnerProductSpace ℂ H, Ring H, StarRing H, Algebra ℂ H, StarModule ℂ H where
   [completeSpace : CompleteSpace H]
   [topRing : TopologicalRing H]
@@ -31,7 +60,7 @@ class HilbertStarAlgebra (H : Type*) extends
 **Pros:**
 - Single typeclass to carry around
 - Lean resolves parent instances automatically
-- Cleaner function signatures: just `[HilbertStarAlgebra H]`
+- Cleaner function signatures: just `[HStarAlgebra H]`
 
 **Cons:**
 - `extends InnerProductSpace ℂ H, Algebra ℂ H` creates a diamond on `Module ℂ H`
@@ -43,7 +72,7 @@ class HilbertStarAlgebra (H : Type*) extends
 ### Option 2: Mixin (separate assumptions)
 
 ```lean
-class HilbertStarAlgebra (H : Type*)
+class HStarAlgebra (H : Type*)
     [InnerProductSpace ℂ H] [CompleteSpace H]
     [Ring H] [StarRing H] [Algebra ℂ H] [StarModule ℂ H]
     [TopologicalRing H] where
@@ -57,7 +86,7 @@ class HilbertStarAlgebra (H : Type*)
 
 **Cons:**
 - Every declaration must carry all `[]` parameters explicitly
-- More verbose: `variable [InnerProductSpace ℂ H] [CompleteSpace H] [Ring H] [StarRing H] [Algebra ℂ H] [StarModule ℂ H] [TopologicalRing H] [HilbertStarAlgebra H]`
+- More verbose: `variable [InnerProductSpace ℂ H] [CompleteSpace H] [Ring H] [StarRing H] [Algebra ℂ H] [StarModule ℂ H] [TopologicalRing H] [HStarAlgebra H]`
 - Can mitigate with `variable` blocks at section level
 
 **Decision**: Deferred to implementation. Try mixin first; fall back to `extends` if the verbosity is too painful.
@@ -83,7 +112,7 @@ For finite-dimensional `H` (like `HilbertMatrix n`), `TopologicalRing` is automa
 To build `H →⋆ₐ[ℂ] (H →L[ℂ] H)`, provide an `AlgHom` + star-preservation proof:
 
 ```lean
-noncomputable def lmulStarAlgHom [HilbertStarAlgebra H] : H →⋆ₐ[ℂ] (H →L[ℂ] H) :=
+noncomputable def lmulStarAlgHom [HStarAlgebra H] : H →⋆ₐ[ℂ] (H →L[ℂ] H) :=
   ⟨Algebra.lmul ℂ H, fun a => star_lmul_eq a⟩
 ```
 
@@ -107,32 +136,131 @@ So `(L_a)† = L_{star a}`, i.e., `star(L_a) = L_{star a}`.
 
 ---
 
-## Critical Issue: CFC on H vs CFC on End(H)
+## CFC on H: Transfer from End(H) via ClosedRange
 
-**`H` is NOT a C\*-algebra**, so there is NO CFC on `H` itself.
+### Background
 
-This means `StarAlgHomClass.map_cfc` cannot be used in the direction `H → End(H)` because it requires `ContinuousFunctionalCalculus` on the **domain**. Our domain `H` doesn't have one.
+**`H` is NOT a C\*-algebra**, but the `ContinuousFunctionalCalculus` class does NOT
+require `CStarAlgebra`. It only requires:
 
-**Impact on the proof**: The identity `L_{A^s} = L_A^s` (where `A^s` is computed on `H` or on `Matrix`) cannot be derived from `map_cfc` directly.
+```
+[Ring A] [StarRing A] [TopologicalSpace A] [Algebra R A]
+```
 
-**Resolution options**:
+All of which an `HStarAlgebra` has. So the question is purely whether we can
+**construct** a CFC instance on H, not whether H has enough structure to state one.
 
-1. **Concrete approach**: In `Lieb.lean`, compute `A^s` on `Matrix (Fin n) (Fin n) ℂ` (which IS a C\*-algebra via `open scoped Matrix.Norms.L2Operator`) and separately show `L_{A^s} = L_A^s` by density of polynomials (for which `pow_mulLeft` gives `L_A^n = L_{A^n}` for `n : ℕ`).
+### Strategy: pullback via `ι = lmulStarAlgHom : H →⋆ₐ[ℂ] End(H)`
 
-2. **Direct CFC argument**: Show that `cfc (· ^ s) (L_A) = L_{cfc (· ^ s) A}` by uniqueness of CFC, using the fact that `A ↦ L_A` is a continuous star-algebra hom and both sides are continuous star-algebra homs `C(σ(A)) → End(H)` agreeing on the identity function.
+End(H) is a C\*-algebra with CFC. We transfer it to H via ι.
 
-3. **Avoid the identity altogether**: State the abstract Lieb theorem purely in terms of `End(H)` operators, with no reference to elements of `H`. The trace identity (connecting to `Tr(A^s K* B^{1-s} K)`) becomes a separate concrete lemma.
+### Spectrum equality: `σ_R(a) = σ_R(L_a)`
 
-**Option 3 is cleanest** for the abstract approach. The abstract theorem says "the inner product evaluation of GenPerspective is concave" — full stop. The concrete matrix translation happens in `Lieb.lean`.
+**Direction `σ(L_a) ⊆ σ(a)`**: Free from `AlgHom.spectrum_apply_subset`.
+
+**Direction `σ(a) ⊆ σ(L_a)`**: If `L_{a-λ}` is invertible in End(H) (i.e., `x ↦ (a-λ)x`
+is bijective), we need `a - λ` invertible in H.
+
+- **Right inverse**: `L_{a-λ}` surjective → `∃ b, (a-λ)·b = 1`. ✓
+- **Left inverse**: Use the H\*-algebra star. `R_{a-λ}(x) = x(a-λ) = star(L_{star(a-λ)}(star(x)))`.
+  So `R_{a-λ}` is bijective iff `L_{star(a-λ)}` is bijective.
+  - For **self-adjoint** `a` with real `λ`: `star(a-λ) = a - λ`, so `L_{star(a-λ)} = L_{a-λ}`,
+    which is bijective by assumption. ✓
+  - For **normal** `a` with complex `λ`: `σ(L_{star(a)}) = conj(σ(L_a))` (C\*-algebra theory
+    on End(H)), so `λ ∉ σ(L_a) ⟹ conj(λ) ∉ σ(L_{star(a)})`, and `star(a-λ) = star(a) - conj(λ)`. ✓
+
+**Result**: `σ_R(a) = σ_R(L_a)` for self-adjoint and normal elements.
+
+### CFC axioms checklist
+
+| CFC axiom | How to satisfy |
+|-----------|---------------|
+| `predicate_zero` | `IsSelfAdjoint 0` — trivial |
+| `compactSpace_spectrum a` | `σ(a) = σ(L_a)`, and `σ(L_a)` is compact (C\*-algebra on End(H)) |
+| `spectrum_nonempty a ha` | `σ(a) = σ(L_a)`, and `σ(L_a)` is nonempty (C\*-algebra + Nontrivial) |
+| `exists_cfc_of_predicate a ha` | Need `φ_H : C(σ(a), R) →⋆ₐ[R] H` — see below |
+
+### The key construction: `φ_H(f) = ι⁻¹(cfc f (L_a))`
+
+Define `φ_H(f) = ι⁻¹(cfcHom(L_a)(f))`. This requires:
+
+**`cfc f (L_a) ∈ range(ι)`** for all continuous f.
+
+- `L_a ∈ range(ι)` — by definition.
+- `range(ι)` is a star-subalgebra of End(H) — since ι is a star-alg hom.
+- `cfc f (L_a)` is in the closure of the star-subalgebra generated by `L_a` — by CFC construction.
+- So `cfc f (L_a) ∈ closure(range(ι))`.
+
+We need `closure(range(ι)) = range(ι)`, i.e., **`range(ι)` is closed in End(H)**.
+
+### The `ClosedRange` hypothesis
+
+We add this as an explicit hypothesis:
+
+```lean
+variable [HStarAlgebra H] [TopologicalRing H]
+    (hι : Function.ClosedRange (lmulStarAlgHom (H := H)))
+```
+
+- For **finite-dimensional** H: automatic (all subspaces are closed).
+- For **infinite-dimensional** H: a genuine requirement. Holds for all H\*-algebras arising
+  as Hilbert–Schmidt operator algebras (Ambrose classification), but must be verified per instance.
+
+### Full CFC transfer theorem
+
+```lean
+/-- An HStarAlgebra with closed lmul range admits a CFC transferred from End(H). -/
+instance [HStarAlgebra H] [TopologicalRing H]
+    (hι : Function.ClosedRange (lmulStarAlgHom (H := H))) :
+    ContinuousFunctionalCalculus ℝ H IsSelfAdjoint where
+  predicate_zero := .zero
+  compactSpace_spectrum a := by -- transfer from σ(L_a)
+    sorry
+  spectrum_nonempty a ha := by -- transfer from σ(L_a)
+    sorry
+  exists_cfc_of_predicate a ha := by
+    -- φ_H := ι⁻¹ ∘ cfcHom(L_a) : C(σ(a), ℝ) →⋆ₐ[ℝ] H
+    -- Well-defined because cfcHom(L_a)(f) ∈ range(ι) (closed star-subalgebra containing L_a)
+    -- Continuous: cfcHom is continuous, ι⁻¹ on range(ι) is continuous (open mapping thm)
+    -- Injective: cfcHom injective + ι injective
+    -- Maps id to a: cfcHom maps id to L_a, ι⁻¹(L_a) = a
+    sorry
+```
+
+### Payoff: `map_cfc` fires
+
+With CFC on H, `StarAlgHomClass.map_cfc` gives us the bridge identity for free:
+
+```lean
+theorem lmul_map_cfc [HStarAlgebra H] [TopologicalRing H]
+    (hι : Function.ClosedRange (lmulStarAlgHom (H := H)))
+    (f : ℝ → ℝ) (a : H) (hf : ContinuousOn f (spectrum ℝ a)) :
+    lmulStarAlgHom (cfc f a) = cfc f (lmulStarAlgHom a) :=
+  StarAlgHomClass.map_cfc lmulStarAlgHom f a
+```
+
+In particular: `L_{a^s} = L_a^s`. **No density-of-polynomials argument needed.**
+
+### UniqueHom on H
+
+`StarAlgHomClass.map_cfc` requires `[ContinuousMap.UniqueHom R B]` on the **codomain** only.
+For our use case (φ = lmulStarAlgHom, codomain = End(H)), UniqueHom on End(H) is already provided.
+
+If we ever need map_cfc with H as codomain, UniqueHom on H follows from:
+- `ι` is injective and continuous
+- UniqueHom on End(H)
+- Two star-alg homs `C(s, R) → H` that agree on id must agree everywhere, because after
+  composing with ι they become two star-alg homs `C(s, R) → End(H)` agreeing on id, hence
+  equal by UniqueHom on End(H), hence equal before composing (ι injective).
 
 ---
 
-## Abstract Lieb Theorem (No CFC on H)
+## Abstract Lieb Theorem
 
 ```lean
 /-- For any k : H, the functional (L, R) ↦ ⟪GenPerspective(·^s, id)(L, R)(k), k⟫
     is jointly concave on positive operators in End(H). -/
-theorem LiebAbstract [HilbertStarAlgebra H] (k : H) (s : ℝ) (hs : 0 < s ∧ s < 1) :
+theorem LiebAbstract [HStarAlgebra H] (k : H) (s : ℝ) (hs : 0 < s ∧ s < 1) :
     ConcaveOn ℝ {p : (H →L[ℂ] H) × (H →L[ℂ] H) | 0 ≤ p.1 ∧ 0 < p.2}
       (fun p => ⟪GenPerspective (H →L[ℂ] H) (· ^ s) id p k, k⟫_ℂ) := by
   -- 1. PowerMeanJointlyConcave gives operator concavity in End(H) (from Main.lean)
@@ -141,7 +269,10 @@ theorem LiebAbstract [HilbertStarAlgebra H] (k : H) (s : ℝ) (hs : 0 < s ∧ s 
   sorry
 ```
 
-**Key**: This theorem lives entirely in `End(H)`. No CFC on `H`, no matrices, no trace. Just inner product space + operator algebra.
+**Key**: This theorem lives entirely in `End(H)`. No CFC on `H`, no matrices, no trace.
+
+The abstract theorem does NOT require `ClosedRange`. CFC on H is only needed for the
+**bridge** `L_{a^s} = L_a^s` used in the concrete instantiation.
 
 ---
 
@@ -155,10 +286,16 @@ def HilbertMatrix (n : ℕ) := Matrix (Fin n) (Fin n) ℂ
 -- Inner product via toMatrixNormedAddCommGroup 1 PosDef.one:
 -- ⟪X, Y⟫ = Tr(Y * 1 * X†) = Tr(Y * X†) = Tr(X† * Y)
 
-instance : HilbertStarAlgebra (HilbertMatrix n) := ⟨
+instance : HStarAlgebra (HilbertMatrix n) := ⟨
   inner_mul_left := by  -- ⟪AX, Y⟫ = Tr((AX)†Y) = Tr(X†A†Y) = ⟪X, A†Y⟫
     sorry
 ⟩
+
+-- ClosedRange is automatic (finite-dimensional)
+instance : Function.ClosedRange (lmulStarAlgHom (H := HilbertMatrix n)) := by
+  exact LinearMap.closedRange_of_finiteDimensional _  -- or similar
+
+-- CFC instance is now automatic from the transfer theorem above
 
 lemma inner_eq_trace (X Y : HilbertMatrix n) :
     ⟪X, Y⟫_ℂ = Matrix.trace (star X * Y) := sorry
@@ -168,17 +305,17 @@ lemma inner_eq_trace (X Y : HilbertMatrix n) :
 
 The concrete Lieb theorem needs to show:
 1. `A ≥ 0` (on Matrix) implies `L_A ≥ 0` (in End(HilbertMatrix))
-2. `GenPerspective(·^s, id)(L_A, R_B)(K*) = A^s * K* * B^{1-s}` (trace identity)
-3. `⟪A^s * K* * B^{1-s}, K*⟫ = Tr(A^s * K* * B^{1-s} * K)` (inner product = trace)
-
-Step 2 is the hard part — it requires `L_A^s = L_{A^s}` and `R_B^s = R_{B^s}`, which bridge the two CFC computations (one on End(HilbertMatrix), one on Matrix).
+2. `L_{A^s} = L_A^s` — **now free from `lmul_map_cfc`** (via CFC transfer + map_cfc)
+3. `GenPerspective(·^s, id)(L_A, R_B)(K*) = A^s * K* * B^{1-s}` (trace identity, uses step 2)
+4. `⟪A^s * K* * B^{1-s}, K*⟫ = Tr(A^s * K* * B^{1-s} * K)` (inner product = trace)
 
 ---
 
 ## Advantages of the Abstract Approach
 
 1. **No norm conflict**: H has one norm (from inner product). End(H) has its own C\*-norm.
-2. **No CFC on H**: All CFC lives in End(H). Clean separation.
-3. **Abstract Lieb theorem**: Works for any HilbertStarAlgebra, not just matrices.
-4. **Matrix case is just an instance**: One `HilbertStarAlgebra (HilbertMatrix n)` declaration.
-5. **CFC bridge is isolated**: The hard `L_{A^s} = L_A^s` identity is a concrete lemma, not an abstract requirement.
+2. **CFC on H without C\*-algebra**: Transferred from End(H) via `ClosedRange lmulStarAlgHom`.
+3. **`L_{a^s} = L_a^s` for free**: Direct from `StarAlgHomClass.map_cfc`, no ad hoc argument.
+4. **Abstract Lieb theorem**: Works for any HStarAlgebra, not just matrices.
+5. **Matrix case is just an instance**: `HStarAlgebra (HilbertMatrix n)` + `ClosedRange` (automatic).
+6. **Infinite-dimensional support**: Works for any H\*-algebra with closed lmul range.
