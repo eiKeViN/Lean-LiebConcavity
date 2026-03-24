@@ -25,7 +25,8 @@
       "Skill(update)",
       "Skill(update:*)",
       "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib -name *.lean -type f)",
-      "Bash(grep -r ⟨.**.*,.*star .lake/packages/mathlib/Mathlib/Analysis --include=*.lean)"
+      "Bash(grep -r ⟨.**.*,.*star .lake/packages/mathlib/Mathlib/Analysis --include=*.lean)",
+      "Bash(grep -r \"theorem continuous_const_mul\\\\|lemma continuous_const_mul\\\\|def continuous_const_mul\" /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib --include=*.lean -l)"
     ]
   }
 }

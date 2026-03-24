@@ -1,10 +1,10 @@
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
-import Mathlib.Analysis.Convex.Function
 import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic
 
 /-!
 # Candidates for upstream contribution.
 -/
+
 
 /-- harmless but convenient: (0 < a) : a ^ half * a ^ half = a -/
 @[simp]
@@ -23,16 +23,25 @@ variable {A : Type*} [Mul A] [StarMul A]
 @[simp]
 lemma star_mul_eq {a b : A} (ha : IsSelfAdjoint a) (hb : IsSelfAdjoint b) :
     star (a * b) = b * a := by
-  grind only [star_mul, star_eq]
+  rw [star_mul, star_eq ha, star_eq hb]
 
 variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
 
 end IsSelfAdjoint
 
--- TODO: ? upstream to Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unital
+-- TODO: ? upstream to Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unital / rpow
 namespace CFC
 
-variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+variable {A : Type*} [PartialOrder A] [Ring A] [StarRing A] [TopologicalSpace A]
+  [StarOrderedRing A] [Algebra ℝ A] [ContinuousFunctionalCalculus ℝ A IsSelfAdjoint]
+  [NonnegSpectrumClass ℝ A]
+
+lemma nonneg_iff_spec_nonneg :
+    ∀ (a : A), IsSelfAdjoint a ∧ spectrum ℝ a ⊆ Set.Ici 0 ↔ 0 ≤ a :=
+    fun a =>
+      ⟨fun ⟨ha, hs⟩ => (StarOrderedRing.nonneg_iff_spectrum_nonneg a ha).mpr (by simpa using hs),
+      fun h => ⟨h.isSelfAdjoint,
+                by simpa using (StarOrderedRing.nonneg_iff_spectrum_nonneg a).mp h⟩⟩
 
 /-- CFC analogue of `mul_self_half`: for strictly positive `x`, `x ^ ½ * x ^ ½ = x`. -/
 @[simp]
@@ -55,6 +64,7 @@ theorem rpow_neg_mul_rpow' {x : ℝ} {a : A} (ha : IsStrictlyPositive a) :
     a ^ (-x) * a ^ x = 1 :=
   rpow_neg_mul_rpow x ha.isUnit
 
+variable [IsTopologicalRing A] [T2Space A]
 /-- If `a` is strictly positive and `f` is continuous and maps positive reals to positive reals,
 then `cfc f a` is strictly positive. -/
 theorem cfc_isStrictlyPositive_of_pos
@@ -77,26 +87,20 @@ theorem cfc_isStrictlyPositive_of_nonneg
   cfc_isStrictlyPositive_of_pos ha hf_pos <|
     hf_cont.mono <| fun _ hx => spectrum_nonneg_of_nonneg ha.nonneg hx
 
+variable [PosSMulMono ℝ A]
 /-- existing `smul_pow` only applies to natural number powers -/
-protected theorem smul_pow {a : ℝ} (ha : 0 ≤ a) {x : A} (hx : 0 ≤ x) {r : ℝ} (hr : 0 ≤ r) :
+protected theorem smul_pow {a : ℝ} (ha : 0 ≤ a)
+    {x : A} (hx : 0 ≤ x := by cfc_tac)
+    {r : ℝ} (hr : 0 ≤ r) :
     (a • x) ^ r = a ^ r • x ^ r := by
   have hf : ContinuousOn (· ^ r : ℝ → ℝ) ((a • ·) '' spectrum ℝ x) :=
-    Real.continuous_rpow_const hr  |>.continuousOn.mono <| by
+    (Real.continuous_rpow_const hr).continuousOn.mono <| by
       rintro _ ⟨t, ht, rfl⟩
       exact smul_nonneg ha <| spectrum_nonneg_of_nonneg hx ht
   rw [rpow_eq_cfc_real (smul_nonneg ha hx), ← cfc_comp_smul a (· ^ r : ℝ → ℝ) x hf]
   simp_rw [smul_eq_mul]
   rw [cfc_congr <| fun t ht => Real.mul_rpow ha <| spectrum_nonneg_of_nonneg hx ht,
       cfc_const_mul (a ^ r) (· ^ r) x, ← rpow_eq_cfc_real hx]
-
-open Set
-
-lemma nonneg_iff_spec_nonneg :
-    ∀ (a : A), IsSelfAdjoint a ∧ spectrum ℝ a ⊆ Ici 0 ↔ 0 ≤ a :=
-    fun a =>
-      ⟨fun ⟨ha, hs⟩ => (StarOrderedRing.nonneg_iff_spectrum_nonneg a ha).mpr (by simpa using hs),
-      fun h => ⟨h.isSelfAdjoint,
-                by simpa using (StarOrderedRing.nonneg_iff_spectrum_nonneg a).mp h⟩⟩
 
 end CFC
 
