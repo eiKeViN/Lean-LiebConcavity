@@ -9,9 +9,8 @@ Search for Mathlib lemmas/definitions/instances related to: **$ARGUMENTS**
 
 ## Step 1 — Check the pre-cached notes
 
-Read the following files and check if the concept is already covered:
-- `notes/01_ordered_cstar_basics.md`
-- `notes/02_cfc_star_hom.md`
+Read `memory/mathlib_key_paths.md` from the project memory at
+`C:\Users\eiKevinZ\.claude\projects\c--Users-eiKevinZ-my-coursework-Lean-LiebConcavity\memory\mathlib_key_paths.md`.
 
 If a relevant result is found, report it immediately with the file:line reference and stop.
 
@@ -51,8 +50,5 @@ If multiple declarations are found, group by topic.
 
 ## Step 4 — Update memory (if new paths discovered)
 
-Read `memory/mathlib_key_paths.md` from the project memory at
-`C:\Users\eiKevinZ\.claude\projects\c--Users-eiKevinZ-my-coursework-Lean-LiebConcavity\memory\mathlib_key_paths.md`.
-
-If any newly found file paths are **not already listed** in that file, append them
-to the appropriate section. Add a new section if the topic is not covered yet.
+For any newly found file paths are **not already listed** in the file `mathlib_key_paths.md`, 
+append them to the appropriate section. Add a new section if the topic is not covered yet.
