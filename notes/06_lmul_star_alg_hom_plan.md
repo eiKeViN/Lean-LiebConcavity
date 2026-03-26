@@ -129,15 +129,19 @@ Audit was run with `[NormedAddCommGroup H] [HStarAlgebra 𝕜 H] [Algebra 𝕜 H
 No `CompleteSpace` needed. This is the primary algebraic object.
 
 ```lean
-section AlgHom
-variable [Algebra 𝕜 H] [IsTopologicalSemiring H]
+-- No [Algebra 𝕜 H] needed separately — comes from [HStarAlgebra 𝕜 H] via extends.
+variable [IsTopologicalSemiring H]
 
 noncomputable def lmulAlgHom : H →ₐ[𝕜] (H →L[𝕜] H) where
-  toFun a := ⟨Algebra.lmul 𝕜 H a, continuous_const_mul a⟩
+  toFun a :=
+    { toFun    := (a * ·)
+      map_add' := mul_add a
+      map_smul' := fun c x => mul_smul_comm c a x   -- SMulCommClass 𝕜 H H from Algebra
+      cont     := continuous_const_mul a }
   map_one' := by ext; simp
   map_mul' := fun a b => by ext; simp [mul_assoc]
   map_zero' := by ext; simp
-  map_add' := fun a b => by ext; simp
+  map_add' := fun a b => by ext; simp [add_mul]     -- plain simp misses add_mul here
   commutes' := fun c => by ext; simp [Algebra.algebraMap_eq_smul_one]
 ```
 
@@ -233,32 +237,43 @@ discharge by `fun_prop`. If not, either:
 
 ## Obstacles
 
-### A. Module Diamond (`Algebra.toModule` vs `InnerProductSpace.toModule`)
+### A. Diamond: `Add H` / `SMul 𝕜 H` / `Module 𝕜 H` — **RESOLVED**
 
-**Confirmed active**: `Algebra.lmul 𝕜 H a : Module.End 𝕜 H` (using `Algebra.toModule`)
-does not unify with `H →ₗ[𝕜] H` as expected by the CLM constructor (using
-`NormedSpace.toModule` from `InnerProductSpace`).
+**Root cause** (deeper than originally diagnosed): The outer `[NormedAddCommGroup H]`
+parameter introduced a **separate** `Add H` / `SMul 𝕜 H` instance alongside those from
+`Semiring H` and `InnerProductSpace 𝕜 H` (via extends). Lean 4's `extends` only unifies
+fields within the `extends` chain; it does NOT unify an outer instance parameter with an
+in-chain instance. So even with `Algebra 𝕜 H` in extends (the original "Option A"),
+`mul_add a` (which used `Semiring.toAdd`) did not match the `map_add'` field expected type
+(which used `NormedAddCommGroup.toAdd`).
 
-**Two candidate fixes for Step 1:**
+**Option A** (tried): Add `Algebra 𝕜 H` to `extends`. This fixed the `Module` diamond
+but NOT the `Add`/`SMul` diamonds because `[NormedAddCommGroup H]` was still external.
 
-**Option A** (preferred): Add `Algebra 𝕜 H` to the `extends` chain:
+**Option B** (tried with Option A): Build the `LinearMap` inline without `Algebra.lmul`.
+Still failed — same `Add`/`SMul` mismatch because the outer parameter was still there.
+
+**Actual fix**: Move `NormedAddCommGroup H` from the outer parameter INTO the `extends`
+chain. Then all `Add H`, `SMul 𝕜 H`, `Module 𝕜 H` instances are unified by `extends`.
+
 ```lean
+-- BEFORE:
 class HStarAlgebra (𝕜 : Type*) (H : Type*) [RCLike 𝕜] [NormedAddCommGroup H] extends
-    InnerProductSpace 𝕜 H, Semiring H, StarRing H, Algebra 𝕜 H where
-```
-Lean's `extends` unifies `Module 𝕜 H` from both. Removes the need for `[Algebra 𝕜 H]`
-as a separate variable throughout.
+    Semiring H, Algebra 𝕜 H, InnerProductSpace 𝕜 H, StarRing H where
 
-**Option B** (fallback): Keep `[Algebra 𝕜 H]` as variable, but build `Lmul` without
-`Algebra.lmul`. Instead, use the linear map directly:
-```lean
-toFun a := ⟨{ toFun := (a * ·), map_add' := mul_add a, map_smul' := fun c x => by simp [mul_smul_comm] },
-             continuous_const_mul a⟩
+-- AFTER (current):
+class HStarAlgebra (𝕜 : Type*) (H : Type*) [RCLike 𝕜] extends
+    NormedAddCommGroup H, Semiring H, Algebra 𝕜 H, InnerProductSpace 𝕜 H, StarRing H where
 ```
-This avoids `Algebra.lmul` entirely, sidestepping the diamond.
 
-Try Option A first in Step 1. If it causes elaboration issues elsewhere (e.g. in
-the inner product identities), fall back to Option B.
+Consequence: all variable blocks drop `[NormedAddCommGroup H]` (it comes from
+`[HStarAlgebra 𝕜 H]` automatically).
+
+**Correct `map_smul'`**: `mul_smul_comm c a x` directly (no `.symm`) gives
+`a * (c • x) = c • (a * x)` which matches the `map_smul'` expected type.
+
+**Correct outer `map_add'`**: `by ext; simp [add_mul]` (plain `simp` can't find `add_mul`
+on its own here).
 
 ### B. Continuity of `lmulStarAlgHom`
 
@@ -288,8 +303,20 @@ Keep `Semiring` in the class. Add `[Ring H]` as variable in the `CFC` section
    - Removed `set_option trace.Meta.synthInstance true`
    - Added `end StarAlgHom` to close the dangling section
 
+**Step 1 progress** (partially done):
+
+- ✅ Class restructured: `[NormedAddCommGroup H]` moved from outer param into `extends` chain
+- ✅ Variable block updated: `[NormedAddCommGroup H]` dropped from namespace variable
+- ✅ `lmulAlgHom` defined with inline `LinearMap` (Option B): `toFun := (a * ·)`,
+  `map_add' := mul_add a`, `map_smul' := mul_smul_comm c a x`, `cont := continuous_const_mul a`
+- ✅ `Lmul` is now `abbrev Lmul (a : H) := lmulAlgHom 𝕜 a`
+- ✅ `Lmul_zero/one/add/mul` simplified to `map_*` one-liners
+- ⬜ `section StarAlgHom` cleanup: still has `[NormedAddCommGroup H]`, broken instances
+  (`aa`, `a`, `aaaaa`), broken `Lmul_commutes`, `variable [AlgHomClass ...]`, stale stub comment
+- ⬜ TypeclassAudit section still present (to delete)
+
 1. **Delete** remaining broken code: the `instance aa`, `instance a`, `instance aaaaa`,
-   and dangling `variable [AlgHomClass ...]` lines (current lines ~194–209)
+   and dangling `variable [AlgHomClass ...]` lines (current lines ~209–223)
 
 2. **Add import**: `import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unique`
 
