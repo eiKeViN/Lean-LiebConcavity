@@ -1,12 +1,14 @@
-import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.InnerProductSpace.Positive
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unique
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+import Mathlib.Analysis.InnerProductSpace.Positive
 
 /-!
 # H*-algebra (Ambrose 1945)
 
 An **H*-algebra** is a Hilbert space `H` over `𝕜` equipped with a compatible ⋆-semiring
 structure satisfying `⟪a * x, y⟫ = ⟪x, a⋆ * y⟫` for all `a, x, y : H`.
+The induced norm makes it a normed ring: `‖x * y‖ ≤ ‖x‖ * ‖y‖` for all `x y : H`.
 
 ## Main definitions
 
@@ -34,10 +36,8 @@ open scoped ComplexOrder
 
 /-! ## Class definition -/
 
-/-- An **H*-algebra** (Ambrose 1945): an inner product space over `𝕜` with semiring and
-star structure, satisfying `⟪a * x, y⟫ = ⟪x, a⋆ * y⟫` and `⟪x * a, y⟫ = ⟪x, y * a⋆⟫`. -/
 class HStarAlgebra (𝕜 : Type*) (H : Type*) [RCLike 𝕜] extends
-    NormedAddCommGroup H, Ring H, Algebra 𝕜 H, InnerProductSpace 𝕜 H, StarRing H where
+    NormedRing H, Algebra 𝕜 H, InnerProductSpace 𝕜 H, StarRing H where
   inner_mul_left {a x y : H} : inner (a * x) y = inner x (star a * y)
   inner_mul_right {a x y : H} : inner (x * a) y = inner x (y * star a)
 
@@ -75,8 +75,6 @@ theorem inner_mul_right_eq {a x y : H} :
   rw [inner_mul_left_eq, star_star]
 
 /-! ### Left multiplication as an algebra homomorphism -/
-
-variable [IsTopologicalSemiring H]
 
 /-- Left multiplication as an algebra homomorphism `H →ₐ[𝕜] (H →L[𝕜] H)`.
 The primary algebraic object; `Lmul` is derived from this.
@@ -182,9 +180,7 @@ If `a` is a unit in `H`, then `Lₐ` and `Rₐ` are units in `H →L[𝕜] H`.
 
 theorem Lmul_isUnit {a : H} (ha : IsUnit a) : IsUnit (Lmul 𝕜 a) := by
   obtain ⟨u, rfl⟩ := ha
-  exact ⟨⟨Lmul 𝕜 ↑u, Lmul 𝕜 ↑u⁻¹,
-    by rw [← Lmul_mul, Units.mul_inv, Lmul_one],
-    by rw [← Lmul_mul, Units.inv_mul, Lmul_one]⟩, rfl⟩
+  exact ⟨⟨Lmul 𝕜 ↑u, Lmul 𝕜 ↑u⁻¹, by simp [← Lmul_mul], by simp [← Lmul_mul]⟩, rfl⟩
 
 theorem Rmul_isUnit {b : H} (hb : IsUnit b) : IsUnit (Rmul 𝕜 b) := by
   obtain ⟨u, rfl⟩ := hb
@@ -233,11 +229,14 @@ theorem Lmul_isSelfAdjoint {a : H} (ha : IsSelfAdjoint a) :
     IsSelfAdjoint (lmulStarAlgHom 𝕜 a) :=
   ha.map (lmulStarAlgHom 𝕜)
 
-variable [PartialOrder H] [StarOrderedRing H]
+/-- The map `a ↦ L_a` is continuous in the operator norm.
+Proof: multiplication is a bounded bilinear map (by `isBoundedBilinearMap_mul`),
+so its curried CLM `H →L[𝕜] H →L[𝕜] H` is automatically continuous. -/
+theorem lmulStarAlgHom_continuous :
+    Continuous (lmulStarAlgHom 𝕜 : H → H →L[𝕜] H) :=
+  (isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H)).toContinuousLinearMap.continuous
 
-/-- Every nonneg element decomposes as `star s * s`. Requires CFC or StarOrderedRing axioms. -/
-lemma nonneg_decompose {a : H} (ha : 0 ≤ a) : ∃ s, a = star s * s := by
-  sorry
+variable [PartialOrder H] [StarOrderedRing H]
 
 omit [CompleteSpace H] in
 /-- If `0 ≤ a` in a `StarOrderedRing`, then `Lₐ` is a positive operator. -/
@@ -254,31 +253,47 @@ theorem Lmul_isPositive {a : H} (ha : 0 ≤ a) : (Lmul 𝕜 a).IsPositive := by
     rw [Lmul_add, ContinuousLinearMap.add_apply, inner_add_left, map_add RCLike.re]
     exact add_nonneg ihb ihc
 
+attribute [local instance] ContinuousLinearMap.instLoewnerPartialOrder
+omit [CompleteSpace H] in
+theorem Lmul_nonneg {a : H} (ha : 0 ≤ a) : 0 ≤ Lmul 𝕜 a := by
+  rw [ContinuousLinearMap.nonneg_iff_isPositive (Lmul 𝕜 a)]
+  exact Lmul_isPositive 𝕜 ha
+
 end StarAlgHom
 
 /-! ### CFC commutation: `L_{f(a)} = f(L_a)` -/
 
 section CFC
+
 variable [CompleteSpace H]
 variable [Algebra ℝ H] [IsScalarTower ℝ 𝕜 H] [IsScalarTower ℝ 𝕜 (H →L[𝕜] H)]
 variable [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint]
 variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H) IsSelfAdjoint]
-variable [ContinuousMap.UniqueHom ℝ (H →L[𝕜] H)]
 
 /-- Left multiplication commutes with the continuous functional calculus:
-`L_{f(a)} = f(L_a)` for self-adjoint `a` and continuous `f`.
-
-The hypothesis `hφ` (continuity of the star-algebra homomorphism in the operator
-norm topology) is passed explicitly because `HStarAlgebra` does not require a
-submultiplicative norm. When `H` is finite-dimensional or carries a `NormedAlgebra`
-structure, this can be discharged from `ContinuousLinearMap.mul`. -/
+`L_{f(a)} = f(L_a)` for self-adjoint `a` and continuous `f`. -/
 theorem Lmul_map_cfc (f : ℝ → ℝ) (a : H)
-    (hφ : Continuous (lmulStarAlgHom 𝕜 : H → H →L[𝕜] H))
     (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
     (ha : IsSelfAdjoint a := by cfc_tac) :
     lmulStarAlgHom 𝕜 (cfc f a) = cfc f (lmulStarAlgHom 𝕜 a) :=
-  StarAlgHom.map_cfc (lmulStarAlgHom 𝕜) f a hf hφ ha (ha.map (lmulStarAlgHom 𝕜))
+  (lmulStarAlgHom 𝕜).map_cfc _ _ hf (lmulStarAlgHom_continuous 𝕜) ha
+    (Lmul_isSelfAdjoint 𝕜 ha)
+
+-- set_option trace.Meta.synthInstance true
+
+variable [PartialOrder H] [StarOrderedRing H]
+variable [StarOrderedRing (H →L[𝕜] H)]
+variable [NonnegSpectrumClass ℝ H] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
+
+/-- At the end of day we get -/
+theorem Lmul_rpow {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
+    Lmul 𝕜 (a ^ r) = (Lmul 𝕜 a) ^ r := by
+  rw [CFC.rpow_eq_cfc_real ha]
+  have hla : 0 ≤ Lmul 𝕜 a := Lmul_nonneg 𝕜 ha
+  rw [CFC.rpow_eq_cfc_real hla]
+  exact Lmul_map_cfc 𝕜 (· ^ r) a
 
 end CFC
+
 
 end HStarAlgebra
