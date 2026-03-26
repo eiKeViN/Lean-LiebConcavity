@@ -1,4 +1,6 @@
 import Mathlib.Analysis.InnerProductSpace.Adjoint
+import Mathlib.Analysis.InnerProductSpace.Positive
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unique
 
 /-!
 # H*-algebra (Ambrose 1945)
@@ -35,7 +37,7 @@ open scoped ComplexOrder
 /-- An **H*-algebra** (Ambrose 1945): an inner product space over `𝕜` with semiring and
 star structure, satisfying `⟪a * x, y⟫ = ⟪x, a⋆ * y⟫` and `⟪x * a, y⟫ = ⟪x, y * a⋆⟫`. -/
 class HStarAlgebra (𝕜 : Type*) (H : Type*) [RCLike 𝕜] extends
-    NormedAddCommGroup H, Semiring H, Algebra 𝕜 H, InnerProductSpace 𝕜 H, StarRing H where
+    NormedAddCommGroup H, Ring H, Algebra 𝕜 H, InnerProductSpace 𝕜 H, StarRing H where
   inner_mul_left {a x y : H} : inner (a * x) y = inner x (star a * y)
   inner_mul_right {a x y : H} : inner (x * a) y = inner x (y * star a)
 
@@ -180,7 +182,9 @@ If `a` is a unit in `H`, then `Lₐ` and `Rₐ` are units in `H →L[𝕜] H`.
 
 theorem Lmul_isUnit {a : H} (ha : IsUnit a) : IsUnit (Lmul 𝕜 a) := by
   obtain ⟨u, rfl⟩ := ha
-  exact ⟨⟨Lmul 𝕜 ↑u, Lmul 𝕜 ↑u⁻¹, by simp [Lmul_mul], by simp [Lmul_mul]⟩, rfl⟩
+  exact ⟨⟨Lmul 𝕜 ↑u, Lmul 𝕜 ↑u⁻¹,
+    by rw [← Lmul_mul, Units.mul_inv, Lmul_one],
+    by rw [← Lmul_mul, Units.inv_mul, Lmul_one]⟩, rfl⟩
 
 theorem Rmul_isUnit {b : H} (hb : IsUnit b) : IsUnit (Rmul 𝕜 b) := by
   obtain ⟨u, rfl⟩ := hb
@@ -194,7 +198,9 @@ theorem Rmul_isUnit {b : H} (hb : IsUnit b) : IsUnit (Rmul 𝕜 b) := by
 operator: `⟪Lₐ x, y⟫ = ⟪x, Lₐ y⟫`. -/
 theorem Lmul_isSymmetric {a : H} (ha : IsSelfAdjoint a) :
     LinearMap.IsSymmetric (Lmul 𝕜 a).toLinearMap :=
-  fun x y => by simp [inner_Lmul_left, ha.star_eq]
+  fun x y => by
+    change ⟪a * x, y⟫ = ⟪x, a * y⟫
+    rw [inner_left_mul_eq, ha.star_eq]
 
 /-- For any `s : H`, left multiplication by `s⋆ * s` has nonneg inner product:
 `0 ≤ re ⟪L_{s⋆s} x, x⟫`. This is the base case for `Lmul_isPositive`. -/
@@ -222,64 +228,57 @@ noncomputable def lmulStarAlgHom : H →⋆ₐ[𝕜] (H →L[𝕜] H) :=
   { lmulAlgHom 𝕜 with
     map_star' := Lmul_star 𝕜 }
 
-variable {H : Type*} [PartialOrder H] [Ring H] [StarRing H] [StarOrderedRing H]
+/-- If `a` is self-adjoint, then `Lmul 𝕜 a` is self-adjoint as an operator. -/
+theorem Lmul_isSelfAdjoint {a : H} (ha : IsSelfAdjoint a) :
+    IsSelfAdjoint (lmulStarAlgHom 𝕜 a) :=
+  ha.map (lmulStarAlgHom 𝕜)
+
+variable [PartialOrder H] [StarOrderedRing H]
 
 /-- Every nonneg element decomposes as `star s * s`. Requires CFC or StarOrderedRing axioms. -/
 lemma nonneg_decompose {a : H} (ha : 0 ≤ a) : ∃ s, a = star s * s := by
   sorry
 
+omit [CompleteSpace H] in
 /-- If `0 ≤ a` in a `StarOrderedRing`, then `Lₐ` is a positive operator. -/
 theorem Lmul_isPositive {a : H} (ha : 0 ≤ a) : (Lmul 𝕜 a).IsPositive := by
-  constructor
-  · exact Lmul_isSymmetric 𝕜 (IsSelfAdjoint.of_nonneg ha)
-  · intro x
-    rw [StarOrderedRing.nonneg_iff] at ha
-    refine AddSubmonoid.closure_induction ha ?_ ?_ ?_
-    · rintro _ ⟨s, rfl⟩
-      exact re_inner_Lmul_star_mul_self_nonneg 𝕜 s x
-    · simp
-    · intro a b _ _ iha ihb
-      simp only [map_add, ContinuousLinearMap.add_apply, inner_add_left, map_add]
-      exact add_nonneg iha ihb
+  refine ⟨Lmul_isSymmetric 𝕜 (IsSelfAdjoint.of_nonneg ha), fun x => ?_⟩
+  simp only [ContinuousLinearMap.reApplyInnerSelf_apply]
+  rw [StarOrderedRing.nonneg_iff] at ha
+  induction ha using AddSubmonoid.closure_induction with
+  | mem b hb =>
+    obtain ⟨s, rfl⟩ := hb
+    exact re_inner_Lmul_star_mul_self_nonneg 𝕜 s x
+  | zero => simp
+  | add b c _ _ ihb ihc =>
+    rw [Lmul_add, ContinuousLinearMap.add_apply, inner_add_left, map_add RCLike.re]
+    exact add_nonneg ihb ihc
 
 end StarAlgHom
 
+/-! ### CFC commutation: `L_{f(a)} = f(L_a)` -/
+
+section CFC
+variable [CompleteSpace H]
+variable [Algebra ℝ H] [IsScalarTower ℝ 𝕜 H] [IsScalarTower ℝ 𝕜 (H →L[𝕜] H)]
+variable [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint]
+variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H) IsSelfAdjoint]
+variable [ContinuousMap.UniqueHom ℝ (H →L[𝕜] H)]
+
+/-- Left multiplication commutes with the continuous functional calculus:
+`L_{f(a)} = f(L_a)` for self-adjoint `a` and continuous `f`.
+
+The hypothesis `hφ` (continuity of the star-algebra homomorphism in the operator
+norm topology) is passed explicitly because `HStarAlgebra` does not require a
+submultiplicative norm. When `H` is finite-dimensional or carries a `NormedAlgebra`
+structure, this can be discharged from `ContinuousLinearMap.mul`. -/
+theorem Lmul_map_cfc (f : ℝ → ℝ) (a : H)
+    (hφ : Continuous (lmulStarAlgHom 𝕜 : H → H →L[𝕜] H))
+    (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
+    (ha : IsSelfAdjoint a := by cfc_tac) :
+    lmulStarAlgHom 𝕜 (cfc f a) = cfc f (lmulStarAlgHom 𝕜 a) :=
+  StarAlgHom.map_cfc (lmulStarAlgHom 𝕜) f a hf hφ ha (ha.map (lmulStarAlgHom 𝕜))
+
+end CFC
+
 end HStarAlgebra
-
-/-! ## Typeclass audit
-
-Temporarily check which instances resolve for the `StarAlgHom.map_cfc` setup.
-Delete this section after the audit.
--/
-section TypeclassAudit
-variable (𝕜 : Type*) [RCLike 𝕜]
-variable (H : Type*) [HStarAlgebra 𝕜 H]
-variable [Algebra 𝕜 H] [IsTopologicalSemiring H] [CompleteSpace H]
-
--- Domain H: basic algebra
-#check (inferInstance : Semiring H)
-#check (inferInstance : StarRing H)
-#check (inferInstance : TopologicalSpace H)
-#check (inferInstance : Algebra 𝕜 H)
-#check (inferInstance : Star H)
-
--- Intermediate: does H have NormedAddCommGroup and NormedSpace?
-#check (inferInstance : InnerProductSpace 𝕜 H)
-#check (inferInstance : NormedAddCommGroup H)
-#check (inferInstance : NormedSpace 𝕜 H)
-
--- Codomain H →L[𝕜] H: ring and algebra
-#check (inferInstance : Semiring (H →L[𝕜] H))
-#check (inferInstance : NormedAddCommGroup (H →L[𝕜] H))
-#check (inferInstance : NormedAlgebra 𝕜 (H →L[𝕜] H))
-#check (inferInstance : Algebra 𝕜 (H →L[𝕜] H))
-#check (inferInstance : Star (H →L[𝕜] H))
-#check (inferInstance : StarRing (H →L[𝕜] H))
-
--- For map_cfc: scalar tower with ℝ
--- These FAIL — need explicit [IsScalarTower ℝ 𝕜 H] variable in CFC section:
--- #check (inferInstance : Algebra ℝ H)          -- fails (no SMul ℝ H)
--- #check (inferInstance : IsScalarTower ℝ 𝕜 H)  -- fails
--- #check (inferInstance : IsScalarTower ℝ 𝕜 (H →L[𝕜] H))  -- fails
-
-end TypeclassAudit
