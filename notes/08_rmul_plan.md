@@ -1,153 +1,153 @@
-# Rmul: Symmetry, Positivity, Star, and Rpow
+# Rmul: CFC commutation and rpow
 
-## Context
+## Status (2026-03-27)
 
-Build the Rmul analogs of the Lmul results in `LeanLiebConcavity/HStarAlgebra.lean`.
-**UPDATED 2026-03-27**: The MulOpposite approach for `Rmul_rpow` is NOW VIABLE in principle—
-Mathlib HAS `NormedRing Rᵐᵒᵖ`, `NormedAlgebra 𝕜 Eᵐᵒᵖ`, and `CStarRing Eᵐᵒᵖ`.
-The sole remaining blocker: **no `ContinuousFunctionalCalculus ℝ Aᵐᵒᵖ IsSelfAdjoint` instance** in Mathlib.
+Parts A–C are **done** in `HStarAlgebra.lean`:
+- `Rmul_isSymmetric`, `re_inner_Rmul_star_mul_self_nonneg`
+- `Rmul_isPositive`, `Rmul_nonneg`
+- `Rmul_star`, `rmulStarAlgHom : H →⋆ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ`
+- `Rmul_isSelfAdjoint`
 
-## Mathlib MulOpposite and CFC infrastructure (UPDATED)
+Remaining: **Parts D and E** — `Rmul_map_cfc` and `Rmul_rpow_nonneg`.
 
-| What | Status | Location | Notes |
-|------|--------|----------|-------|
-| `StarRing Rᵐᵒᵖ` | ✓ yes | `Algebra/Star/Basic.lean:545` | star(op(a)) = op(star(a)) |
-| `starRingEquiv : R ≃+* Rᵐᵒᵖ` | ✓ yes | `Algebra/Star/Basic.lean:283` | ring iso via star composition |
-| `NonUnitalNormedRing Rᵐᵒᵖ` | ✓ yes | `Analysis/Normed/Ring/Basic.lean:497` | **was missing, now found** |
-| `NormedRing Rᵐᵒᵖ` | ✓ yes | `Analysis/Normed/Ring/Basic.lean:521` | **CORRECTED: was "no", actually YES** |
-| `NormedAlgebra 𝕜 Eᵐᵒᵖ` | ✓ yes | `Analysis/Normed/Module/Basic.lean:387` | **CORRECTED: was "no", actually YES** |
-| `CStarRing Eᵐᵒᵖ` | ✓ yes | `Analysis/CStarAlgebra/Basic.lean:199` | `‖x⋆*x‖ = ‖x*x⋆‖` (conjugate norm) |
-| `ContinuousFunctionalCalculus ℝ Aᵐᵒᵖ IsSelfAdjoint` | ✗ **BLOCKER** | not in Mathlib | Spectrum/CFC transfer to opposite missing |
-| `AlgEquiv.op`, `.opComm` | ✓ yes | `Algebra/Algebra/Opposite.lean:141,169` | Convert `A ≃ₐ Bᵐᵒᵖ` ↔ `Aᵐᵒᵖ ≃ₐ B` |
-| `StarAlgHom.map_cfc` | ✓ yes | `Analysis/CStarAlgebra/ContinuousFunctionalCalculus/Unique.lean:508` | **KEY**: CFC commutes with star-alg homs |
-| `IsSelfAdjoint.map_spectrum_real` | ✓ yes | `Analysis/CStarAlgebra/Hom.lean:24–27` | Injective star-alg hom preserves real spectrum |
+---
 
-## Alternative approaches for `Rmul_rpow_nonneg`
+## Mathlib infrastructure (confirmed)
 
-### **Approach 1: MulOpposite + CFC (Best if CFC instance added)**
+| What | Status | Location |
+|------|--------|----------|
+| `NormedRing Rᵐᵒᵖ` | ✓ | `Analysis/Normed/Ring/Basic.lean:521` |
+| `NormedAlgebra 𝕜 Eᵐᵒᵖ` | ✓ | `Analysis/Normed/Module/Basic.lean:387` |
+| `CStarRing Eᵐᵒᵖ` | ✓ | `Analysis/CStarAlgebra/Basic.lean:199` |
+| `starₗᵢ 𝕜 : E ≃ₗᵢ⋆[𝕜] E` | ✓ | `Analysis/CStarAlgebra/Basic.lean:294` |
+| `starRingEquiv : R ≃+* Rᵐᵒᵖ` (x ↦ op(star x)) | ✓ | `Algebra/Star/Basic.lean:283` |
+| `StarAlgHom.map_cfc` | ✓ | `ContinuousFunctionalCalculus/Unique.lean:508` |
+| `ContinuousFunctionalCalculus ℝ Aᵐᵒᵖ IsSelfAdjoint` | ✗ not in Mathlib | — |
 
-**Goal**: Define `rmulStarAlgHom : Hᵐᵒᵖ →⋆ₐ[𝕜] B(H)` and apply `StarAlgHom.map_cfc`.
+---
 
-**Status**: ALMOST VIABLE
-- `fun x ↦ Rmul 𝕜 (unop x)` is a ring anti-hom (Rmul is anti-hom)
-- Composing with `op : H → Hᵐᵒᵖ` gives a ring hom from `Hᵐᵒᵖ`
-- It preserves star (via `Rmul_star` lemma)
-- **Missing piece**: `ContinuousFunctionalCalculus ℝ Hᵐᵒᵖ IsSelfAdjoint` instance
-  - Should follow from: spectrum of `op a` in `Hᵐᵒᵖ` = spectrum of `a` in `H` (isomorphic algebras)
-  - Lemma `IsSelfAdjoint.map_spectrum_real` shows injective star-alg homs preserve spectrum
+## Part D: `Rmul_map_cfc` (in `namespace CFC`, needs new variables)
 
-### **Approach 2: Direct Conjugation by `starₗᵢ` (Viable Now)**
+### Strategy
 
-**Goal**: Use `Rmul_eq_star_Lmul_star` + conjugation by `starₗᵢ : H ≃ₗᵢ⋆[𝕜] H`.
+`rmulStarAlgHom : H →⋆ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ` is already defined.
+Apply `StarAlgHom.map_cfc` to it, exactly mirroring `Lmul_map_cfc`.
 
-**Status**: PROMISING (needs verification of star/adjoint compatibility)
+This requires CFC on `(H →L[𝕜] H)ᵐᵒᵖ`, which is NOT in Mathlib as a derived instance,
+so we add it as an abstract variable (acceptable since our typeclass stack is already
+abstract).
 
-**Strategy**:
-- `Rmul 𝕜 a = starₗᵢ ∘ Lmul 𝕜 (star a) ∘ starₗᵢ` (identity already proven in project)
-- For `a ≥ 0`: `star a = a`, so `Rmul 𝕜 a = starₗᵢ ∘ Lmul 𝕜 a ∘ starₗᵢ`
-- Key claim: Conjugation by `starₗᵢ` (restricted to ℝ-linearity) is a C*-algebra aut of `B_ℝ(H)`
-- Then: `(Rmul 𝕜 a)^r = starₗᵢ ∘ (Lmul 𝕜 a)^r ∘ starₗᵢ = starₗᵢ ∘ Lmul 𝕜 (a^r) ∘ starₗᵢ = Rmul 𝕜 (a^r)`
+### New variables to add (alongside the existing `(H →L[𝕜] H)` variables)
 
-**Available tools**:
-- `starₗᵢ 𝕜 : E ≃ₗᵢ⋆[𝕜] E` — semilinear isometric equiv (in `Analysis/CStarAlgebra/Basic.lean:294`)
-- `starL 𝕜 : E ≃L⋆[𝕜] E` — continuous linear equiv (in `Basic.lean:307`)
-- `ContinuousLinearMap.star_eq_adjoint` — relates star on CLM to adjoint
-
-**Potential issue**: Need to verify `adj(starₗᵢ ∘ T ∘ starₗᵢ) = starₗᵢ ∘ adj(T) ∘ starₗᵢ` for the CFC to transfer via conjugation.
-
-### **Approach 3: Spectrum Identity + Uniqueness (Fallback)**
-
-**Goal**: Prove spectrum of `Rmul 𝕜 a` = spectrum of `Lmul 𝕜 a` (up to ordering).
-
-**Status**: POSSIBLE but complex
-- Use HStarAlgebra norm properties to relate operators in `B(H)`
-- Apply `cfc_le_iff` or CFC uniqueness lemma to compare `(Rmul 𝕜 a)^r` and `Rmul 𝕜 (a^r)`
-
-## Implementation plan
-
-### Part A: Rmul prerequisites (no CompleteSpace needed)
-
-Place after `Lmul_isSymmetric` / `re_inner_Lmul_star_mul_self_nonneg` block (around line 207).
-
-**1. `Rmul_isSymmetric`** — mirror of `Lmul_isSymmetric`
 ```lean
-theorem Rmul_isSymmetric {a : H} (ha : IsSelfAdjoint a) :
-    LinearMap.IsSymmetric (Rmul 𝕜 a).toLinearMap :=
-  fun x y => by
-    change ⟪x * a, y⟫ = ⟪x, y * a⟫
-    rw [inner_mul_left_eq, ha.star_eq]
+variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H)ᵐᵒᵖ IsSelfAdjoint]
+variable [ContinuousMap.UniqueHom ℝ (H →L[𝕜] H)ᵐᵒᵖ]
+variable [StarOrderedRing (H →L[𝕜] H)ᵐᵒᵖ]
+variable [NonnegSpectrumClass ℝ (H →L[𝕜] H)ᵐᵒᵖ]
 ```
 
-**2. `re_inner_Rmul_star_mul_self_nonneg`** — base case for positivity
+(User confirmed experimentally that adding these compiles.)
+
+### `rmul_continuous_op`
+
+Needed for `StarAlgHom.map_cfc`'s continuity hypothesis:
+
 ```lean
-theorem re_inner_Rmul_star_mul_self_nonneg (s x : H) :
-    0 ≤ RCLike.re ⟪(Rmul 𝕜 (star s * s)) x, x⟫ := by
-  simp_rw [Rmul_apply, mul_assoc]
-  -- ⟪(x * star s) * s, x⟫ = ⟪x * star s, x * star s⟫
-  rw [inner_mul_left_eq, star_star]
-  exact inner_self_nonneg
+theorem rmul_continuous_op :
+    Continuous (rmulStarAlgHom 𝕜 : H → (H →L[𝕜] H)ᵐᵒᵖ) :=
+  continuous_op.comp (rmul_continuous 𝕜)
 ```
 
-### Part B: Rmul positivity (in `section StarAlgHom`, needs `[PartialOrder H] [StarOrderedRing H]`)
+(`continuous_op : Continuous (MulOpposite.op : A → Aᵐᵒᵖ)` is in Mathlib.)
 
-**3. `Rmul_isPositive`** — closure induction, same pattern as `Lmul_isPositive`
+### `Rmul_isSelfAdjoint_op`
+
+Self-adjointness of `op (Rmul 𝕜 a)` in `(H →L[𝕜] H)ᵐᵒᵖ` when `IsSelfAdjoint a`.
+Star on `Aᵐᵒᵖ` is `star(op x) = op(star x)`, so:
+
 ```lean
-omit [CompleteSpace H] in
-theorem Rmul_isPositive {a : H} (ha : 0 ≤ a) : (Rmul 𝕜 a).IsPositive := by
-  refine ⟨Rmul_isSymmetric 𝕜 (IsSelfAdjoint.of_nonneg ha), fun x => ?_⟩
-  simp only [ContinuousLinearMap.reApplyInnerSelf_apply]
-  rw [StarOrderedRing.nonneg_iff] at ha
-  induction ha using AddSubmonoid.closure_induction with
-  | mem b hb =>
-    obtain ⟨s, rfl⟩ := hb
-    exact re_inner_Rmul_star_mul_self_nonneg 𝕜 s x
-  | zero => simp
-  | add b c _ _ ihb ihc =>
-    rw [Rmul_add, ContinuousLinearMap.add_apply, inner_add_left, map_add RCLike.re]
-    exact add_nonneg ihb ihc
+lemma Rmul_isSelfAdjoint_op {a : H} (ha : IsSelfAdjoint a) :
+    IsSelfAdjoint (rmulStarAlgHom 𝕜 a) := by
+  simp only [IsSelfAdjoint, rmulStarAlgHom, StarAlgHom.coe_mk, AlgHom.coe_mk]
+  -- goal: star (op (Rmul 𝕜 a)) = op (Rmul 𝕜 a)
+  -- star on Aᵐᵒᵖ: star(op x) = op(star x)
+  simp [MulOpposite.star_def, Rmul_star, (Rmul_isSelfAdjoint 𝕜 ha).star_eq]
 ```
 
-Wait — `Rmul_add` has signature `Rmul 𝕜 a + Rmul 𝕜 b = Rmul 𝕜 (a + b)`, direction
-is reversed from what we need. May need `(Rmul_add).symm` or `← Rmul_add`.
+(Exact simp lemmas TBD; may use `ha.map (rmulStarAlgHom 𝕜)` directly if that typeclass
+path works.)
 
-**4. `Rmul_nonneg`** — bridge to Loewner order
+### `Rmul_map_cfc`
+
 ```lean
-attribute [local instance] ContinuousLinearMap.instLoewnerPartialOrder
-omit [CompleteSpace H] in
-theorem Rmul_nonneg {a : H} (ha : 0 ≤ a) : 0 ≤ Rmul 𝕜 a := by
-  rw [ContinuousLinearMap.nonneg_iff_isPositive (Rmul 𝕜 a)]
-  exact Rmul_isPositive 𝕜 ha
+theorem Rmul_map_cfc (f : ℝ → ℝ) (a : H)
+    (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
+    (ha : IsSelfAdjoint a := by cfc_tac) :
+    rmulStarAlgHom 𝕜 (cfc f a) = cfc f (rmulStarAlgHom 𝕜 a) :=
+  (rmulStarAlgHom 𝕜).map_cfc _ _ hf (rmulStarAlgHom_continuous 𝕜) ha
+    (ha.map (rmulStarAlgHom 𝕜))
 ```
 
-### Part C: Rmul star (in `section StarAlgHom`, needs CompleteSpace)
+Result lives in `(H →L[𝕜] H)ᵐᵒᵖ`:
+`op (Rmul 𝕜 (cfc f a)) = cfc f (op (Rmul 𝕜 a))`.
 
-**5. `Rmul_star`** — mirror of `Lmul_star`
+---
+
+## Part E: `Rmul_rpow_nonneg`
+
+### The missing bridge: `op_rpow_eq_rpow_op`
+
+To extract `(Rmul 𝕜 a)^r = Rmul 𝕜 (a^r)` in `H →L[𝕜] H` from `Rmul_map_cfc`,
+we need:
+
 ```lean
-theorem Rmul_star (a : H) :
-    Rmul 𝕜 (star a) = star (Rmul 𝕜 a) := by
-  rw [ContinuousLinearMap.star_eq_adjoint]
-  exact (ContinuousLinearMap.eq_adjoint_iff _ _).mpr fun x y => by
-    simp only [Rmul_apply, inner_mul_left_eq, star_star]
+-- For self-adjoint T : A, (op T : Aᵐᵒᵖ)^r = op (T^r : A)
+lemma op_rpow_eq_rpow_op {T : H →L[𝕜] H} (hT : 0 ≤ T) (r : ℝ) :
+    (MulOpposite.op T : (H →L[𝕜] H)ᵐᵒᵖ) ^ r = MulOpposite.op (T ^ r) := ...
 ```
 
-### Part D: Rmul rpow (in `section CFC`) — sorry
+**Why this holds**: `op ∘ star : A →⋆ₐ[ℝ] Aᵐᵒᵖ` is a star-algebra hom over ℝ
+(because `star` is a ring anti-hom and `op` reverses multiplication, so the
+composition `op ∘ star` is a genuine ring hom into `Aᵐᵒᵖ`). On self-adjoint elements
+`star T = T`, so `(op ∘ star)(T) = op T`. By `StarAlgHom.map_cfc`:
+`(op ∘ star)(T^r) = ((op ∘ star)(T))^r`, i.e., `op(T^r) = (op T)^r`.
 
-**6. `Rmul_rpow_nonneg`** — sorry with TODO comment.
+**Mathlib gap**: `starRingEquiv : R ≃+* Rᵐᵒᵖ` (x ↦ op(star x)) is only a ring equiv,
+not packaged as a `StarAlgHom`. Promoting it to `StarAlgHom` over ℝ is a
+`ForMathlib` item.
 
-The MulOpposite route is blocked (no CFC/NormedRing on `Aᵐᵒᵖ`).
-Alternative approaches for future:
-- Build `HStarAlgebra 𝕜 Hᵐᵒᵖ` instance + transfer
-- Direct CFC anti-hom argument
-- Conjugation: `R_a = star . L_{a*} . star` (pointwise identity, hard to lift to operator rpow)
+**Plan**: sorry `op_rpow_eq_rpow_op` with a clear TODO comment for `ForMathlib`.
+
+### `Rmul_rpow_nonneg`
 
 ```lean
-/-- Right multiplication commutes with nonneg real powers: `(R_a)^r = R_{a^r}`.
-TODO: prove via MulOpposite approach once CFC on Aᵐᵒᵖ is available in Mathlib,
-or by building HStarAlgebra 𝕜 Hᵐᵒᵖ. -/
+/-- Right multiplication commutes with nonneg real powers: `(R_a)^r = R_{a^r}`. -/
 theorem Rmul_rpow_nonneg {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
     (Rmul 𝕜 a) ^ r = Rmul 𝕜 (a ^ r) := by
-  sorry
+  have hRa : 0 ≤ Rmul 𝕜 a := Rmul_nonneg 𝕜 ha
+  -- Use Rmul_map_cfc in (H →L[𝕜] H)ᵐᵒᵖ:
+  -- op(Rmul 𝕜 (cfc (·^r) a)) = cfc (·^r) (op (Rmul 𝕜 a))
+  have key := Rmul_map_cfc 𝕜 (· ^ r) a
+  -- LHS: cfc (·^r) (op (Rmul 𝕜 a)) = op((Rmul 𝕜 a)^r)  [by op_rpow_eq_rpow_op]
+  -- RHS: op(Rmul 𝕜 (a^r))  [by CFC.rpow_eq_cfc_real on H side]
+  rw [← CFC.rpow_eq_cfc_real ha] at key
+  rw [← op_rpow_eq_rpow_op hRa r, ← key]
+  simp [CFC.rpow_eq_cfc_real hRa]
 ```
+
+(Exact proof term TBD depending on `op_rpow_eq_rpow_op` form; the outline is correct.)
+
+Also add the strictly-positive and apply variants mirroring `Lmul_rpow_strictlyPositive`.
+
+---
+
+## Implementation checklist
+
+- [ ] Add `rmulStarAlgHom_continuous` (near other continuity lemmas)
+- [ ] Add new variables to `namespace CFC` section for `(H →L[𝕜] H)ᵐᵒᵖ`
+- [ ] Add `Rmul_map_cfc`
+- [ ] Add `op_rpow_eq_rpow_op` (sorry, ForMathlib TODO) in `ForMathlib.lean`
+- [ ] Add `Rmul_rpow_nonneg`, `Rmul_rpow_strictlyPositive` and apply variants
 
 ## Verification
 
@@ -155,4 +155,4 @@ theorem Rmul_rpow_nonneg {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cf
 lake build LeanLiebConcavity.HStarAlgebra
 ```
 
-Expected: pre-existing sorry in `nonneg_decompose` + new sorry in `Rmul_rpow_nonneg`.
+Expected: sorries only in `op_rpow_eq_rpow_op` and the `Rmul_rpow` theorems.
