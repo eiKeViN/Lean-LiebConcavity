@@ -14,6 +14,14 @@ def OperatorConvexOn (I : Set ℝ) (f : ℝ → ℝ) : Prop :=
   ∀ {B : Type u} [CStarAlgebra B] [PartialOrder B] [StarOrderedRing B],
     ConvexOn ℝ {a : B | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f)
 
+variable {ι : Type*} {B : ι → Type*}
+[∀ i, CStarAlgebra (B i)] [∀ i, PartialOrder (B i)] [∀ i, StarOrderedRing (B i)]
+
+def OperatorConvexOn'' (I : Set ℝ) (f : ℝ → ℝ) : Prop :=
+  ∀ i,
+    ConvexOn ℝ {a : B i | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f)
+
+
 /-- `f : ℝ → ℝ` is *operator concave* on `I : Set ℝ` if, for every unital C⋆-algebra `B`
 with a compatible partial order, `cfc f` is concave on the set of self-adjoint elements of
 `B` whose spectrum is contained in `I`. -/
