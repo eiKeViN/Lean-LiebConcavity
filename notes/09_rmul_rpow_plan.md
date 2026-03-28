@@ -90,35 +90,52 @@ Alternatively, if the Loewner order is a local instance on `H →L[𝕜] H`, the
 
 ---
 
-## Part 3: `op_rpow_eq_rpow_op` via `StarAlgHom.map_cfc`
+## Part 3: `starRingEquivStarAlgEquiv_map_cfc` and `op_rpow_eq_rpow_op`
 
-### Key insight
+### Step 3a: CFC commutativity for `starRingEquivStarAlgEquiv`
 
-With `φ := starRingEquivStarAlgEquiv : A ≃⋆ₐ[ℝ] Aᵐᵒᵖ`, we get from
-`StarAlgHom.map_cfc`:
+Analogous to `Lmul_map_cfc` in `HStarAlgebra.lean`:
 
-```
-φ (cfc f a) = cfc f (φ a)
-```
-
-For a **self-adjoint** `a` (where `star a = a`): `φ a = op(star a) = op a`.
-
-So: `op(star(cfc f a)) = cfc f (op a)` in `Aᵐᵒᵖ`.
-
-If furthermore `cfc f a` is self-adjoint (which holds for real-valued CFC on
-self-adjoint elements), then `star(cfc f a) = cfc f a`, giving:
-
-```
-op(cfc f a) = cfc f (op a)     -- in Aᵐᵒᵖ
+```lean
+theorem starRingEquivStarAlgEquiv_map_cfc
+    [ContinuousFunctionalCalculus ℝ A IsSelfAdjoint]
+    [ContinuousFunctionalCalculus ℝ Aᵐᵒᵖ IsSelfAdjoint]
+    [ContinuousMap.UniqueHom ℝ Aᵐᵒᵖ]
+    (f : ℝ → ℝ) (a : A)
+    (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
+    (ha : IsSelfAdjoint a := by cfc_tac) :
+    starRingEquivStarAlgEquiv (cfc f a) = cfc f (starRingEquivStarAlgEquiv a) :=
+  starRingEquivStarAlgEquiv.toStarAlgHom.map_cfc _ _ hf
+    starRingEquivStarAlgEquiv_continuous ha (ha.map starRingEquivStarAlgEquiv.toStarAlgHom)
 ```
 
-Applying with `f = (· ^ r)` and using `rpow_eq_cfc_real`:
+**Required by `StarAlgHom.map_cfc` (from `Unique.lean:472–479`):**
+- `ContinuousFunctionalCalculus ℝ A IsSelfAdjoint` — assumed
+- `ContinuousFunctionalCalculus ℝ Aᵐᵒᵖ IsSelfAdjoint` — **must be added as hypothesis**
+- `ContinuousMap.UniqueHom ℝ Aᵐᵒᵖ` — **must be added as hypothesis**
+- `IsScalarTower ℝ ℝ A`, `IsScalarTower ℝ ℝ Aᵐᵒᵖ` — trivial (both from `Algebra.id`)
+- `Continuous starRingEquivStarAlgEquiv` — proved (`starRingEquivStarAlgEquiv_continuous`)
+- `IsSelfAdjoint (starRingEquivStarAlgEquiv a)` — `ha.map _` (star-alg homs preserve self-adjointness)
 
-```
-op(a ^ r) = (op a) ^ r         -- for 0 ≤ a self-adjoint
+**Note on `hφa` simplification:**
+`starRingEquivStarAlgEquiv a = op (star a)`. When `ha : IsSelfAdjoint a`, i.e. `star a = a`,
+this equals `op a`. Self-adjointness in `Aᵐᵒᵖ`: `star (op a) = op (star a) = op a` ✓.
+
+### Step 3b: `op_rpow_eq_rpow_op`
+
+```lean
+lemma op_rpow_eq_rpow_op [IsTopologicalRing A] [T2Space A]
+    [ContinuousFunctionalCalculus ℝ Aᵐᵒᵖ IsSelfAdjoint]
+    [ContinuousMap.UniqueHom ℝ Aᵐᵒᵖ] [IsTopologicalRing Aᵐᵒᵖ] [T2Space Aᵐᵒᵖ]
+    [NonnegSpectrumClass ℝ Aᵐᵒᵖ]
+    {a : A} (ha : 0 ≤ a) (r : ℝ) :
+    (op a : Aᵐᵒᵖ) ^ r = op (a ^ r) := by
+  rw [rpow_eq_cfc_real (op_nonneg.mpr ha), rpow_eq_cfc_real ha]
+  exact (starRingEquivStarAlgEquiv_map_cfc (· ^ r) a).symm
 ```
 
-This is exactly the bridge lemma needed!
+Note: `starRingEquivStarAlgEquiv a = op (star a) = op a` when `ha.isSelfAdjoint`.
+The `rpow_eq_cfc_real` on `Aᵐᵒᵖ` side needs `[IsTopologicalRing Aᵐᵒᵖ] [T2Space Aᵐᵒᵖ]`.
 
 ### Proof sketch for `Rmul_rpow_nonneg_op`
 
@@ -154,22 +171,46 @@ lemma op_rpow_eq_rpow_op (T : A) (r : ℝ) (hT : 0 ≤ T) :
 
 ## Implementation checklist
 
-### Step 1: `ForMathlib.lean` — add `starRingEquivStarAlgEquiv` and `op_rpow_eq_rpow_op`
+### Step 1: `MulOppositeStarAlgEquiv.lean` — DONE
 
-1. Define `starRingEquivStarAlgEquiv : A ≃⋆ₐ[ℝ] Aᵐᵒᵖ` from `starRingEquiv`
-   - Need fields: `map_star'` and `map_smul'` (over ℝ)
-   - Typeclass requirements: `[Algebra ℝ A] [StarRing A] [StarModule ℝ A]` etc.
-2. Prove its continuity: `continuous_op.comp continuous_star`
-3. Prove `op_rpow_eq_rpow_op` using `StarAlgHom.map_cfc` applied to `starRingEquivStarAlgEquiv`
+All of the following are proved and building:
+- `starAlgEquiv : A ≃⋆ₐ[ℝ] Aᵐᵒᵖ` (the star-alg equiv `a ↦ op(star a)`)
+- `opStar a : Aᵐᵒᵖ` (downstream abbrev)
+- `opStar_continuous`, `opStar_isSelfAdjoint`, `opStar_nonneg`, `opStar_eq_op`
+- `opStar_map_cfc` (CFC commutativity)
+- `opStar_rpow_nonneg`, `opStar_rpow_strictlyPositive`
+- `op_rpow_eq_rpow_op_nonneg` (requires `hr : 0 ≤ r`)
+- `op_rpow_eq_rpow_op` (strictly positive, no `hr`)
 
 ### Step 2: `HStarAlgebra.lean` — discharge `Rmul_rpow_nonneg_op`
 
-- Use `op_nonneg.mpr (Rmul_nonneg 𝕜 ha)` for nonnegativity
-- Use `Rmul_map_cfc` + `CFC.rpow_eq_cfc_real` (same pattern as `Lmul_rpow_nonneg`)
+Pattern: same as `Lmul_rpow_nonneg`.
+
+```lean
+theorem Rmul_rpow_nonneg_op {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
+    (rmulStarAlgHom 𝕜 a) ^ r = rmulStarAlgHom 𝕜 (a ^ r) := by
+  symm
+  rw [CFC.rpow_eq_cfc_real ha,
+      CFC.rpow_eq_cfc_real <| op_nonneg.mpr (Rmul_nonneg 𝕜 ha)]
+  exact Rmul_map_cfc 𝕜 (· ^ r) a
+```
+
+Note: `rmulStarAlgHom 𝕜 a = op (Rmul 𝕜 a)`, so nonnegativity of `rmulStarAlgHom 𝕜 a`
+follows from `op_nonneg.mpr (Rmul_nonneg 𝕜 ha)`.
 
 ### Step 3: `HStarAlgebra.lean` — discharge `Rmul_rpow_nonneg`
 
-- Use `op_rpow_eq_rpow_op` + `Rmul_rpow_nonneg_op` + `op_injective`
+Use `op_rpow_eq_rpow_op_nonneg` from `MulOppositeStarAlgEquiv.lean` to bridge.
+
+```lean
+theorem Rmul_rpow_nonneg {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
+    (Rmul 𝕜 a) ^ r = Rmul 𝕜 (a ^ r) := by
+  apply op_injective
+  rw [op_rpow_eq_rpow_op_nonneg hr (Rmul_nonneg 𝕜 ha)]
+  exact congrArg MulOpposite.unop (Rmul_rpow_nonneg_op 𝕜 hr ha)
+```
+
+Need to import `MulOppositeStarAlgEquiv` in `HStarAlgebra.lean`.
 
 ---
 

@@ -2,6 +2,7 @@ import Mathlib.Analysis.InnerProductSpace.Positive
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unique
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic
+import LeanLiebConcavity.MulOppositeStarAlgEquiv
 
 /-!
 # H*-algebra (Ambrose 1945)
@@ -440,31 +441,36 @@ theorem Rmul_map_cfc (f : ℝ → ℝ) (a : H)
   (rmulStarAlgHom 𝕜).map_cfc _ _ hf (rmulAlgHom_continuous 𝕜) ha
     (Rmul_isSelfAdjoint_op 𝕜 ha)
 
-variable [PartialOrder H] [StarOrderedRing H]
-variable [StarOrderedRing (H →L[𝕜] H)ᵐᵒᵖ]
-variable [NonnegSpectrumClass ℝ H] [NonnegSpectrumClass ℝ (H →L[𝕜] H)ᵐᵒᵖ]
+variable [PartialOrder H] [StarOrderedRing H] [NonnegSpectrumClass ℝ H]
+variable [StarOrderedRing (H →L[𝕜] H)ᵐᵒᵖ] [NonnegSpectrumClass ℝ (H →L[𝕜] H)ᵐᵒᵖ]
 
 /-- Right multiplication commutes with nonneg real powers in `(H →L[𝕜] H)ᵐᵒᵖ`:
-`op(Rₐ)^r = op(R_{a^r})`.
-TODO: Extract to `H →L[𝕜] H` via `op_rpow_eq_rpow_op` once that is proved
-(see ForMathlib.lean). -/
+`op(Rₐ)^r = op(R_{a^r})`. -/
 theorem Rmul_rpow_nonneg_op {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
     (rmulStarAlgHom 𝕜 a) ^ r = rmulStarAlgHom 𝕜 (a ^ r) := by
+  -- rmulStarAlgHom 𝕜 a = op (Rmul 𝕜 a), so nonnegativity follows from op_nonneg + Rmul_nonneg
+  have h0 : 0 ≤ rmulStarAlgHom 𝕜 a := op_nonneg.mpr (Rmul_nonneg 𝕜 ha)
   symm
-  -- 0 ≤ rmulStarAlgHom 𝕜 a follows from 0 ≤ Rmul 𝕜 a and the order on Aᵐᵒᵖ
-  sorry
+  rw [CFC.rpow_eq_cfc_real ha, CFC.rpow_eq_cfc_real h0]
+  exact Rmul_map_cfc 𝕜 (· ^ r) a
 
-
-variable [IsScalarTower ℝ 𝕜 (H →L[𝕜] H)]
+variable [StarModule ℝ (H →L[𝕜] H)] [StarOrderedRing (H →L[𝕜] H)]
 variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H) IsSelfAdjoint]
-variable [StarOrderedRing (H →L[𝕜] H)] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
-/-- Right multiplication commutes with nonneg real powers: `(R_a)^r = R_{a^r}`.
-TODO: Needs `op_rpow_eq_rpow_op : (op T)^r = op (T^r)` for self-adjoint T,
-which would follow from `starRingEquiv` being a star-algebra hom over ℝ.
-See ForMathlib.lean for the precise statement. -/
+variable [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
+
+-- Right multiplication commutes with nonneg real powers: `(R_a)^r = R_{a^r}`.
+omit [StarOrderedRing (H →L[𝕜] H)ᵐᵒᵖ] in
 theorem Rmul_rpow_nonneg {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
     (Rmul 𝕜 a) ^ r = Rmul 𝕜 (a ^ r) := by
-  sorry
+  apply op_injective
+  rw [← op_rpow_eq_rpow_op_nonneg hr (Rmul_nonneg 𝕜 ha)]
+  exact Rmul_rpow_nonneg_op 𝕜 hr ha
+
+omit [StarOrderedRing (H →L[𝕜] H)ᵐᵒᵖ] in
+theorem Rmul_rpow_nonneg_apply {r : ℝ} {a x : H}
+    (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
+    ((Rmul 𝕜 a) ^ r) x =  x * a ^ r := by
+  rw [Rmul_rpow_nonneg 𝕜 hr]; simp
 
 end Right
 
