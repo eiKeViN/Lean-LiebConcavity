@@ -1,7 +1,7 @@
 # Lean-LiebConcavity
 
 
-A **Lean 4 / Mathlib** formalization of **Lieb's concavity theorem**, a key theorem in Quantum Information, and related results provable by same approach including Lieb's extension theorem and Ando's convexity theorem. The present approach enables the generalization towards H\*-algebra context (Ambrose 1945): a Hilbert space + normed ring + compatible star operation (motivating example: the space of n by n complex matrices endowed with Frobenius trace inner product, with star being the complex conjugate).
+A **Lean 4 / Mathlib** formalization of **Lieb's concavity theorem**, a key theorem in Quantum Information, and related results provable by same approach including Lieb's extension theorem and Ando's convexity theorem. The present approach enables the generalization towards H\*-algebra context (Ambrose 1945): a Hilbert space + normed ring + compatible star operation (motivating example: the space of n by n complex matrices endowed with Frobenius trace inner product, with star being the conjugate transpose).
 
 Key (sorried) dependencies for the approach include: Jensen's operator inequality (*sorried*) and Löwner's theorem (*sorried*).
 
