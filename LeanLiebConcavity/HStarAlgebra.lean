@@ -196,7 +196,7 @@ Left and right multiplication operators commute: `Lₐ ∘ Rᵦ = Rᵦ ∘ Lₐ`
 i.e., `a * (x * b) = (a * x) * b`.
 -/
 
-theorem Lmul_Rmul_comm (a b : H) : Lmul 𝕜 a * Rmul 𝕜 b = Rmul 𝕜 b * Lmul 𝕜 a := by
+theorem Lmul_Rmul_comm {a b : H} : Commute (Lmul 𝕜 a) (Rmul 𝕜 b) := by
   ext; simp [mul_assoc]
 
 /-- right multiplication via composing left multiplication with star -/
@@ -333,13 +333,13 @@ variable [CompleteSpace H]
 theorem Lmul_star (a : H) :
     Lmul 𝕜 (star a) = star (Lmul 𝕜 a) := by
   rw [ContinuousLinearMap.star_eq_adjoint]
-  exact (ContinuousLinearMap.eq_adjoint_iff _ _).mpr fun x y => by
+  exact (ContinuousLinearMap.eq_adjoint_iff _ _).mpr fun _ _ => by
     simp only [Lmul_apply, inner_left_mul_eq, star_star]
 
 theorem Rmul_star (a : H) :
     Rmul 𝕜 (star a) = star (Rmul 𝕜 a) := by
   rw [ContinuousLinearMap.star_eq_adjoint]
-  exact (ContinuousLinearMap.eq_adjoint_iff _ _).mpr fun x y => by
+  exact (ContinuousLinearMap.eq_adjoint_iff _ _).mpr fun _ _ => by
     simp only [Rmul_apply, inner_mul_left_eq, star_star]
 
 /-- Left multiplication as a star algebra homomorphism `H →⋆ₐ[𝕜] (H →L[𝕜] H)`. -/
@@ -393,8 +393,8 @@ theorem Lmul_map_cfc (f : ℝ → ℝ) (a : H)
     (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
     (ha : IsSelfAdjoint a := by cfc_tac) :
     lmulStarAlgHom 𝕜 (cfc f a) = cfc f (lmulStarAlgHom 𝕜 a) :=
-  (lmulStarAlgHom 𝕜).map_cfc _ _ hf (Lmul_continuous 𝕜) ha
-    (Lmul_isSelfAdjoint 𝕜 ha)
+  (lmulStarAlgHom 𝕜).map_cfc _ _ hf (Lmul_continuous 𝕜) ha <|
+    Lmul_isSelfAdjoint 𝕜 ha
 
 variable [PartialOrder H] [StarOrderedRing H]
 variable [StarOrderedRing (H →L[𝕜] H)]
@@ -412,8 +412,8 @@ theorem Lmul_rpow_strictlyPositive {r : ℝ} {a : H} (ha : IsStrictlyPositive a 
     (Lmul 𝕜 a) ^ r = Lmul 𝕜 (a ^ r) := by
   symm
   rw [CFC.rpow_eq_cfc_real ha.nonneg, CFC.rpow_eq_cfc_real <| Lmul_nonneg 𝕜 ha.nonneg]
-  refine Lmul_map_cfc 𝕜 (· ^ r) a <| rpow_continuousOn_pos.mono ?_
-  exact fun _ hx => ha.spectrum_pos hx
+  exact Lmul_map_cfc 𝕜 (· ^ r) a <|
+    rpow_continuousOn_pos.mono <| fun _ hx => ha.spectrum_pos hx
 
 theorem Lmul_rpow_nonneg_apply {r : ℝ} {a x : H}
     (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
@@ -438,8 +438,8 @@ theorem Rmul_map_cfc (f : ℝ → ℝ) (a : H)
     (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
     (ha : IsSelfAdjoint a := by cfc_tac) :
     rmulStarAlgHom 𝕜 (cfc f a) = cfc f (rmulStarAlgHom 𝕜 a) :=
-  (rmulStarAlgHom 𝕜).map_cfc _ _ hf (rmulAlgHom_continuous 𝕜) ha
-    (Rmul_isSelfAdjoint_op 𝕜 ha)
+  (rmulStarAlgHom 𝕜).map_cfc _ _ hf (rmulAlgHom_continuous 𝕜) ha <|
+    Rmul_isSelfAdjoint_op 𝕜 ha
 
 variable [PartialOrder H] [StarOrderedRing H] [NonnegSpectrumClass ℝ H]
 variable [StarOrderedRing (H →L[𝕜] H)ᵐᵒᵖ] [NonnegSpectrumClass ℝ (H →L[𝕜] H)ᵐᵒᵖ]

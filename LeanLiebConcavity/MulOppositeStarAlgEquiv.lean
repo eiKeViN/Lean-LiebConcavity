@@ -136,8 +136,8 @@ theorem opStar_rpow_strictlyPositive {a : A} {r : ℝ} (ha : IsStrictlyPositive 
     (opStar a : Aᵐᵒᵖ) ^ r = opStar (a ^ r) := by
   symm
   rw [CFC.rpow_eq_cfc_real, CFC.rpow_eq_cfc_real]
-  refine opStar_map_cfc (· ^ r) a <| rpow_continuousOn_pos.mono ?_
-  exact fun _ hx => ha.spectrum_pos hx
+  exact opStar_map_cfc (· ^ r) a <|
+    rpow_continuousOn_pos.mono <| fun _ hx => ha.spectrum_pos hx
 
 /-- `op` commutes with nonneg real powers: `(op a)^r = op (a^r)`.
 Follows from `opStar_rpow_nonneg` since `opStar a = op a` for self-adjoint `a`. -/
