@@ -42,7 +42,11 @@
       "Bash(grep -rn \"instance.*Algebra.*𝕜.*E.*L\\\\|E.*L.*Algebra.*𝕜\" .lake/packages/mathlib/Mathlib --include=*.lean)",
       "Bash(grep -rn \"ContinuousFunctionalCalculus.*ContinuousLinearMap\\\\|ContinuousLinearMap.*ContinuousFunctionalCalculus\" .lake/packages/mathlib/Mathlib --include=*.lean)",
       "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake -name Basic.lean -path */CStarAlgebra/*)",
-      "Skill(mathlib-search)"
+      "Skill(mathlib-search)",
+      "Bash(grep -i \"\\\\.lean$\")",
+      "Bash(grep -rn \"Opposite\\\\|ᵐᵒᵖ\" /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib/Analysis/CStarAlgebra/ContinuousFunctionalCalculus/*.lean)",
+      "Bash(grep -n \"StarAlgEquiv\\\\|AlgEquiv\\\\|IsometryCFC\" /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib/Analysis/CStarAlgebra/ContinuousFunctionalCalculus/*.lean)",
+      "Bash(ls:*)"
     ]
   }
 }
