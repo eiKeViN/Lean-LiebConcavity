@@ -373,8 +373,7 @@ end StarAlgHom
 
 open Set
 
--- could upgrade this a lemma to `ForMathlib`.
-theorem rpow_continuousOn_pos {r : ℝ} : ContinuousOn (fun (x : ℝ) ↦ x ^ r) (Ioi 0) :=
+private theorem rpow_continuousOn_pos {r : ℝ} : ContinuousOn (fun (x : ℝ) ↦ x ^ r) (Ioi 0) :=
     continuousOn_id.rpow_const (by grind only [= mem_Ioi, = id.eq_1])
 
 namespace CFC

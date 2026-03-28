@@ -10,6 +10,10 @@ Collected here for potential upstream contribution. Grouped by topic.
 
 /-! ### Real rpow -/
 
+/-- `x ↦ x ^ r` is continuous on `(0, ∞)` for any `r : ℝ`. -/
+theorem rpow_continuousOn_pos {r : ℝ} : ContinuousOn (fun (x : ℝ) ↦ x ^ r) (Set.Ioi 0) :=
+  continuousOn_id.rpow_const (by grind only [= Set.mem_Ioi, = id.eq_1])
+
 /-- For `0 < a`, `a ^ ½ * a ^ ½ = a`. -/
 @[simp]
 theorem mul_self_half {a : ℝ} (ha : 0 < a) :
@@ -95,8 +99,14 @@ protected theorem smul_pow {a : ℝ} (ha : 0 ≤ a) {x : A} (hx : 0 ≤ x := by 
       exact smul_nonneg ha <| spectrum_nonneg_of_nonneg hx ht
   rw [rpow_eq_cfc_real (smul_nonneg ha hx), ← cfc_comp_smul a (· ^ r : ℝ → ℝ) x hf]
   simp_rw [smul_eq_mul]
-  rw [cfc_congr <| fun t ht => Real.mul_rpow ha <| spectrum_nonneg_of_nonneg hx ht,
+  rw [cfc_congr <| fun _ ht => Real.mul_rpow ha <| spectrum_nonneg_of_nonneg hx ht,
       cfc_const_mul (a ^ r) (· ^ r) x, ← rpow_eq_cfc_real hx]
+
+/-- For commuting nonneg elements `a b` and any `r : ℝ`, `(a * b) ^ r = a ^ r * b ^ r`. -/
+theorem mul_rpow_of_commute {a b : A} (hab : Commute a b)
+    (ha : 0 ≤ a := by cfc_tac) (hb : 0 ≤ b := by cfc_tac) (r : ℝ) :
+    (a * b) ^ r = a ^ r * b ^ r := by
+  sorry
 
 end CFC
 
@@ -123,11 +133,8 @@ theorem isStrictlyPositive_convex :
 /-- The set `{(L, R) | 0 ≤ L ∧ IsStrictlyPositive R}` is convex. -/
 theorem convex_nonneg_strictlyPositive :
     Convex ℝ {p : A × A | 0 ≤ p.1 ∧ IsStrictlyPositive p.2} := by
-  have : {p : A × A | 0 ≤ p.1 ∧ IsStrictlyPositive p.2}
-      = Set.Ici 0 ×ˢ {a : A | IsStrictlyPositive a} :=
-    Set.ext fun _ => Iff.rfl
-  rw [this]
-  exact (convex_Ici 0).prod isStrictlyPositive_convex
+  simpa only [Set.setOf_and] using
+    (convex_Ici (0 : A)).prod isStrictlyPositive_convex
 
 end StrictPositivity
 
@@ -155,9 +162,24 @@ end SelfAdjointConvexity
 
 section SpectrumConvexity
 
+
+variable {R A : Type*} [CommSemiring R] [Semiring A] [Algebra R A]
+
+@[simp]
+theorem algebraMap_mul_eq_smul {a r : R} :
+    algebraMap R A (a * r) = a • algebraMap R A r:= by
+  simp only [Algebra.algebraMap_eq_smul_one, smul_smul]
+
 variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
 
-open Set
+theorem spectral_bounds (z : A) (hz_sa : IsSelfAdjoint z) (hzc : IsCompact (spectrum ℝ z)) :
+    algebraMap ℝ A (sInf (spectrum ℝ z)) ≤ z ∧
+    z ≤ algebraMap ℝ A (sSup (spectrum ℝ z)) := by
+    constructor
+    · exact (algebraMap_le_iff_le_spectrum hz_sa).mpr fun _ hs =>
+        csInf_le hzc.bddBelow hs
+    · exact (le_algebraMap_iff_spectrum_le hz_sa).mpr fun _ hs =>
+        le_csSup hzc.bddAbove hs
 
 /-- If `x` and `y` are self-adjoint with spectra in a convex set `I`, then any convex
 combination `a • x + b • y` also has spectrum in `I`. -/
@@ -173,32 +195,23 @@ theorem spectrum_subset_convex_comb {I : Set ℝ} (hI : Convex ℝ I)
   · rw [not_nontrivial_iff_subsingleton] at hA; simp
   have hxc := ContinuousFunctionalCalculus.isCompact_spectrum (R := ℝ) x
   have hyc := ContinuousFunctionalCalculus.isCompact_spectrum (R := ℝ) y
-  have hx_lo : algebraMap ℝ A (sInf (spectrum ℝ x)) ≤ x :=
-    (algebraMap_le_iff_le_spectrum).mpr fun _ hs => csInf_le hxc.bddBelow hs
-  have hy_lo : algebraMap ℝ A (sInf (spectrum ℝ y)) ≤ y :=
-    (algebraMap_le_iff_le_spectrum).mpr fun _ hs => csInf_le hyc.bddBelow hs
-  have hx_hi : x ≤ algebraMap ℝ A (sSup (spectrum ℝ x)) :=
-    (le_algebraMap_iff_spectrum_le).mpr fun _ hs => le_csSup hxc.bddAbove hs
-  have hy_hi : y ≤ algebraMap ℝ A (sSup (spectrum ℝ y)) :=
-    (le_algebraMap_iff_spectrum_le).mpr fun _ hs => le_csSup hyc.bddAbove hs
-  have alg_eq : ∀ {r s : ℝ}, algebraMap ℝ A (a * r + b * s) =
-      a • algebraMap ℝ A r + b • algebraMap ℝ A s := by
-    intro r s; simp only [map_add, Algebra.algebraMap_eq_smul_one, smul_smul]
-  intro t ht
   have hnx := CFC.spectrum_nonempty ℝ x
   have hny := CFC.spectrum_nonempty ℝ y
+  have ⟨hx_lo, hx_hi⟩ := spectral_bounds x hx_sa hxc
+  have ⟨hy_lo, hy_hi⟩ := spectral_bounds y hy_sa hyc
+  intro t ht
   have hl_I : a • sInf (spectrum ℝ x) + b • sInf (spectrum ℝ y) ∈ I :=
     hI (hx_spec <| hxc.sInf_mem hnx) (hy_spec <| hyc.sInf_mem hny) ha hb hab
   have hu_I : a • sSup (spectrum ℝ x) + b • sSup (spectrum ℝ y) ∈ I :=
     hI (hx_spec <| hxc.sSup_mem hnx) (hy_spec <| hyc.sSup_mem hny) ha hb hab
   have lower : algebraMap ℝ A (a * sInf (spectrum ℝ x) + b * sInf (spectrum ℝ y))
       ≤ a • x + b • y := by
-    rw [alg_eq]
+    simp_rw [map_add, algebraMap_mul_eq_smul]
     exact add_le_add (smul_le_smul_of_nonneg_left hx_lo ha)
                      (smul_le_smul_of_nonneg_left hy_lo hb)
   have upper : a • x + b • y
       ≤ algebraMap ℝ A (a * sSup (spectrum ℝ x) + b * sSup (spectrum ℝ y)) := by
-    rw [alg_eq]
+    simp_rw [map_add, algebraMap_mul_eq_smul]
     exact add_le_add (smul_le_smul_of_nonneg_left hx_hi ha)
                      (smul_le_smul_of_nonneg_left hy_hi hb)
   have hsa : IsSelfAdjoint (a • x + b • y) := isSelfAdjoint_linear_comb hx_sa hy_sa
@@ -208,10 +221,9 @@ theorem spectrum_subset_convex_comb {I : Set ℝ} (hI : Convex ℝ I)
 
 /-- The set of self-adjoint elements with spectrum in a convex set `I` is convex. -/
 theorem convex_selfAdjoint_spectrum_subset {I : Set ℝ} (hI : Convex ℝ I) :
-    Convex ℝ {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} :=
-  fun _ hx _ hy _ _ ha hb hab =>
-    ⟨isSelfAdjoint_linear_comb hx.1 hy.1,
-     spectrum_subset_convex_comb hI ha hb hab hx hy⟩
+    Convex ℝ {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} := by
+  intro _ hx _ hy _ _ ha hb hab
+  exact ⟨isSelfAdjoint_linear_comb hx.1 hy.1, spectrum_subset_convex_comb hI ha hb hab hx hy⟩
 
 end SpectrumConvexity
 
@@ -227,8 +239,8 @@ variable [IsTopologicalRing A] [T2Space A]
 functions `f` and `g`. Generalizes `cfc_commute_cfc` (same element) to the two-element case. -/
 protected theorem Commute.cfc_cfc {a b : A} (hb₁ : Commute a b) (hb₂ : Commute (star a) b)
     (f g : 𝕜 → 𝕜) : Commute (cfc f a) (cfc g b) := by
-  have h1 : Commute (cfc f a) b           := hb₁.cfc hb₂ f
-  have h2 : Commute (cfc f a) (star b)    := hb₂.star_right.cfc hb₁.star_star f
+  have h1 : Commute (cfc f a) b        := hb₁.cfc hb₂ f
+  have h2 : Commute (cfc f a) (star b) := hb₂.star_right.cfc hb₁.star_star f
   exact (h1.symm.cfc h2.symm g).symm
 
 /-- For self-adjoint `a`, if `b` commutes with `a` then `cfc f a` and `cfc g b` commute.
@@ -251,4 +263,33 @@ protected theorem Commute.cfc_cfc_real {a b : A} (hb : Commute a b) (f g : ℝ �
     Commute (cfc f a) (cfc g b) :=
   ((hb.cfc_real f).symm.cfc_real g).symm
 
+
 end CFCCommuteReal
+
+/-! ### Commute lemmas for real powers (`a ^ r` for `r : ℝ`) -/
+
+section CFCCommuteRpow
+
+variable {A : Type*} [PartialOrder A] [Ring A] [StarRing A] [TopologicalSpace A]
+variable [StarOrderedRing A] [Algebra ℝ A] [ContinuousFunctionalCalculus ℝ A IsSelfAdjoint]
+variable [NonnegSpectrumClass ℝ A] [IsTopologicalRing A] [T2Space A]
+
+/-- If `a` commutes with `b`, then `a` commutes with `b ^ r` for any `r : ℝ`.
+No nonnegativity hypothesis needed: rpow is defined via `ℝ≥0`-CFC, which returns 0 in the
+junk case, and `Commute a 0` holds trivially. -/
+protected theorem Commute.rpow_right {a b : A} (h : Commute a b) (r : ℝ) :
+    Commute a (b ^ r) := by
+  simp only [CFC.rpow_def]
+  exact (h.symm.cfc_nnreal _).symm
+
+/-- If `a` commutes with `b`, then `a ^ r` commutes with `b` for any `r : ℝ`. -/
+protected theorem Commute.rpow_left {a b : A} (h : Commute a b) (r : ℝ) :
+    Commute (a ^ r) b :=
+  (h.symm.rpow_right r).symm
+
+/-- If `a` and `b` commute, then `a ^ r` and `b ^ s` commute for any `r s : ℝ`. -/
+protected theorem Commute.rpow_rpow {a b : A} (h : Commute a b) (r s : ℝ) :
+    Commute (a ^ r) (b ^ s) :=
+  (h.rpow_left r).rpow_right s
+
+end CFCCommuteRpow
