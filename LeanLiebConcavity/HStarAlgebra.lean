@@ -32,8 +32,6 @@ field, avoiding instance conflicts for abstract types.
   Trans. AMS 57 (1945), 364–386.
 -/
 
-noncomputable section
-
 open scoped ComplexOrder
 
 /-! ## Class definition -/
@@ -45,7 +43,7 @@ class HStarAlgebra (𝕜 : Type*) (H : Type*) [RCLike 𝕜] extends
 
 export HStarAlgebra (inner_mul_left inner_mul_right)
 
-namespace HStarAlgebra
+section HStarAlgebra
 
 variable (𝕜 : Type*)
 variable {H : Type*} [RCLike 𝕜] [HStarAlgebra 𝕜 H]
@@ -211,16 +209,21 @@ Multiplication is a bounded bilinear map (by `isBoundedBilinearMap_mul`),
 so its curried CLM `H →L[𝕜] H →L[𝕜] H` is automatically continuous.
 -/
 
-/-- The map `a ↦ Lₐ` and `a ↦ Rₐ` are continuous w.r.t. the operator norm -/
-theorem lmulStarAlgHom_continuous :
+/-- The map `a ↦ Lₐ` is continuous w.r.t. the operator norm -/
+theorem Lmul_continuous :
     Continuous (fun a : H => Lmul 𝕜 a : H → H →L[𝕜] H) :=
   (isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H)).toContinuousLinearMap.continuous
 
 /-- The map `a ↦ R_a` is continuous w.r.t. the operator norm -/
-theorem rmulAlgHom_continuous :
+theorem Rmul_continuous :
     Continuous (fun a : H => Rmul 𝕜 a : H → H →L[𝕜] H) :=
   (ContinuousLinearMap.flip
     (isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H)).toContinuousLinearMap).continuous
+
+/-- The map `a ↦ op(Rₐ)` into the opposite algebra is continuous w.r.t. the operator norm -/
+theorem rmulAlgHom_continuous :
+    Continuous (rmulAlgHom 𝕜 : H → (H →L[𝕜] H)ᵐᵒᵖ) :=
+  continuous_op.comp (Rmul_continuous 𝕜)
 
 
 /-! ### Invertibility preserving
@@ -354,25 +357,33 @@ theorem Lmul_isSelfAdjoint {a : H} (ha : IsSelfAdjoint a) :
   ha.map (lmulStarAlgHom 𝕜)
 
 /-- If `a` is self-adjoint in `H`, then `Rₐ` is self-adjoint as an operator. -/
+theorem Rmul_isSelfAdjoint_op {a : H} (ha : IsSelfAdjoint a) :
+    IsSelfAdjoint (rmulStarAlgHom 𝕜 a) :=
+  ha.map (rmulStarAlgHom 𝕜)
+
 theorem Rmul_isSelfAdjoint {a : H} (ha : IsSelfAdjoint a) :
     IsSelfAdjoint (Rmul 𝕜 a) := by
-  simp only [IsSelfAdjoint, ← Rmul_star, ha.star_eq]
+  simp [IsSelfAdjoint, ← Rmul_star, ha.star_eq]
 
 end StarAlgHom
 
 
 /-! ### CFC commutation: `L_{f(a)} = f(L_a)` -/
 
-namespace CFC
 open Set
 
 -- could upgrade this a lemma to `ForMathlib`.
 theorem rpow_continuousOn_pos {r : ℝ} : ContinuousOn (fun (x : ℝ) ↦ x ^ r) (Ioi 0) :=
     continuousOn_id.rpow_const (by grind only [= mem_Ioi, = id.eq_1])
 
+namespace CFC
+
 variable [CompleteSpace H] [Algebra ℝ H] [IsScalarTower ℝ 𝕜 H]
-variable [IsScalarTower ℝ 𝕜 (H →L[𝕜] H)]
 variable [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint]
+
+section Left
+
+variable [IsScalarTower ℝ 𝕜 (H →L[𝕜] H)]
 variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H) IsSelfAdjoint]
 
 /-- Left multiplication commutes with the continuous functional calculus:
@@ -381,7 +392,7 @@ theorem Lmul_map_cfc (f : ℝ → ℝ) (a : H)
     (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
     (ha : IsSelfAdjoint a := by cfc_tac) :
     lmulStarAlgHom 𝕜 (cfc f a) = cfc f (lmulStarAlgHom 𝕜 a) :=
-  (lmulStarAlgHom 𝕜).map_cfc _ _ hf (lmulStarAlgHom_continuous 𝕜) ha
+  (lmulStarAlgHom 𝕜).map_cfc _ _ hf (Lmul_continuous 𝕜) ha
     (Lmul_isSelfAdjoint 𝕜 ha)
 
 variable [PartialOrder H] [StarOrderedRing H]
@@ -395,7 +406,7 @@ theorem Lmul_rpow_nonneg {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cf
   rw [CFC.rpow_eq_cfc_real ha, CFC.rpow_eq_cfc_real <| Lmul_nonneg 𝕜 ha]
   exact Lmul_map_cfc 𝕜 (· ^ r) a
 
-/-- need a version that applies to taking negative powers -/
+/-- Left multiplication by strictly positive elements commutes with real powers -/
 theorem Lmul_rpow_strictlyPositive {r : ℝ} {a : H} (ha : IsStrictlyPositive a := by cfc_tac) :
     (Lmul 𝕜 a) ^ r = Lmul 𝕜 (a ^ r) := by
   symm
@@ -412,6 +423,50 @@ theorem Lmul_rpow_strictlyPositive_apply {r : ℝ} {a x : H}
     (ha : IsStrictlyPositive a := by cfc_tac) :
     ((Lmul 𝕜 a) ^ r) x = a ^ r * x := by
   rw [Lmul_rpow_strictlyPositive 𝕜]; simp
+
+end Left
+
+section Right
+
+variable [IsScalarTower ℝ 𝕜 (H →L[𝕜] H)ᵐᵒᵖ]
+variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H)ᵐᵒᵖ IsSelfAdjoint]
+
+/-- Right multiplication commutes with the continuous functional calculus:
+`op(R_{f(a)}) = f(op(Rₐ))` for self-adjoint `a` and continuous `f`. -/
+theorem Rmul_map_cfc (f : ℝ → ℝ) (a : H)
+    (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
+    (ha : IsSelfAdjoint a := by cfc_tac) :
+    rmulStarAlgHom 𝕜 (cfc f a) = cfc f (rmulStarAlgHom 𝕜 a) :=
+  (rmulStarAlgHom 𝕜).map_cfc _ _ hf (rmulAlgHom_continuous 𝕜) ha
+    (Rmul_isSelfAdjoint_op 𝕜 ha)
+
+variable [PartialOrder H] [StarOrderedRing H]
+variable [StarOrderedRing (H →L[𝕜] H)ᵐᵒᵖ]
+variable [NonnegSpectrumClass ℝ H] [NonnegSpectrumClass ℝ (H →L[𝕜] H)ᵐᵒᵖ]
+
+/-- Right multiplication commutes with nonneg real powers in `(H →L[𝕜] H)ᵐᵒᵖ`:
+`op(Rₐ)^r = op(R_{a^r})`.
+TODO: Extract to `H →L[𝕜] H` via `op_rpow_eq_rpow_op` once that is proved
+(see ForMathlib.lean). -/
+theorem Rmul_rpow_nonneg_op {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
+    (rmulStarAlgHom 𝕜 a) ^ r = rmulStarAlgHom 𝕜 (a ^ r) := by
+  symm
+  -- 0 ≤ rmulStarAlgHom 𝕜 a follows from 0 ≤ Rmul 𝕜 a and the order on Aᵐᵒᵖ
+  sorry
+
+
+variable [IsScalarTower ℝ 𝕜 (H →L[𝕜] H)]
+variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H) IsSelfAdjoint]
+variable [StarOrderedRing (H →L[𝕜] H)] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
+/-- Right multiplication commutes with nonneg real powers: `(R_a)^r = R_{a^r}`.
+TODO: Needs `op_rpow_eq_rpow_op : (op T)^r = op (T^r)` for self-adjoint T,
+which would follow from `starRingEquiv` being a star-algebra hom over ℝ.
+See ForMathlib.lean for the precise statement. -/
+theorem Rmul_rpow_nonneg {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
+    (Rmul 𝕜 a) ^ r = Rmul 𝕜 (a ^ r) := by
+  sorry
+
+end Right
 
 end CFC
 
