@@ -383,14 +383,13 @@ open Set
 private theorem rpow_continuousOn_pos {r : ℝ} : ContinuousOn (fun (x : ℝ) ↦ x ^ r) (Ioi 0) :=
     continuousOn_id.rpow_const (by grind only [= mem_Ioi, = id.eq_1])
 
-namespace CFC
+section CFC
 
 variable [CompleteSpace H] [Algebra ℝ H] [IsScalarTower ℝ 𝕜 H]
 variable [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint]
 
 section Left
 
-variable [IsScalarTower ℝ 𝕜 (H →L[𝕜] H)]
 variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H) IsSelfAdjoint]
 
 /-- Left multiplication commutes with the continuous functional calculus:
@@ -435,7 +434,6 @@ end Left
 
 section Right
 
-variable [IsScalarTower ℝ 𝕜 (H →L[𝕜] H)ᵐᵒᵖ]
 variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H)ᵐᵒᵖ IsSelfAdjoint]
 
 /-- Right multiplication commutes with the continuous functional calculus:

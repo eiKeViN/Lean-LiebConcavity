@@ -6,8 +6,7 @@ example : 1 = 1 := rfl
 noncomputable section
 
 
-namespace CFC
-open Set NNReal
+open Set NNReal CFC
 
 --namespace IsSelfAdjoint
 universe u
@@ -229,6 +228,7 @@ theorem PowerMeanJointlyConvex
     (PowerOperatorConvex hα)
     (PowerOperatorConcave hβ)
 
+/-
 variable {L₁ : A} (r : ℝ)
 example : 0 ≤ L₁ ^ r := by simp
 example : IsSelfAdjoint (cfc f L₁) := by simp
@@ -242,6 +242,4 @@ example {a : A} (ha : IsStrictlyPositive a) : IsUnit a := IsStrictlyPositive.isU
 example : 0 ≤ ½ := by linarith
 example {a b c d : A} : a * b * d + a * c * d= a * (b + c) * d := by
   simp [mul_add, add_mul]
-
-
-end CFC
+-/
