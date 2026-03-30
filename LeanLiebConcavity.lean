@@ -3,3 +3,4 @@ import LeanLiebConcavity.Defs
 import LeanLiebConcavity.ForMathlib
 import LeanLiebConcavity.Jensen
 import LeanLiebConcavity.Main
+import LeanLiebConcavity.Lieb

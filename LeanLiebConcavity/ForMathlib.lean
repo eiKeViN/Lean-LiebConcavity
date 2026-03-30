@@ -271,8 +271,8 @@ end CFCCommuteReal
 section CFCCommuteRpow
 
 variable {A : Type*} [PartialOrder A] [Ring A] [StarRing A] [TopologicalSpace A]
-variable [StarOrderedRing A] [Algebra ℝ A] [ContinuousFunctionalCalculus ℝ A IsSelfAdjoint]
-variable [NonnegSpectrumClass ℝ A] [IsTopologicalRing A] [T2Space A]
+variable [StarOrderedRing A] [Algebra ℝ A] [IsTopologicalRing A] [T2Space A]
+variable [NonnegSpectrumClass ℝ A] [ContinuousFunctionalCalculus ℝ A IsSelfAdjoint]
 
 /-- If `a` commutes with `b`, then `a` commutes with `b ^ r` for any `r : ℝ`.
 No nonnegativity hypothesis needed: rpow is defined via `ℝ≥0`-CFC, which returns 0 in the

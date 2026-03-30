@@ -44,11 +44,9 @@ theorem PerspectiveJointConvex
   refine ⟨convex_nonneg_strictlyPositive, ?_⟩
   rintro ⟨L₁, R₁⟩ ⟨hL₁, hR₁⟩ ⟨L₂, R₂⟩ ⟨hL₂, hR₂⟩ a b ha hb hab
   rcases ha.eq_or_lt_dec with rfl | ha'
-  · -- a = 0
-    simp_all
+  · simp_all
   rcases hb.eq_or_lt_dec with rfl | hb'
-  · -- b = 0
-    simp_all
+  · simp_all
   -- the main case: 0 < a and 0 < b
   let F : A → A := cfc f
   let G : A → A := cfc g

@@ -37,8 +37,8 @@ open scoped ComplexOrder
 
 /-! ## Class definition -/
 
-class HStarAlgebra (𝕜 : Type*) (H : Type*) [RCLike 𝕜] extends
-    NormedRing H, Algebra 𝕜 H, InnerProductSpace 𝕜 H, StarRing H where
+class HStarAlgebra (𝕜 : Type*) (H : Type*) [S : Semiring 𝕜] [RCLike 𝕜] extends
+    NormedRing H, InnerProductSpace 𝕜 H, Algebra 𝕜 H, StarRing H where
   inner_mul_left {a x y : H} : inner (a * x) y = inner x (star a * y)
   inner_mul_right {a x y : H} : inner (x * a) y = inner x (y * star a)
 
@@ -262,7 +262,7 @@ theorem Rmul_isSymmetric {a : H} (ha : IsSelfAdjoint a) :
 
 section nonneg
 
-/-! ### Nonnegativity preserving
+/-! ### Nonnegativity preserving => (+ unit preserving) strict positivity preserving
 
 left/right multiplication by nonnegative (semi-definite) elements are positive operators,
 which are operators nonnegative with respect to the Loewner partial order.
@@ -316,6 +316,14 @@ theorem Rmul_nonneg {a : H} (ha : 0 ≤ a) : 0 ≤ Rmul 𝕜 a := by
   rw [ContinuousLinearMap.nonneg_iff_isPositive (Rmul 𝕜 a)]
   exact Rmul_isPositive 𝕜 ha
 
+theorem Lmul_isStrictlyPositive {a : H} (ha : IsStrictlyPositive a) :
+    IsStrictlyPositive (Lmul 𝕜 a) :=
+  (Lmul_isUnit 𝕜 ha.isUnit).isStrictlyPositive (Lmul_nonneg 𝕜 ha.nonneg)
+
+theorem Rmul_isStrictlyPositive {a : H} (ha : IsStrictlyPositive a) :
+    IsStrictlyPositive (Rmul 𝕜 a) :=
+  (Rmul_isUnit 𝕜 ha.isUnit).isStrictlyPositive (Rmul_nonneg 𝕜 ha.nonneg)
+
 end nonneg
 
 
@@ -367,7 +375,6 @@ theorem Rmul_isSelfAdjoint {a : H} (ha : IsSelfAdjoint a) :
   simp [IsSelfAdjoint, ← Rmul_star, ha.star_eq]
 
 end StarAlgHom
-
 
 /-! ### CFC commutation: `L_{f(a)} = f(L_a)` -/
 

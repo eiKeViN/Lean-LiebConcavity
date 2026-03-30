@@ -170,7 +170,7 @@ theorem GenPerspective_of_rpow_commute {L R : A} {α β : ℝ} (hLR : Commute L 
           rw [← rpow_eq_cfc_real hR.nonneg,
               rpow_rpow R β (-1 : ℝ) hR.isUnit hβ.ne' hR.nonneg]
     _ = (L * R ^ (β * -1)) ^ α * R ^ β := by
-          rw [← rpow_eq_cfc_real (hLRnβ_comm.mul_nonneg hL hR.rpow.nonneg)]
+          rw [← rpow_eq_cfc_real <| hLRnβ_comm.mul_nonneg hL hR.rpow.nonneg]
     _ = L ^ α * (R ^ (β * -1)) ^ α * R ^ β := by
           rw [mul_rpow_of_commute hLRnβ_comm hL hR.rpow.nonneg]
     _ = L ^ α * R ^ (β * -1 * α) * R ^ β := by
