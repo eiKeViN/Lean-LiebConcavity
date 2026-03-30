@@ -1,87 +1,77 @@
 import LeanLiebConcavity.HStarAlgebra
 import LeanLiebConcavity.Main
-import Mathlib.Analysis.InnerProductSpace.StarOrder
--- StarOrder transitively provides:
---   CStarAlgebra (H →L[ℂ] H)  (via ContinuousLinearMap.lean)
---   StarOrderedRing (H →L[ℂ] H)
---   NonnegSpectrumClass ℝ (H →L[ℂ] H)
-
-/-!
-# Lieb's Concavity Theorem in the H*-Algebra Setting
-
-Given a complete H*-algebra `H` over `ℂ`, the space `H →L[ℂ] H` of continuous linear
-endomorphisms is a C*-algebra (with the operator norm) and inherits the Loewner partial order.
-We use `Lmul` and `Rmul` to embed `H` into `H →L[ℂ] H`, allowing us to apply the abstract
-joint concavity / convexity results from `Main.lean`.
-
-## Main results
-
-- `OperatorPowerMean`: the operator `(α,β)`-power mean
-  `(A, B) ↦ GenPerspective (·^α) (·^β) (Rmul ℂ B, Lmul ℂ A) : H →L[ℂ] H`
-- `OperatorPowerMean_apply`: explicit form `A^(β*(1-α)) * x * B^α`
-- `LiebConcavity`: `(A, B) ↦ re ⟪A^s * x * B^t, x⟫` is jointly concave
-  when `s, t > 0` and `s + t ≤ 1`
-
-## References
-
-- [Nik2013] Nikoufar–Ebadian–Eshaghi Gordji, *Adv. Math.* 248 (2013) 531–533
--/
+import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 
 noncomputable section
 
 open scoped ComplexOrder InnerProductSpace
 
--- All Lieb content lives in `namespace CFC` so that `CFC.instPowReal` (the `Pow H ℝ`
--- instance for rpow) is found by instance synthesis without a namespace qualifier.
+variable {H : Type*} [HStarAlgebra ℂ H]
 
-variable {H : Type*} [HStarAlgebra ℂ H] [CompleteSpace H]
-  [TopologicalSpace H]
-  -- CFC stack on H (provides `a ^ r : H` for `r : ℝ`)
-  [Algebra ℝ H] [IsScalarTower ℝ ℂ H]
-  [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint]
-  -- Order structure on H
-  [PartialOrder H] [StarOrderedRing H]
-  [NonnegSpectrumClass ℝ H]
-  -- CFC + order stack on H →L[ℂ] H (needed for GenPerspective)
-  [Module ℂ H]
-  [CStarAlgebra (H →L[ℂ] H)]
+/-- ad-hoc ℝ in ℂ scalar multiplication lemmas -/
+@[simp, grind .]
+private lemma Lmul_smul_real (a : ℝ) (A : H) :
+    Lmul ℂ (a • A) = a • Lmul ℂ A := by
+ calc Lmul ℂ (a • A)
+        = Lmul ℂ ((↑a : ℂ) • A) := by rw [Complex.coe_smul]
+      _ = (↑a : ℂ) • Lmul ℂ A := by rw [Lmul_smul]
+      _ = a • Lmul ℂ A := by rw [<- Complex.coe_smul]
 
--- Activate the Loewner partial order on `H →L[ℂ] H` so that `GenPerspective` can be applied.
--- With this, `H →L[ℂ] H` is a C*-algebra (ContinuousLinearMap.lean:20),
--- `StarOrderedRing (H →L[ℂ] H)` (StarOrder.lean:79), and
--- `NonnegSpectrumClass ℝ (H →L[ℂ] H)` (StarOrder.lean:52) — all automatic.
+@[simp, grind .]
+private lemma Rmul_smul_real (a : ℝ) (A : H) :
+    Rmul ℂ (a • A) = a • Rmul ℂ A := by
+ calc Rmul ℂ (a • A)
+        = Rmul ℂ ((↑a : ℂ) • A) := by rw [Complex.coe_smul]
+      _ = (↑a : ℂ) • Rmul ℂ A := by rw [Rmul_smul]
+      _ = a • Rmul ℂ A := by rw [<- Complex.coe_smul]
 
-
-variable [PartialOrder (H →L[ℂ] H)]
+variable [CompleteSpace H] [PartialOrder H] [StarOrderedRing H]
+  [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint] [NonnegSpectrumClass ℝ H]
+attribute [local instance] instCStarAlgebraContinuousLinearMapComplexIdOfCompleteSpace
 attribute [local instance] ContinuousLinearMap.instLoewnerPartialOrder
 variable [StarOrderedRing (H →L[ℂ] H)]
 
-set_option trace.Meta.synthInstance true
-set_option backward.isDefEq.respectTransparency false
-
-/-! ### The operator (α, β)-power mean -/
-
-/-- The operator `(α, β)`-power mean of `(A, B)` as a continuous linear map `H →L[ℂ] H`:
-```
-  OperatorPowerMean α β A B
-    := GenPerspective (H →L[ℂ] H) (·^α) (·^β) (Rmul ℂ B, Lmul ℂ A)
-```
-This is the operator `R_B #_{(α,β)} L_A` from [Nik2013]. -/
 def OperatorPowerMean (α β : ℝ) (A B : H) : H →L[ℂ] H :=
-  have T : H →L[ℂ] H := Rmul ℂ B
-  GenPerspective (H →L[ℂ] H) (· ^ α) (· ^ β) (T, Lmul ℂ A)
+  GenPerspective (H →L[ℂ] H) (· ^ α) (· ^ β) (Rmul ℂ B, Lmul ℂ A)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem OperatorPowerMean_apply {α β : ℝ} {A B : H}
-    (hA : IsStrictlyPositive A) (hB : 0 ≤ B) (hβ : 0 < β) (x : H) :
-    OperatorPowerMean α β A B x = cfc (fun x => x ^ ((β * (1 - α)))) A * x
-    * cfc (fun x => x ^ β) B := by
+    (hA : IsStrictlyPositive A) (hB : 0 ≤ B) (hα : 0 ≤ α) (hβ : β ≠ 0) (x : H) :
+    OperatorPowerMean α β A B x = A ^ (β * (1 - α)) * x * B ^ α := by
   simp only [OperatorPowerMean,
-    GenPerspective_of_rpow_commute (Lmul_Rmul_comm (𝕜 := ℂ)).symm
+    GenPerspective_of_rpow_commute (Lmul_Rmul_comm ℂ).symm
       (Rmul_nonneg ℂ hB) (Lmul_isStrictlyPositive ℂ hA) hβ]
-  simp [ContinuousLinearMap.mul_apply,
-        Lmul_rpow_strictlyPositive_apply (𝕜 := ℂ) (ha := hA),
-        Rmul_rpow_nonneg_apply (𝕜 := ℂ) (hr := hβ.le) (ha := hB)]
+  rw [ContinuousLinearMap.mul_apply,
+      CFC.Rmul_rpow_nonneg_apply ℂ hα hB,
+      CFC.Lmul_rpow_strictlyPositive_apply ℂ hA]
 
-end CFC
+variable (x : H)
+
+
+variable [PosSMulMono ℝ H]
+theorem OperatorPowerMean_jointly_concave {α β : ℝ}
+    (hα : 0 < α ∧ α ≤ 1) (hβ : 0 < β ∧ β ≤ 1) :
+    ConcaveOn ℝ {p : H × H | IsStrictlyPositive p.1 ∧ 0 ≤ p.2}
+      (fun p => OperatorPowerMean α β p.1 p.2) := by
+  refine ⟨convex_strictlyPositive_nonneg, fun ⟨A₁, B₁⟩ h₁ ⟨A₂, B₂⟩ h₂ a b ha hb hab => ?_⟩
+  have hc := (@CFC.PowerMeanJointlyConcave (H →L[ℂ] H) _ _ _ α β hα hβ)
+  simp only [OperatorPowerMean, Prod.smul_mk, Prod.mk_add_mk]
+  simp only [Lmul_add, Rmul_add, Lmul_smul_real, Rmul_smul_real]
+  exact @hc.2 ⟨Rmul ℂ B₁, Lmul ℂ A₁⟩ ⟨Rmul_nonneg ℂ h₁.2, Lmul_isStrictlyPositive ℂ h₁.1⟩
+              ⟨Rmul ℂ B₂, Lmul ℂ A₂⟩ ⟨Rmul_nonneg ℂ h₂.2, Lmul_isStrictlyPositive ℂ h₂.1⟩
+              a b ha hb hab
+
+theorem OperatorPowerMean_jointly_convex {α β : ℝ}
+    (hα : 1 ≤ α ∧ α ≤ 2) (hβ : 0 < β ∧ β ≤ 1) :
+    ConvexOn ℝ {p : H × H | IsStrictlyPositive p.1 ∧ 0 ≤ p.2}
+      (fun p => OperatorPowerMean α β p.1 p.2) := by
+  have hc := @CFC.PowerMeanJointlyConvex (H →L[ℂ] H) _ _ _ α β hα hβ
+  refine ⟨convex_strictlyPositive_nonneg, fun ⟨A₁, B₁⟩ h₁ ⟨A₂, B₂⟩ h₂ a b ha hb hab => ?_⟩
+  simp only [OperatorPowerMean, Prod.smul_mk, Prod.mk_add_mk]
+  simp only [Lmul_add, Rmul_add, Lmul_smul_real, Rmul_smul_real]
+  exact @hc.2 ⟨Rmul ℂ B₁, Lmul ℂ A₁⟩ ⟨Rmul_nonneg ℂ h₁.2, Lmul_isStrictlyPositive ℂ h₁.1⟩
+              ⟨Rmul ℂ B₂, Lmul ℂ A₂⟩ ⟨Rmul_nonneg ℂ h₂.2, Lmul_isStrictlyPositive ℂ h₂.1⟩
+              a b ha hb hab
+
 
 end

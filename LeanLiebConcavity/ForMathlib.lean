@@ -114,8 +114,38 @@ end CFC
 
 section StrictPositivity
 
-variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+--- open NNReal
+variable {A : Type*} [TopologicalSpace A] [Ring A] [StarRing A]
+  [Algebra ℝ A] [PartialOrder A] [StarOrderedRing A]
+  [NonnegSpectrumClass ℝ A] [ContinuousFunctionalCalculus ℝ A IsSelfAdjoint]
 
+/-- Generalization of `CStarAlgebra.isUnit_of_le`: if `a` is strictly positive and `a ≤ b`,
+then `b` is a unit. Does not require `CStarAlgebra`; only needs CFC + NonnegSpectrumClass. -/
+private lemma isUnit_of_le_general (a : A) {b : A} (hab : a ≤ b)
+    (h : IsStrictlyPositive a := by cfc_tac) : IsUnit b := by
+  have ha := h.nonneg
+  have hb := ha.trans hab
+  nontriviality A
+  rw [← spectrum.zero_notMem_iff ℝ]
+  obtain ⟨r, hr, hr_le⟩ :=
+    CFC.exists_pos_algebraMap_le_iff (.of_nonneg ‹_›) |>.mpr <|
+    fun _ hx => h.spectrum_pos hx
+  have := algebraMap_le_iff_le_spectrum (.of_nonneg ‹_›) |>.mp <| hr_le.trans hab
+  intro hb₀; linarith [this 0 hb₀]
+
+/-- Generalization of `IsStrictlyPositive.of_le`: if `a` is strictly positive and `a ≤ b`,
+then `b` is strictly positive. Does not require `CStarAlgebra`. -/
+private lemma isStrictlyPositive_of_le {a b : A} (ha : IsStrictlyPositive a) (hab : a ≤ b) :
+    IsStrictlyPositive b :=
+  ⟨ha.nonneg.trans hab, isUnit_of_le_general a hab ha⟩
+
+/-- Generalization of `IsStrictlyPositive.add_nonneg`: adding a nonneg element to a strictly
+positive one stays strictly positive. Does not require `CStarAlgebra`. -/
+private lemma isStrictlyPositive_add_nonneg {a b : A}
+    (ha : IsStrictlyPositive a) (hb : 0 ≤ b) : IsStrictlyPositive (a + b) :=
+  isStrictlyPositive_of_le ha ((le_add_iff_nonneg_right a).mpr hb)
+
+variable [PosSMulMono ℝ A]
 /-- Convex combinations of strictly positive elements are strictly positive. -/
 theorem isStrictlyPositive_convex_comb {a b : ℝ} {x y : A}
     (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : a + b = 1)
@@ -123,7 +153,7 @@ theorem isStrictlyPositive_convex_comb {a b : ℝ} {x y : A}
     IsStrictlyPositive (a • x + b • y) := by
   rcases eq_or_lt_of_le ha with rfl | ha_pos
   · simp only [zero_smul, zero_add] at hab ⊢; rwa [hab, one_smul]
-  · exact (hx.smul ha_pos).add_nonneg <| smul_nonneg hb hy.nonneg
+  · exact isStrictlyPositive_add_nonneg (hx.smul ha_pos) (smul_nonneg hb hy.nonneg)
 
 /-- The set of strictly positive elements is convex. -/
 theorem isStrictlyPositive_convex :
@@ -134,7 +164,12 @@ theorem isStrictlyPositive_convex :
 theorem convex_nonneg_strictlyPositive :
     Convex ℝ {p : A × A | 0 ≤ p.1 ∧ IsStrictlyPositive p.2} := by
   simpa only [Set.setOf_and] using
-    (convex_Ici (0 : A)).prod isStrictlyPositive_convex
+    (convex_Ici 0).prod isStrictlyPositive_convex
+
+theorem convex_strictlyPositive_nonneg :
+    Convex ℝ {p : A × A | IsStrictlyPositive p.1 ∧ 0 ≤ p.2} := by
+  simpa only [Set.setOf_and] using
+    isStrictlyPositive_convex.prod (convex_Ici 0)
 
 end StrictPositivity
 
