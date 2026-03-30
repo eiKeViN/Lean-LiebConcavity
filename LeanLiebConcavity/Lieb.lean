@@ -70,8 +70,20 @@ lemma reApplyInnerSelf_mono {S T : H →L[ℂ] H} (h : S ≤ T) (x : H) :
   simp only [ContinuousLinearMap.sub_apply, inner_sub_left, map_sub] at this
   linarith
 
+theorem OperatorPowerMean_jointly_convex {α β : ℝ}
+    (hα : 1 ≤ α ∧ α ≤ 2) (hβ : 0 < β ∧ β ≤ 1) :
+    ConvexOn ℝ {(A, B) : H × H | IsStrictlyPositive A ∧ 0 ≤ B}
+      (fun (A, B) => OperatorPowerMean α β A B) := by
+  have hc := @PowerMeanJointlyConvex (H →L[ℂ] H) _ _ _ α β hα hβ
+  refine ⟨convex_strictlyPositive_nonneg, fun ⟨A₁, B₁⟩ h₁ ⟨A₂, B₂⟩ h₂ a b ha hb hab => ?_⟩
+  simp only [OperatorPowerMean, Prod.smul_mk, Lmul_add, Rmul_add, Lmul_smul_real, Rmul_smul_real]
+  exact @hc.2 ⟨Rmul ℂ B₁, Lmul ℂ A₁⟩ ⟨Rmul_nonneg ℂ h₁.2, Lmul_isStrictlyPositive ℂ h₁.1⟩
+              ⟨Rmul ℂ B₂, Lmul ℂ A₂⟩ ⟨Rmul_nonneg ℂ h₂.2, Lmul_isStrictlyPositive ℂ h₂.1⟩
+              a b ha hb hab
+
 open RCLike
-/-- `(A, B) ↦ re ⟪OperatorPowerMean α β A B x, x⟫` is jointly concave in `(A, B)`
+/-- ## Generalised Lieb Concavity
+`(A, B) ↦ re ⟪OperatorPowerMean α β A B x, x⟫` is jointly concave in `(A, B)`
 for `0 < α, β ≤ 1`. -/
 theorem LiebConcavity_inner {α β : ℝ} (hα : 0 < α ∧ α ≤ 1) (hβ : 0 < β ∧ β ≤ 1) (x : H) :
     ConcaveOn ℝ {p : H × H | IsStrictlyPositive p.1 ∧ 0 ≤ p.2}
@@ -96,17 +108,5 @@ theorem LiebConcavity_inner' {α β : ℝ} (hα : 0 < α ∧ α ≤ 1) (hβ : 0 
       (fun (A, B) => re ⟪A ^ (β * (1 - α)) * x * B ^ α, x⟫_ℂ) := by
   refine LiebConcavity_inner hα hβ x |>.congr fun ⟨A, B⟩ ⟨hA, hB⟩ => ?_
   simp only [OperatorPowerMean_apply hA hB hα.1.le hβ.1.ne']
-
-theorem OperatorPowerMean_jointly_convex {α β : ℝ}
-    (hα : 1 ≤ α ∧ α ≤ 2) (hβ : 0 < β ∧ β ≤ 1) :
-    ConvexOn ℝ {(A, B) : H × H | IsStrictlyPositive A ∧ 0 ≤ B}
-      (fun (A, B) => OperatorPowerMean α β A B) := by
-  have hc := @PowerMeanJointlyConvex (H →L[ℂ] H) _ _ _ α β hα hβ
-  refine ⟨convex_strictlyPositive_nonneg, fun ⟨A₁, B₁⟩ h₁ ⟨A₂, B₂⟩ h₂ a b ha hb hab => ?_⟩
-  simp only [OperatorPowerMean, Prod.smul_mk, Lmul_add, Rmul_add, Lmul_smul_real, Rmul_smul_real]
-  exact @hc.2 ⟨Rmul ℂ B₁, Lmul ℂ A₁⟩ ⟨Rmul_nonneg ℂ h₁.2, Lmul_isStrictlyPositive ℂ h₁.1⟩
-              ⟨Rmul ℂ B₂, Lmul ℂ A₂⟩ ⟨Rmul_nonneg ℂ h₂.2, Lmul_isStrictlyPositive ℂ h₂.1⟩
-              a b ha hb hab
-
 
 end
