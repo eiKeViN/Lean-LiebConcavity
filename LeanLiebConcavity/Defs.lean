@@ -160,20 +160,22 @@ theorem GenPerspective_of_commute {L R : A} (hLR : Commute L R)
 theorem GenPerspective_of_rpow_commute {L R : A} {α β : ℝ} (hLR : Commute L R)
     (hL : 0 ≤ L) (hR : IsStrictlyPositive R) (hβ : β ≠ 0) :
     GenPerspective A (· ^ α) (· ^ β) (L, R) = L ^ α * R ^ (β * (1 - α)) := by
+  have hR₀ := hR.isUnit
+  have hRn := hR.nonneg
   have hRβ_sp : IsStrictlyPositive (cfc (· ^ β) R) :=
-    rpow_eq_cfc_real (A := A) hR.nonneg (y := β) ▸ hR.rpow
+    rpow_eq_cfc_real (A := A) hRn (y := β) ▸ hR.rpow
   have hLRnβ_comm : Commute L (R ^ (β * -1)) := hLR.rpow_right _
   calc GenPerspective A (· ^ α) (· ^ β) (L, R)
       = cfc (· ^ α) (L * (cfc (· ^ β) R) ^ (-1 : ℝ)) * cfc (· ^ β) R := by
           rw [GenPerspective_of_commute (· ^ α) (· ^ β) hLR hRβ_sp]
     _ = cfc (· ^ α) (L * R ^ (β * -1)) * R ^ β := by
-          rw [← rpow_eq_cfc_real hR.nonneg,
-              rpow_rpow R β (-1 : ℝ) hR.isUnit hβ hR.nonneg]
+          rw [← rpow_eq_cfc_real hRn,
+              rpow_rpow R β (-1 : ℝ) hR₀ hβ hRn]
     _ = (L * R ^ (β * -1)) ^ α * R ^ β := by
           rw [← rpow_eq_cfc_real <| hLRnβ_comm.mul_nonneg hL hR.rpow.nonneg]
     _ = L ^ α * (R ^ (β * -1)) ^ α * R ^ β := by
           rw [mul_rpow_of_commute hLRnβ_comm hL hR.rpow.nonneg]
     _ = L ^ α * R ^ (β * -1 * α) * R ^ β := by
-          rw [rpow_rpow R (β * -1) α hR.isUnit (by positivity) hR.nonneg]
+          rw [rpow_rpow R (β * -1) α hR₀ (by positivity) hRn]
     _ = L ^ α * R ^ (β * (1 - α)) := by
-          rw [mul_assoc, ← rpow_add hR.isUnit]; congr 2; ring
+          rw [mul_assoc, ← rpow_add hR₀]; congr 2; ring

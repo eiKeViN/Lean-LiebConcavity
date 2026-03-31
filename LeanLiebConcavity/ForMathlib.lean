@@ -1,6 +1,7 @@
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Commute
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic
+import Mathlib.Analysis.InnerProductSpace.Positive
 
 /-!
 # Lemmas missing from Mathlib
@@ -156,7 +157,7 @@ theorem isStrictlyPositive_convex_comb {a b : ℝ} {x y : A}
   · exact isStrictlyPositive_add_nonneg (hx.smul ha_pos) (smul_nonneg hb hy.nonneg)
 
 /-- The set of strictly positive elements is convex. -/
-theorem isStrictlyPositive_convex :
+theorem convex_isStrictlyPositive :
     Convex ℝ {a : A | IsStrictlyPositive a} :=
   fun _ hx _ hy _ _ ha hb hab => isStrictlyPositive_convex_comb ha hb hab hx hy
 
@@ -164,12 +165,18 @@ theorem isStrictlyPositive_convex :
 theorem convex_nonneg_strictlyPositive :
     Convex ℝ {p : A × A | 0 ≤ p.1 ∧ IsStrictlyPositive p.2} := by
   simpa only [Set.setOf_and] using
-    (convex_Ici 0).prod isStrictlyPositive_convex
+    (convex_Ici 0).prod convex_isStrictlyPositive
 
 theorem convex_strictlyPositive_nonneg :
     Convex ℝ {p : A × A | IsStrictlyPositive p.1 ∧ 0 ≤ p.2} := by
   simpa only [Set.setOf_and] using
-    isStrictlyPositive_convex.prod (convex_Ici 0)
+    convex_isStrictlyPositive.prod (convex_Ici 0)
+
+/-- The set `{(A, B) | IsStrictlyPositive A ∧ IsStrictlyPositive B}` is convex. -/
+theorem convex_strictlyPositive_prod :
+    Convex ℝ {p : A × A | IsStrictlyPositive p.1 ∧ IsStrictlyPositive p.2} := by
+  simpa only [Set.setOf_and] using
+    convex_isStrictlyPositive.prod convex_isStrictlyPositive
 
 end StrictPositivity
 
@@ -202,8 +209,12 @@ variable {R A : Type*} [CommSemiring R] [Semiring A] [Algebra R A]
 
 @[simp]
 theorem algebraMap_mul_eq_smul {a r : R} :
-    algebraMap R A (a * r) = a • algebraMap R A r:= by
+    algebraMap R A (a * r) = a • algebraMap R A r := by
   simp only [Algebra.algebraMap_eq_smul_one, smul_smul]
+
+theorem algebraMap_smul_eq_smul {a r : R} :
+    algebraMap R A (a • r) = a • algebraMap R A r := by
+  rw [smul_eq_mul, algebraMap_mul_eq_smul]
 
 variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
 
@@ -232,28 +243,18 @@ theorem spectrum_subset_convex_comb {I : Set ℝ} (hI : Convex ℝ I)
   have hyc := ContinuousFunctionalCalculus.isCompact_spectrum (R := ℝ) y
   have hnx := CFC.spectrum_nonempty ℝ x
   have hny := CFC.spectrum_nonempty ℝ y
-  have ⟨hx_lo, hx_hi⟩ := spectral_bounds x hx_sa hxc
-  have ⟨hy_lo, hy_hi⟩ := spectral_bounds y hy_sa hyc
-  intro t ht
-  have hl_I : a • sInf (spectrum ℝ x) + b • sInf (spectrum ℝ y) ∈ I :=
-    hI (hx_spec <| hxc.sInf_mem hnx) (hy_spec <| hyc.sInf_mem hny) ha hb hab
-  have hu_I : a • sSup (spectrum ℝ x) + b • sSup (spectrum ℝ y) ∈ I :=
-    hI (hx_spec <| hxc.sSup_mem hnx) (hy_spec <| hyc.sSup_mem hny) ha hb hab
-  have lower : algebraMap ℝ A (a * sInf (spectrum ℝ x) + b * sInf (spectrum ℝ y))
-      ≤ a • x + b • y := by
-    simp_rw [map_add, algebraMap_mul_eq_smul]
-    exact add_le_add (smul_le_smul_of_nonneg_left hx_lo ha)
-                     (smul_le_smul_of_nonneg_left hy_lo hb)
-  have upper : a • x + b • y
-      ≤ algebraMap ℝ A (a * sSup (spectrum ℝ x) + b * sSup (spectrum ℝ y)) := by
-    simp_rw [map_add, algebraMap_mul_eq_smul]
-    exact add_le_add (smul_le_smul_of_nonneg_left hx_hi ha)
-                     (smul_le_smul_of_nonneg_left hy_hi hb)
+  obtain ⟨hx_lo, hx_hi⟩ := spectral_bounds x hx_sa hxc
+  obtain ⟨hy_lo, hy_hi⟩ := spectral_bounds y hy_sa hyc
+  have hinf_I := hI (hx_spec <| hxc.sInf_mem hnx) (hy_spec <| hyc.sInf_mem hny) ha hb hab
+  have hsup_I := hI (hx_spec <| hxc.sSup_mem hnx) (hy_spec <| hyc.sSup_mem hny) ha hb hab
   have hsa : IsSelfAdjoint (a • x + b • y) := isSelfAdjoint_linear_comb hx_sa hy_sa
-  refine hI.ordConnected.out hl_I hu_I ⟨?_, ?_⟩
-  · exact (algebraMap_le_iff_le_spectrum hsa).mp lower t ht
-  · exact (le_algebraMap_iff_spectrum_le hsa).mp upper t ht
-
+  intro t ht
+  refine hI.ordConnected.out hinf_I hsup_I
+    ⟨(algebraMap_le_iff_le_spectrum hsa).mp ?_ t ht,
+    (le_algebraMap_iff_spectrum_le hsa).mp ?_ t ht⟩
+  all_goals
+    simp_rw [map_add, algebraMap_smul_eq_smul]
+    gcongr
 /-- The set of self-adjoint elements with spectrum in a convex set `I` is convex. -/
 theorem convex_selfAdjoint_spectrum_subset {I : Set ℝ} (hI : Convex ℝ I) :
     Convex ℝ {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} := by
@@ -328,3 +329,19 @@ protected theorem Commute.rpow_rpow {a b : A} (h : Commute a b) (r s : ℝ) :
   (h.rpow_left r).rpow_right s
 
 end CFCCommuteRpow
+
+/-! ### Inner product monotonicity under the Loewner order -/
+
+section LoewnerInnerMono
+
+variable {𝕜 : Type*} {E : Type*} [RCLike 𝕜]
+  [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
+
+lemma reApplyInnerSelf_mono
+    {S T : E →L[𝕜] E} (h : S ≤ T) (x : E) :
+    RCLike.re (inner 𝕜 (S x) x) ≤ RCLike.re (inner 𝕜 (T x) x):= by
+  have := h.re_inner_nonneg_left x
+  simp only [ContinuousLinearMap.sub_apply, inner_sub_left, map_sub] at this
+  linarith
+
+end LoewnerInnerMono

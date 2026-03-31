@@ -35,7 +35,7 @@ private lemma smul_rpow_conj
 -- [thm:gen_perspective_jointly_convex] Eba2011 Thm 2.5, generalized perspective jointly convex
 theorem PerspectiveJointConvex
     (hf : ContinuousOn f (Ici 0) ∧ f 0 ≤ 0)
-    (hg : ContinuousOn g (Ici 0) ∧ ∀ ⦃x : ℝ⦄, 0 < x → 0 < g x)
+    (hg : ContinuousOn g (Ici 0) ∧ ∀ (x : ℝ), 0 < x → 0 < g x)
     (hf_opconvex : OperatorConvexOn.{u} (Ici 0) f)
     (hg_opconcav : OperatorConcaveOn.{u} (Ici 0) g) :
     ConvexOn ℝ {p : A × A | 0 ≤ p.1 ∧ IsStrictlyPositive p.2}
@@ -170,9 +170,9 @@ theorem PerspectiveJointConvex
 -- [cor:gen_perspective_jointly_concave] Eba2011 Cor 2.6(i), generalized perspective jointly concave
 theorem PerspectiveJointConcave
     (hf : ContinuousOn f (Ici 0) ∧ f 0 ≥ 0)
-    (hg : ContinuousOn g (Ici 0) ∧ ∀ ⦃x : ℝ⦄, 0 < x → 0 < g x)
+    (hg : ContinuousOn g (Ici 0) ∧ ∀ (x : ℝ), 0 < x → 0 < g x)
     (hf_opconcave : OperatorConcaveOn.{u} (Ici 0) f)
-    (hg_opconcav : OperatorConcaveOn.{u} (Ici 0) g) :
+    (hg_opconcave : OperatorConcaveOn.{u} (Ici 0) g) :
     ConcaveOn ℝ {p : A × A | 0 ≤ p.1 ∧ IsStrictlyPositive p.2}
       (GenPerspective A f g) := by
   have : ConvexOn ℝ {p : A × A | 0 ≤ p.1 ∧ IsStrictlyPositive p.2}
@@ -180,7 +180,7 @@ theorem PerspectiveJointConcave
     PerspectiveJointConvex
       ⟨hf.1.neg, neg_nonpos.mpr hf.2⟩ hg
       (operatorConcaveOn_neg_iff_convexOn.mp hf_opconcave)
-      hg_opconcav
+      hg_opconcave
   rwa [GenPerspective_neg' f g, neg_convexOn_iff] at this
 
 -- [cor:power_convex] Löwner, x ↦ x^r is operator convex on [0,∞) for 1 ≤ r ≤ 2
@@ -211,7 +211,7 @@ theorem PowerMeanJointlyConcave
       (GenPerspective A (· ^ α) (· ^ β)) :=
   PerspectiveJointConcave
     ⟨(Real.continuous_rpow_const hα.1.le).continuousOn, by simp [Real.zero_rpow hα.1.ne']⟩
-    ⟨(Real.continuous_rpow_const hβ.1.le).continuousOn, fun {_} hx => Real.rpow_pos_of_pos hx β⟩
+    ⟨(Real.continuous_rpow_const hβ.1.le).continuousOn, fun _ hx => Real.rpow_pos_of_pos hx β⟩
     (PowerOperatorConcave hα)
     (PowerOperatorConcave hβ)
 
@@ -224,7 +224,7 @@ theorem PowerMeanJointlyConvex
   PerspectiveJointConvex
     ⟨(Real.continuous_rpow_const (by linarith)).continuousOn,
      by simp [Real.zero_rpow (by linarith : α ≠ 0)]⟩
-    ⟨(Real.continuous_rpow_const hβ.1.le).continuousOn, fun {_} hx => Real.rpow_pos_of_pos hx β⟩
+    ⟨(Real.continuous_rpow_const hβ.1.le).continuousOn, fun _ hx => Real.rpow_pos_of_pos hx β⟩
     (PowerOperatorConvex hα)
     (PowerOperatorConcave hβ)
 
