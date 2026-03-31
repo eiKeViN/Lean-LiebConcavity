@@ -51,7 +51,8 @@ Lean-LiebConcavity/
     ├── HStarAlgebra.lean      ← H*-algebra typeclass (Ambrose 1945); Lmul/Rmul as
     │                             StarAlgHom; CFC commutativity L_{f(a)} = f(L_a)
     ├── Jensen.lean            ← Jensen's operator inequality (HP1982, HP2003)
-    └── Main.lean              ← Lieb, Lieb extension, Ando, Corollary 1.3
+    └── Main.lean              ← Concavity and Convexity of General Perspective functions
+    └── Lieb.lean              ← Lieb and related results
 ```
 
 ---
@@ -114,8 +115,6 @@ The correspondence (for future reference) is:
 
 - **Jensen nodes are hardest:** `JensenOperator1982` and `JensenOperator2003` should
   be attempted last or taken as axioms initially.
-- **Check Lean-QuantumInfo's `Lieb.lean`** before working on `Main.lean` — understand
-  what they have sorry'd and ensure no duplication.
 
 ---
 
