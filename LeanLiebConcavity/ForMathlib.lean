@@ -337,9 +337,16 @@ section LoewnerInnerMono
 variable {𝕜 : Type*} {E : Type*} [RCLike 𝕜]
   [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
 
-lemma reApplyInnerSelf_mono
+lemma reApplyInnerSelf_mono_right
     {S T : E →L[𝕜] E} (h : S ≤ T) (x : E) :
-    RCLike.re (inner 𝕜 (S x) x) ≤ RCLike.re (inner 𝕜 (T x) x):= by
+    RCLike.re (inner 𝕜 x (S x)) ≤ RCLike.re (inner 𝕜 x (T x)) := by
+  have := h.re_inner_nonneg_right x
+  simp only [ContinuousLinearMap.sub_apply, inner_sub_right, map_sub] at this
+  linarith
+
+lemma reApplyInnerSelf_mono_left
+    {S T : E →L[𝕜] E} (h : S ≤ T) (x : E) :
+    RCLike.re (inner 𝕜 (S x) x) ≤ RCLike.re (inner 𝕜 (T x) x) := by
   have := h.re_inner_nonneg_left x
   simp only [ContinuousLinearMap.sub_apply, inner_sub_left, map_sub] at this
   linarith
