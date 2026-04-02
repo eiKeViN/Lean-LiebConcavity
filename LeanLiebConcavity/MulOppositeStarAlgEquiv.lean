@@ -1,9 +1,11 @@
+module
+
 import Mathlib.Algebra.Star.StarAlgHom
 import Mathlib.Algebra.Star.Basic
 import Mathlib.Data.Real.Star
 import Mathlib.Topology.Algebra.Star
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unique
-import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unique
+public import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic
 
 /-!
 # The star-conjugation map `a ↦ op(star a)` as a `StarAlgEquiv ℝ A Aᵐᵒᵖ`
@@ -32,6 +34,8 @@ open MulOpposite
 
 variable {A : Type*} [Ring A] [StarRing A] [Algebra ℝ A] [StarModule ℝ A]
 variable [TopologicalSpace A] [ContinuousStar A]
+
+@[expose] public section
 
 /-! ### The star-algebra equivalence -/
 

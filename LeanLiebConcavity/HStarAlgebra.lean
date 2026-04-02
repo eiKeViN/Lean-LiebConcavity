@@ -1,8 +1,9 @@
-import Mathlib.Analysis.InnerProductSpace.Positive
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unique
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
-import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic
-import LeanLiebConcavity.MulOppositeStarAlgEquiv
+module
+
+public import Mathlib.Analysis.InnerProductSpace.Defs
+public import Mathlib.Analysis.InnerProductSpace.Positive
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+public import LeanLiebConcavity.MulOppositeStarAlgEquiv
 
 /-!
 # H*-algebra (Ambrose 1945)
@@ -32,22 +33,21 @@ field, avoiding instance conflicts for abstract types.
 - Warren Ambrose, *Structure theorems for a special class of Banach algebras*,
   Trans. AMS 57 (1945), 364–386.
 -/
+@[expose] public section
 
 open scoped ComplexOrder
 
 /-! ## Class definition -/
 
-class HStarAlgebra (𝕜 : Type*) (H : Type*) [S : Semiring 𝕜] [RCLike 𝕜] extends
+variable (𝕜 : Type*) [RCLike 𝕜]
+
+class HStarAlgebra (H : Type*) [S : Semiring 𝕜] extends
     NormedRing H, InnerProductSpace 𝕜 H, Algebra 𝕜 H, StarRing H where
   inner_mul_left {a x y : H} : inner (a * x) y = inner x (star a * y)
   inner_mul_right {a x y : H} : inner (x * a) y = inner x (y * star a)
 
-export HStarAlgebra (inner_mul_left inner_mul_right)
 
-section HStarAlgebra
-
-variable (𝕜 : Type*)
-variable {H : Type*} [RCLike 𝕜] [HStarAlgebra 𝕜 H]
+variable {H : Type*} [HStarAlgebra 𝕜 H]
 local notation "⟪" x ", " y "⟫" => @inner 𝕜 H _ x y
 
 /-! ### Inner product identities
@@ -59,7 +59,7 @@ the adjoint calculation `Lmul (star a) = adjoint (Lmul a)`.
 @[simp]
 theorem inner_left_mul_eq {a x y : H} :
     ⟪a * x, y⟫ = ⟪x, star a * y⟫ :=
-  inner_mul_left
+  HStarAlgebra.inner_mul_left
 
 @[simp]
 theorem inner_right_mul_eq {a x y : H} :
@@ -68,7 +68,7 @@ theorem inner_right_mul_eq {a x y : H} :
 @[simp]
 theorem inner_mul_left_eq {a x y : H} :
     ⟪x * a, y⟫ = ⟪x, y * star a⟫ :=
-  inner_mul_right
+  HStarAlgebra.inner_mul_right
 
 @[simp]
 theorem inner_mul_right_eq {a x y : H} :
@@ -280,7 +280,6 @@ lemma re_inner_Rmul_star_mul_self_nonneg (s x : H) :
   exact inner_self_nonneg
 
 variable [PartialOrder H] [StarOrderedRing H]
-attribute [local instance] ContinuousLinearMap.instLoewnerPartialOrder
 
 theorem Lmul_isPositive {a : H} (ha : 0 ≤ a) : (Lmul 𝕜 a).IsPositive := by
   refine ⟨Lmul_isSymmetric 𝕜 (IsSelfAdjoint.of_nonneg ha), fun x => ?_⟩
@@ -479,6 +478,3 @@ theorem Rmul_rpow_nonneg_apply {r : ℝ} {a x : H}
 end Right
 
 end CFC
-
-
-end HStarAlgebra
