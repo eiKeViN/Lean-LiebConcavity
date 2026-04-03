@@ -19,9 +19,11 @@ Main references:
 |------|----------|
 | `Defs.lean` | `OperatorConvexOn`/`OperatorConcaveOn`; `GenPerspective`; `GenPerspective_of_commute` (*done*); `GenPerspective_of_rpow_commute` (*done, pending* `mul_rpow_of_commute`) |
 | `HStarAlgebra.lean` | H\*-algebra typeclass; `Lmul`/`Rmul` as star-algebra homs (*done*); CFC commutativity for both `Lmul` and `Rmul` (*done*) |
+| `Inner.lean` | Frobenius inner product `⟪A, B⟫_𝕜 = (B * Aᴴ).trace` and its properties (*done*) |
 | `Jensen.lean` | Jensen's operator inequality (*sorried*) |
 | `Main.lean` | `GenPerspectiveJointlyConcave` / `GenPerspectiveJointlyConvex`; `PowerMeanJointlyConcave` / `PowerMeanJointlyConvex` (*done, depending on Jensen*) |
-| `Lieb.lean` | `LiebConcavity_general` / `AndoConvexity_general` (abstract H\*-algebra versions, *done*); `LiebExtension` [Thm 1.2(b)], `LiebConcavity` [Thm 1.2(a)], `AndoConvexity` [Thm 1.4] (*done*) |
+| `MatrixSpecialization.lean` | `FrobeniusMat` namespace: all typeclasses for `Matrix n n 𝕜` with Frobenius norm/inner product — `NormedAddCommGroup`, `InnerProductSpace`, `NormedRing`, `CompleteSpace`, `HStarAlgebra`, `ContinuousFunctionalCalculus`, and their CLM endomorphism counterparts (*done*) |
+| `Lieb.lean` | Abstract H\*-algebra theorems: `LiebConcavity_general`, `AndoConvexity_general`, `LiebExtension` [Thm 1.2(b)], `LiebConcavity` [Thm 1.2(a)], `AndoConvexity` [Thm 1.4] (*done*); `FrobeniusMat` namespace: matrix specializations of all three main theorems with `A.PosDef ∧ B.PosSemidef` hypotheses and explicit trace formula `re ((A ^ _ * K * B ^ _ * Kᴴ).trace)` (*done*) |
 | `ForMathlib.lean` | Lemmas not yet in Mathlib: `Commute.rpow_right/left/rpow`, `mul_rpow_of_commute` (*sorried*), `cfc_isStrictlyPositive_of_pos/nonneg`, strict positivity lemmas, `spectrum_subset_convex_comb` |
 | `MulOppositeStarAlgEquiv.lean` | `starAlgEquiv : A ≃⋆ₐ[ℝ] Aᵐᵒᵖ`; `opStar`; CFC and rpow commutativity across `op` (*done*) |
 
