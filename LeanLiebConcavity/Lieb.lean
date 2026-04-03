@@ -1,7 +1,5 @@
---- import LeanLiebConcavity.HStarAlgebra
 import LeanLiebConcavity.Main
 import LeanLiebConcavity.MatrixSpecialization
---- import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 
 noncomputable section
 
@@ -177,10 +175,10 @@ theorem AndoConvexity {q r : ℝ} (hq : 1 ≤ q ∧ q ≤ 2) (hr : 0 < r)
 /-! ## Specialization to n×n Complex Matrices
 
 The specialized matrix theorems follow from instantiating the abstract theorems with the
-`HStarAlgebra ℂ (Matrix n n ℂ)` instance from `MatrixSpecialization.lean`. They are defined
-by importing `MatrixSpecialization` and calling the abstract `LiebConcavity`,
-`LiebExtension`, and `AndoConvexity` theorems with the matrix instances.
-(Explicit definitions omitted due to Lean 4 subscript notation parsing issues.) -/
+relevant instances packaged in `MatrixSpecialization.lean`.
+
+Must be called inside the namespace `FrobeniusMat` to ensure fixed instances on matrices.
+-/
 
 
 --- open the packed instances on Matrix n n ℂ
@@ -204,31 +202,31 @@ set_option backward.isDefEq.respectTransparency false in
 /-- **Lieb's Extension Theorem** for matrices [Nik2013, Thm 1.2(b)]:
 `(A, B) ↦ re ((A ^ q * K * B ^ p * Kᴴ).trace)` is jointly concave in `(A, B)`
 for `p, q > 0` with `p + q ≤ 1`, `A` (strictly) positive definite and `B` positive semidefinite -/
-protected theorem LiebExtension {p q : ℝ} (hp : 0 < p) (hq : 0 < q) (hpq : p + q ≤ 1) (K : M[n]) :
+theorem LiebExtension_matrix {p q : ℝ} (hp : 0 < p) (hq : 0 < q) (hpq : p + q ≤ 1) (K : M[n]) :
     ConcaveOn ℝ {(A, B) : M[n] × M[n] | A.PosDef ∧ B.PosSemidef}
       (fun (A, B) => re ((A ^ q * K * B ^ p * Kᴴ).trace)) := by
-  convert LiebExtension hp hq hpq K using 2
+  convert LiebExtension hp hq hpq K using 1
   simp_rw [Matrix.isStrictlyPositive_iff_posDef, Matrix.nonneg_iff_posSemidef]
 
 set_option backward.isDefEq.respectTransparency false in
 /-- **Lieb's Concavity Theorem** for matrices [Nik2013, Thm 1.2(a)]:
 `(A, B) ↦ re ((A ^ s * K * B ^ (1 - s) * Kᴴ).trace)` is jointly concave in `(A, B)`
 for `0 < s < 1`, `A` positive definite and `B` positive semidefinite -/
-protected theorem LiebConcavity {s : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (K : M[n]) :
+theorem LiebConcavity_matrix {s : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (K : M[n]) :
     ConcaveOn ℝ {(A, B) : M[n] × M[n] | A.PosDef ∧ B.PosSemidef}
       (fun (A, B) => re ((A ^ s * K * B ^ (1 - s) * Kᴴ).trace)) := by
-  convert LiebConcavity hs0 hs1 K using 2
+  convert LiebConcavity hs0 hs1 K using 1
   simp_rw [Matrix.isStrictlyPositive_iff_posDef, Matrix.nonneg_iff_posSemidef]
 
 set_option backward.isDefEq.respectTransparency false in
 /-- **Ando's Convexity Theorem** for matrices [Nik2013, Thm 1.4]:
 `(A, B) ↦ re ((A ^ (-r) * K * B ^ q * Kᴴ).trace)` is jointly convex in `(A, B)`
 for `1 ≤ q ≤ 2`, `0 < r`, `q - r > 1`, `A` positive definite and `B` positive semidefinite -/
-protected theorem AndoConvexity {q r : ℝ} (hq : 1 ≤ q ∧ q ≤ 2) (hr : 0 < r)
+theorem AndoConvexity_matrix {q r : ℝ} (hq : 1 ≤ q ∧ q ≤ 2) (hr : 0 < r)
     (hqr : q - r > 1) (K : M[n]) :
     ConvexOn ℝ {(A, B) : M[n] × M[n] | A.PosDef ∧ B.PosSemidef}
       (fun (A, B) => re ((A ^ (-r) * K * B ^ q * Kᴴ).trace)) := by
-  convert AndoConvexity hq hr hqr K using 2
+  convert AndoConvexity hq hr hqr K using 1
   simp_rw [Matrix.isStrictlyPositive_iff_posDef, Matrix.nonneg_iff_posSemidef]
 
 end FrobeniusMat

@@ -3,7 +3,7 @@ module
 public import Mathlib.Analysis.InnerProductSpace.Defs
 public import Mathlib.Analysis.InnerProductSpace.Positive
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
-public import LeanLiebConcavity.MulOppositeStarAlgEquiv
+import LeanLiebConcavity.MulOppositeStarAlgEquiv
 
 /-!
 # H*-algebra (Ambrose 1945)
@@ -41,7 +41,7 @@ open scoped ComplexOrder
 
 variable (𝕜 : Type*) [RCLike 𝕜]
 
-class HStarAlgebra (H : Type*) [S : Semiring 𝕜] extends
+class HStarAlgebra (H : Type*) extends
     NormedRing H, InnerProductSpace 𝕜 H, Algebra 𝕜 H, StarRing H where
   inner_mul_left {a x y : H} : inner (a * x) y = inner x (star a * y)
   inner_mul_right {a x y : H} : inner (x * a) y = inner x (y * star a)

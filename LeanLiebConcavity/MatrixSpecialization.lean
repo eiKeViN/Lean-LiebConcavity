@@ -2,9 +2,6 @@ module
 
 public import LeanLiebConcavity.HStarAlgebra
 public import LeanLiebConcavity.Inner
---- import Mathlib.Analysis.Matrix.Normed
---- import Mathlib.Analysis.Matrix.Order
---- public import Mathlib.Analysis.InnerProductSpace.ofNorm
 public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 
@@ -19,16 +16,13 @@ together with `CStarAlgebra` and `StarOrderedRing` instances on endomorphisms.
 -/
 
 @[expose] public section
-
 noncomputable section
-
-set_option linter.unusedDecidableInType false
-
 open scoped ComplexOrder Matrix
+namespace FrobeniusMat
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
-
-namespace FrobeniusMat
+set_option linter.unusedDecidableInType false
+set_option linter.unusedFintypeInType false
 
 section RCLike
 
@@ -38,23 +32,23 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 
 /-- The Frobenius norm on `Matrix n n 𝕜`: `‖X‖ = (∑ᵢⱼ |Xᵢⱼ|²)^(1/2)`.
 Built on nested `PiLp 2` layers, so topology is the standard product topology, diamond avoid -/
-scoped instance instNormedAddCommGroup : NormedAddCommGroup (Matrix n n 𝕜) :=
+instance (priority := high) instNormedAddCommGroup : NormedAddCommGroup (Matrix n n 𝕜) :=
   Matrix.frobeniusNormedAddCommGroup
 --- example : (inferInstance : TopologicalSpace (Matrix n n 𝕜))
 ---     = NormedAddCommGroup.toMetricSpace.toUniformSpace.toTopologicalSpace :=
 ---   rfl
 
 /-- The Frobenius inner product on `Matrix n n 𝕜`: `‖X‖ = (∑ᵢⱼ |Xᵢⱼ|²)^(1/2)`. -/
-scoped instance instInnerProductSpace : InnerProductSpace 𝕜 (Matrix n n 𝕜) :=
+instance (priority := high) instInnerProductSpace : InnerProductSpace 𝕜 (Matrix n n 𝕜) :=
   Matrix.frobeniusInnerProductSpace
 
 /-! ### Normed -/
 
 /-- The Frobenius norm is good. -/
-scoped instance instNormedRing : NormedRing (Matrix n n 𝕜) :=
+instance (priority := high) instNormedRing : NormedRing (Matrix n n 𝕜) :=
   Matrix.frobeniusNormedRing
 
-scoped instance instNormedSpace : NormedSpace 𝕜 (Matrix n n 𝕜) :=
+instance (priority := high) instNormedSpace : NormedSpace 𝕜 (Matrix n n 𝕜) :=
   Matrix.frobeniusNormedSpace
 
 /-! ### CompleteSpace
@@ -64,7 +58,7 @@ this creates no diamonds when used by CStarAlgebra inference.
 
 set_option backward.isDefEq.respectTransparency false in
 /-- The standard topology on `Matrix n n 𝕜` is complete. -/
-scoped instance instCompleteSpace : CompleteSpace (Matrix n n 𝕜) :=
+instance instCompleteSpace : CompleteSpace (Matrix n n 𝕜) :=
   inferInstance
 
 /-! ### HStarAlgebra instance -/
@@ -75,7 +69,8 @@ open Matrix in
 The two H*-algebra axioms follow from trace cyclicity `tr(AB) = tr(BA)`:
 - `inner_mul_left`: `⟪a*x, y⟫ = tr(y*(ax)ᴴ) = tr(y*xᴴ*aᴴ) = tr(aᴴ*y*xᴴ) = ⟪x, aᴴ*y⟫`
 - `inner_mul_right`: `⟪x*a, y⟫ = tr(y*(xa)ᴴ) = tr(y*aᴴ*xᴴ) = ⟪x, y*aᴴ⟫` -/
-@[reducible] scoped instance instHStarAlgebra : HStarAlgebra 𝕜 (Matrix n n 𝕜) where
+@[instance_reducible, scoped instance]
+def instHStarAlgebra : HStarAlgebra 𝕜 (Matrix n n 𝕜) where
   __ := (inferInstance : NormedRing (Matrix n n 𝕜))
   __ := (inferInstance : InnerProductSpace 𝕜 (Matrix n n 𝕜))
   __ := (inferInstance : Algebra 𝕜 (Matrix n n 𝕜))
@@ -89,21 +84,21 @@ The two H*-algebra axioms follow from trace cyclicity `tr(AB) = tr(BA)`:
 /-! ### PartialOrder, StarOrderedRing, NonnegSpectrumClass -/
 
 --- Loewner (PSD) partial order: `A ≤ B ↔ (B - A).PosSemidef`.
-scoped instance LoewnerOrder : PartialOrder (Matrix n n 𝕜) :=
+instance LoewnerOrder : PartialOrder (Matrix n n 𝕜) :=
   Matrix.instPartialOrder
 
 --- Nonnegativity With respect to loewner order.
-scoped instance instNonnegSpectrumClass : NonnegSpectrumClass ℝ (Matrix n n 𝕜) :=
+instance instNonnegSpectrumClass : NonnegSpectrumClass ℝ (Matrix n n 𝕜) :=
   Matrix.instNonnegSpectrumClass
 
 --- Star-ordered ring on `Matrix n n 𝕜` under the Loewner order.
-scoped instance instStarOrderedRing : StarOrderedRing (Matrix n n 𝕜) :=
+instance instStarOrderedRing : StarOrderedRing (Matrix n n 𝕜) :=
    Matrix.instStarOrderedRing
 
 /-! ### PosSMulMono ℝ (Matrix n n ℂ) -/
 
 /-- Nonneg real scalar multiplication preserves the Loewner order on `Matrix n n 𝕜`. -/
-scoped instance instPosSMulMono : PosSMulMono ℝ (Matrix n n 𝕜) where
+instance instPosSMulMono : PosSMulMono ℝ (Matrix n n 𝕜) where
   smul_le_smul_of_nonneg_left := by
     intro r hr A B hAB
     rw [Matrix.le_iff, ← Matrix.nonneg_iff_posSemidef] at hAB ⊢
@@ -128,7 +123,7 @@ For CStarAlgebra and StarOrderRing instances, need to set 𝕜 = ℂ
 /-! ### NormedRing -/
 
 set_option backward.isDefEq.respectTransparency false in
-scoped instance instNormedRingCLM : NormedRing (Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜) :=
+instance instNormedRingCLM : NormedRing (Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜) :=
   ContinuousLinearMap.toNormedRing --- `inferInstance` √
 -- example : (inferInstance : Norm (Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜)) =
 --     NormedRing.toNorm :=
@@ -138,7 +133,7 @@ scoped instance instNormedRingCLM : NormedRing (Matrix n n 𝕜 →L[𝕜] Matri
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Loewner partial order on `Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜`. -/
-scoped instance LoewnerOrderCLM : PartialOrder (Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜) :=
+instance LoewnerOrderCLM : PartialOrder (Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜) :=
   ContinuousLinearMap.instLoewnerPartialOrder --- `inferInstance` √
 
 end RCLike
@@ -149,16 +144,21 @@ section Complex
 
 set_option backward.isDefEq.respectTransparency false in
 /-- `CStarAlgebra` on `Matrix n n ℂ →L[ℂ] Matrix n n ℂ`. -/
-scoped instance instCStarAlgebraCLM : CStarAlgebra (Matrix n n ℂ →L[ℂ] Matrix n n ℂ) :=
+instance instCStarAlgebraCLM : CStarAlgebra (Matrix n n ℂ →L[ℂ] Matrix n n ℂ) :=
   instCStarAlgebraContinuousLinearMapComplexIdOfCompleteSpace --- `inferInstance` √
 
 /-! ### StarOrderedRing -/
 
 set_option backward.isDefEq.respectTransparency false in
 /-- `StarOrderedRing` on `Matrix n n ℂ →L[ℂ] Matrix n n ℂ` w.r.t Loewner order -/
-scoped instance instCStarRingCLM : StarOrderedRing (Matrix n n ℂ →L[ℂ] Matrix n n ℂ) :=
+instance instCStarRingCLM : StarOrderedRing (Matrix n n ℂ →L[ℂ] Matrix n n ℂ) :=
   ContinuousLinearMap.instStarOrderedRing
 
 end Complex
+
+attribute [scoped instance] instNormedAddCommGroup instInnerProductSpace
+instNormedRing instNormedSpace instCompleteSpace
+LoewnerOrder instPosSMulMono instNonnegSpectrumClass instStarOrderedRing
+instNormedRingCLM LoewnerOrderCLM instCStarAlgebraCLM instCStarRingCLM
 
 end FrobeniusMat
