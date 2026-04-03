@@ -28,7 +28,7 @@ section RCLike
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
-/-! ### NormedAddCommGroup and InnerProductSpace -/
+/-! ### Norme and InnerProductSpace -/
 
 /-- The Frobenius norm on `Matrix n n 𝕜`: `‖X‖ = (∑ᵢⱼ |Xᵢⱼ|²)^(1/2)`.
 Built on nested `PiLp 2` layers, so topology is the standard product topology, diamond avoid -/
@@ -37,29 +37,13 @@ instance (priority := high) instNormedAddCommGroup : NormedAddCommGroup (Matrix 
 --- example : (inferInstance : TopologicalSpace (Matrix n n 𝕜))
 ---     = NormedAddCommGroup.toMetricSpace.toUniformSpace.toTopologicalSpace :=
 ---   rfl
+/-- The Frobenius norm is good -/
+instance (priority := high) instNormedRing : NormedRing (Matrix n n 𝕜) :=
+  Matrix.frobeniusNormedRing
 
 /-- The Frobenius inner product on `Matrix n n 𝕜`: `‖X‖ = (∑ᵢⱼ |Xᵢⱼ|²)^(1/2)`. -/
 instance (priority := high) instInnerProductSpace : InnerProductSpace 𝕜 (Matrix n n 𝕜) :=
   Matrix.frobeniusInnerProductSpace
-
-/-! ### Normed -/
-
-/-- The Frobenius norm is good. -/
-instance (priority := high) instNormedRing : NormedRing (Matrix n n 𝕜) :=
-  Matrix.frobeniusNormedRing
-
-instance (priority := high) instNormedSpace : NormedSpace 𝕜 (Matrix n n 𝕜) :=
-  Matrix.frobeniusNormedSpace
-
-/-! ### CompleteSpace
-Since the topology induced by (Frobenius) norm is definitionally equal to the standard one,
-this creates no diamonds when used by CStarAlgebra inference.
--/
-
-set_option backward.isDefEq.respectTransparency false in
-/-- The standard topology on `Matrix n n 𝕜` is complete. -/
-instance instCompleteSpace : CompleteSpace (Matrix n n 𝕜) :=
-  inferInstance
 
 /-! ### HStarAlgebra instance -/
 
@@ -105,12 +89,7 @@ instance instPosSMulMono : PosSMulMono ℝ (Matrix n n 𝕜) where
     rw [← show r • (B - A) = r • B - r • A from smul_sub r B A]
     exact smul_nonneg hr hAB
 
-/-! ### ContinuousFunctionalCalculus -/
-
-set_option backward.isDefEq.respectTransparency false in
-/-- CFC for self-adjoint (Hermitian) matrices, independent of norm choice. -/
-scoped instance instCFCReal : ContinuousFunctionalCalculus ℝ (Matrix n n 𝕜) IsSelfAdjoint :=
-  inferInstance
+/-! ### ContinuousFunctionalCalculus (inferred) -/
 
 /-!
 ## Instances on (continuous) linear endomorphisms
@@ -120,14 +99,7 @@ The (operator) norm on `Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜` is instantia
 For CStarAlgebra and StarOrderRing instances, need to set 𝕜 = ℂ
 -/
 
-/-! ### NormedRing -/
-
-set_option backward.isDefEq.respectTransparency false in
-instance instNormedRingCLM : NormedRing (Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜) :=
-  ContinuousLinearMap.toNormedRing --- `inferInstance` √
--- example : (inferInstance : Norm (Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜)) =
---     NormedRing.toNorm :=
---   rfl
+/-! ### NormedRing (inferred) -/
 
 /-! ### Partial Order -/
 
@@ -140,25 +112,14 @@ end RCLike
 
 section Complex
 
-/-! ### CStarAlgebra -/
+/-! ### CStarAlgebra (inferred) -/
 
-set_option backward.isDefEq.respectTransparency false in
-/-- `CStarAlgebra` on `Matrix n n ℂ →L[ℂ] Matrix n n ℂ`. -/
-instance instCStarAlgebraCLM : CStarAlgebra (Matrix n n ℂ →L[ℂ] Matrix n n ℂ) :=
-  instCStarAlgebraContinuousLinearMapComplexIdOfCompleteSpace --- `inferInstance` √
-
-/-! ### StarOrderedRing -/
-
-set_option backward.isDefEq.respectTransparency false in
-/-- `StarOrderedRing` on `Matrix n n ℂ →L[ℂ] Matrix n n ℂ` w.r.t Loewner order -/
-instance instCStarRingCLM : StarOrderedRing (Matrix n n ℂ →L[ℂ] Matrix n n ℂ) :=
-  ContinuousLinearMap.instStarOrderedRing
+/-! ### StarOrderedRing (inferred) -/
 
 end Complex
 
-attribute [scoped instance] instNormedAddCommGroup instInnerProductSpace
-instNormedRing instNormedSpace instCompleteSpace
+attribute [scoped instance] instNormedAddCommGroup instNormedRing instInnerProductSpace
 LoewnerOrder instPosSMulMono instNonnegSpectrumClass instStarOrderedRing
-instNormedRingCLM LoewnerOrderCLM instCStarAlgebraCLM instCStarRingCLM
+LoewnerOrderCLM
 
 end FrobeniusMat
