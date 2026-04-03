@@ -243,11 +243,11 @@ theorem spectrum_subset_convex_comb {I : Set ℝ} (hI : Convex ℝ I)
   have hyc := ContinuousFunctionalCalculus.isCompact_spectrum (R := ℝ) y
   have hnx := CFC.spectrum_nonempty ℝ x
   have hny := CFC.spectrum_nonempty ℝ y
-  obtain ⟨hx_lo, hx_hi⟩ := spectral_bounds x hx_sa hxc
-  obtain ⟨hy_lo, hy_hi⟩ := spectral_bounds y hy_sa hyc
+  have hsa : IsSelfAdjoint (a • x + b • y) := isSelfAdjoint_linear_comb hx_sa hy_sa
   have hinf_I := hI (hx_spec <| hxc.sInf_mem hnx) (hy_spec <| hyc.sInf_mem hny) ha hb hab
   have hsup_I := hI (hx_spec <| hxc.sSup_mem hnx) (hy_spec <| hyc.sSup_mem hny) ha hb hab
-  have hsa : IsSelfAdjoint (a • x + b • y) := isSelfAdjoint_linear_comb hx_sa hy_sa
+  obtain ⟨hx_lo, hx_hi⟩ := spectral_bounds x hx_sa hxc
+  obtain ⟨hy_lo, hy_hi⟩ := spectral_bounds y hy_sa hyc
   intro t ht
   refine hI.ordConnected.out hinf_I hsup_I
     ⟨(algebraMap_le_iff_le_spectrum hsa).mp ?_ t ht,

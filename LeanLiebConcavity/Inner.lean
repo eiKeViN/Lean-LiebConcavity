@@ -49,7 +49,7 @@ theorem frobenius_norm_sq_eq_re_inner (A : Matrix n n 𝕜) :
   · positivity
 
 @[implicit_reducible]
-def FrobeniusInnerProductSpace :
+def frobeniusInnerProductSpace :
     InnerProductSpace 𝕜 (Matrix n n 𝕜) where
   norm_sq_eq_re_inner := frobenius_norm_sq_eq_re_inner
   conj_inner_symm := by
