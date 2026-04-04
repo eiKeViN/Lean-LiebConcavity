@@ -43,12 +43,13 @@ variable (𝕜 : Type*) [RCLike 𝕜]
 
 class HStarAlgebra (H : Type*) extends
     NormedRing H, InnerProductSpace 𝕜 H, Algebra 𝕜 H, StarRing H where
-  inner_mul_left {a x y : H} : inner (a * x) y = inner x (star a * y)
-  inner_mul_right {a x y : H} : inner (x * a) y = inner x (y * star a)
+  inner_mul_left : ∀ (a x y : H), inner (a * x) y = inner x (star a * y)
+  inner_mul_right : ∀ (a x y : H), inner (x * a) y = inner x (y * star a)
 
+export HStarAlgebra (inner_mul_left inner_mul_right)
 
 variable {H : Type*} [HStarAlgebra 𝕜 H]
-local notation "⟪" x ", " y "⟫" => @inner 𝕜 H _ x y
+local notation "⟪" x ", " y "⟫" => inner 𝕜 x y
 
 /-! ### Inner product identities
 
@@ -57,21 +58,21 @@ the adjoint calculation `Lmul (star a) = adjoint (Lmul a)`.
 -/
 
 @[simp]
-theorem inner_left_mul_eq {a x y : H} :
+theorem inner_left_mul_eq (a x y : H) :
     ⟪a * x, y⟫ = ⟪x, star a * y⟫ :=
-  HStarAlgebra.inner_mul_left
+  inner_mul_left a x y
 
 @[simp]
-theorem inner_right_mul_eq {a x y : H} :
+theorem inner_right_mul_eq (a x y : H) :
     ⟪x, a * y⟫ = ⟪star a * x, y⟫ := by
   rw [inner_left_mul_eq, star_star]
 @[simp]
-theorem inner_mul_left_eq {a x y : H} :
+theorem inner_mul_left_eq (a x y : H) :
     ⟪x * a, y⟫ = ⟪x, y * star a⟫ :=
-  HStarAlgebra.inner_mul_right
+  inner_mul_right a x y
 
 @[simp]
-theorem inner_mul_right_eq {a x y : H} :
+theorem inner_mul_right_eq (a x y : H) :
     ⟪x, y * a⟫ = ⟪x * star a, y⟫ := by
   rw [inner_mul_left_eq, star_star]
 
@@ -84,12 +85,10 @@ We build the underlying `LinearMap` directly (rather than via `Algebra.lmul`) to
 avoid the module diamond between `Algebra.toModule` and `InnerProductSpace.toModule`. -/
 def lmulAlgHom : H →ₐ[𝕜] (H →L[𝕜] H) where
   toFun a :=
-    { toFun    := (a * ·)
-      map_add' := mul_add a
-      map_smul' := fun c x => mul_smul_comm c a x
+    { toLinearMap := LinearMap.mulLeft 𝕜 a
       cont     := continuous_const_mul a }
   map_one' := by ext; simp
-  map_mul' := fun a b => by ext; simp [mul_assoc]
+  map_mul' := fun a b => by ext; simp
   map_zero' := by ext; simp
   map_add' := fun a b => by ext; simp [add_mul]
   commutes' := fun c => by ext; simp [Algebra.algebraMap_eq_smul_one]
@@ -98,7 +97,7 @@ def lmulAlgHom : H →ₐ[𝕜] (H →L[𝕜] H) where
 abbrev Lmul (a : H) : H →L[𝕜] H := lmulAlgHom 𝕜 a
 
 @[simp]
-theorem Lmul_apply {a x : H} : Lmul 𝕜 a x = a * x := rfl
+theorem Lmul_apply (a x : H) : Lmul 𝕜 a x = a * x := rfl
 
 @[simp]
 theorem Lmul_zero : Lmul 𝕜 0 = (0 : H →L[𝕜] H) := map_zero (lmulAlgHom 𝕜)
@@ -107,16 +106,16 @@ theorem Lmul_zero : Lmul 𝕜 0 = (0 : H →L[𝕜] H) := map_zero (lmulAlgHom �
 theorem Lmul_one : Lmul 𝕜 1 = (1 : H →L[𝕜] H) := map_one (lmulAlgHom 𝕜)
 
 @[simp]
-theorem Lmul_add {a b : H} : Lmul 𝕜 (a + b) = Lmul 𝕜 a + Lmul 𝕜 b :=
+theorem Lmul_add (a b : H) : Lmul 𝕜 (a + b) = Lmul 𝕜 a + Lmul 𝕜 b :=
   map_add (lmulAlgHom 𝕜) a b
 
--- `*` on `H →L[𝕜] H` is composition, so this says `L_{ab} = Lₐ ∘ L_b`.
+-- `*` on `H →L[𝕜] H` is composition, so this says `L_{ab} = L_a ∘ L_b`.
 @[simp]
-theorem Lmul_mul {a b : H} : Lmul 𝕜 (a * b) = Lmul 𝕜 a * Lmul 𝕜 b :=
+theorem Lmul_mul (a b : H) : Lmul 𝕜 (a * b) = Lmul 𝕜 a * Lmul 𝕜 b :=
   map_mul (lmulAlgHom 𝕜) a b
 
 @[simp]
-theorem Lmul_smul {k : 𝕜} {a : H} : k • Lmul 𝕜 a = Lmul 𝕜 (k • a) := by
+theorem Lmul_smul (k : 𝕜) (a : H) : k • Lmul 𝕜 a = Lmul 𝕜 (k • a) := by
   ext; simp
 
 /-- The H*-algebra axiom in operator form: `⟪Lₐ x, y⟫ = ⟪x, L_{a⋆} y⟫`. -/
@@ -158,7 +157,7 @@ def rmulAlgHom : H →ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ where
 abbrev Rmul (a : H) : H →L[𝕜] H := unop (rmulAlgHom 𝕜 a)
 
 @[simp]
-theorem Rmul_apply {a x : H} : Rmul 𝕜 a x = x * a := rfl
+theorem Rmul_apply (a x : H) : Rmul 𝕜 a x = x * a := rfl
 
 @[simp]
 theorem Rmul_zero : Rmul 𝕜 0 = (0 : H →L[𝕜] H) :=
@@ -169,14 +168,14 @@ theorem Rmul_one : Rmul 𝕜 1 = (1 : H →L[𝕜] H) :=
   op_injective (map_one (rmulAlgHom 𝕜))
 
 @[simp]
-theorem Rmul_add {a b : H} : Rmul 𝕜 (a + b) = Rmul 𝕜 a + Rmul 𝕜 b :=
+theorem Rmul_add (a b : H) : Rmul 𝕜 (a + b) = Rmul 𝕜 a + Rmul 𝕜 b :=
   op_injective (map_add (rmulAlgHom 𝕜) a b)
 
 @[simp]
-theorem Rmul_smul {k : 𝕜} {a : H} : k • Rmul 𝕜 a = Rmul 𝕜 (k • a) := by ext; simp
+theorem Rmul_smul (k : 𝕜) (a : H) : k • Rmul 𝕜 a = Rmul 𝕜 (k • a) := by ext; simp
 
 -- Note: `Rmul` is an *anti*-homomorphism: `R_{ab} = R_b ∘ R_a`.
-theorem Rmul_mul {a b : H} : Rmul 𝕜 (a * b) = Rmul 𝕜 b * Rmul 𝕜 a :=
+theorem Rmul_mul (a b : H) : Rmul 𝕜 (a * b) = Rmul 𝕜 b * Rmul 𝕜 a :=
   op_injective (map_mul (rmulAlgHom 𝕜) a b)
 
 @[simp]
@@ -201,7 +200,7 @@ theorem Lmul_Rmul_comm {a b : H} : Commute (Lmul 𝕜 a) (Rmul 𝕜 b) := by
 
 /-- right multiplication via composing left multiplication with star -/
 theorem Rmul_eq_star_Lmul_star (a : H) : Rmul 𝕜 a = star ∘ Lmul 𝕜 (star a) ∘ star := by
-  ext x; simp
+  ext x; simp only [Rmul_apply, Function.comp_apply, Lmul_apply, star_mul, star_star]
 
 
 /-! ### Continuity of L and R as functions
@@ -375,17 +374,36 @@ theorem Rmul_isSelfAdjoint {a : H} (ha : IsSelfAdjoint a) :
 
 end StarAlgHom
 
-/-! ### CFC commutation: `L_{f(a)} = f(L_a)` -/
 
-open Set
+/-! ### CFC commutation: `L_{f(a)} = f(L_a)`, `R_{f(a)} = f(_a)` -/
+--- noncomputable section
 
-private theorem rpow_continuousOn_pos {r : ℝ} : ContinuousOn (fun (x : ℝ) ↦ x ^ r) (Ioi 0) :=
-    continuousOn_id.rpow_const (by grind only [= mem_Ioi, = id.eq_1])
+private theorem rpow_continuousOn_pos {r : ℝ} :
+    ContinuousOn (fun (x : ℝ) ↦ x ^ r) (Set.Ioi 0) :=
+  continuousOn_id.rpow_const (by grind only [= Set.mem_Ioi, = id.eq_1])
 
 section CFC
 
 variable [CompleteSpace H] [Algebra ℝ H] [IsScalarTower ℝ 𝕜 H]
 variable [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint]
+
+-- instantiating for efficiency concern
+local instance : Module 𝕜 H := NormedSpace.toModule
+local instance : Ring (H →L[𝕜] H) := ContinuousLinearMap.ring
+local instance : Module 𝕜 (H →L[𝕜] H) := ContinuousLinearMap.module
+local instance : SMul ℝ (H →L[𝕜] H) := ContinuousLinearMap.instSMul
+local instance : Algebra ℝ (H →L[𝕜] H) := ContinuousLinearMap.algebra
+local instance : TopologicalSpace (H →L[𝕜] H) := ContinuousLinearMap.topologicalSpace
+local instance : PartialOrder (H →L[𝕜] H) := ContinuousLinearMap.instLoewnerPartialOrder
+noncomputable local instance : StarRing (H →L[𝕜] H) := ContinuousLinearMap.instStarRingId
+
+local instance : Ring (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
+local instance : SMul ℝ (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
+local instance : Module 𝕜 (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
+local instance : Algebra ℝ (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
+local instance : PartialOrder (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
+local instance : TopologicalSpace (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
+noncomputable local instance : StarRing (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
 
 section Left
 
@@ -397,38 +415,50 @@ theorem Lmul_map_cfc (f : ℝ → ℝ) (a : H)
     (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
     (ha : IsSelfAdjoint a := by cfc_tac) :
     lmulStarAlgHom 𝕜 (cfc f a) = cfc f (lmulStarAlgHom 𝕜 a) :=
-  (lmulStarAlgHom 𝕜).map_cfc _ _ hf (Lmul_continuous 𝕜) ha <|
-    Lmul_isSelfAdjoint 𝕜 ha
+  (@lmulStarAlgHom 𝕜 _ H _ _).map_cfc f a hf (@Lmul_continuous 𝕜 _ H _) ha <|
+    @Lmul_isSelfAdjoint 𝕜 _ H _ _ a ha
 
 variable [PartialOrder H] [StarOrderedRing H]
-variable [StarOrderedRing (H →L[𝕜] H)]
-variable [NonnegSpectrumClass ℝ H] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
 
 /-- Left multiplication commutes with nonneg real powers: `(L_a)^r = L_{a^r}`. -/
-theorem Lmul_rpow_nonneg {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
-    (Lmul 𝕜 a) ^ r = Lmul 𝕜 (a ^ r)  := by
-  symm
-  rw [CFC.rpow_eq_cfc_real ha, CFC.rpow_eq_cfc_real <| Lmul_nonneg 𝕜 ha]
-  exact Lmul_map_cfc 𝕜 (· ^ r) a
+theorem Lmul_rpow_nonneg' {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
+    cfc (fun x : ℝ ↦ x ^ r) (Lmul 𝕜 a) = Lmul 𝕜 (cfc (fun x : ℝ ↦ x ^ r) a) :=
+  Lmul_map_cfc 𝕜 (· ^ r) a (by cfc_cont_tac) ha.isSelfAdjoint |>.symm
+
+theorem Lmul_rpow_nonneg_apply' {r : ℝ} {a : H} (x : H)
+    (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
+    (cfc (fun x : ℝ ↦ x ^ r) (Lmul 𝕜 a)) x = cfc (fun x : ℝ ↦ x ^ r) a * x := by
+  rw [Lmul_rpow_nonneg' 𝕜 hr]
+  simp only [Lmul_apply]
+
+variable [NonnegSpectrumClass ℝ H]
 
 /-- Left multiplication by strictly positive elements commutes with real powers -/
-theorem Lmul_rpow_strictlyPositive {r : ℝ} {a : H} (ha : IsStrictlyPositive a := by cfc_tac) :
-    (Lmul 𝕜 a) ^ r = Lmul 𝕜 (a ^ r) := by
+theorem Lmul_rpow_strictlyPositive'
+    (r : ℝ) {a : H} (ha : IsStrictlyPositive a := by cfc_tac) :
+    cfc (fun x : ℝ ↦ x ^ r) (Lmul 𝕜 a) = Lmul 𝕜 (cfc (fun x : ℝ ↦ x ^ r) a) := by
   symm
-  rw [CFC.rpow_eq_cfc_real ha.nonneg, CFC.rpow_eq_cfc_real <| Lmul_nonneg 𝕜 ha.nonneg]
   exact Lmul_map_cfc 𝕜 (· ^ r) a <|
     rpow_continuousOn_pos.mono <| fun _ hx => ha.spectrum_pos hx
 
-theorem Lmul_rpow_nonneg_apply {r : ℝ} {a x : H}
-    (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
-    ((Lmul 𝕜 a) ^ r) x = a ^ r * x := by
-  rw [Lmul_rpow_nonneg 𝕜 hr]; simp
+theorem Lmul_rpow_strictlyPositive_apply'
+    (r : ℝ) {a : H} (x : H) (ha : IsStrictlyPositive a := by cfc_tac) :
+    cfc (fun y : ℝ ↦ y ^ r) (Lmul 𝕜 a) x = cfc (fun y : ℝ ↦ y ^ r) a * x := by
+  rw [Lmul_rpow_strictlyPositive' 𝕜 r ha]
+  simp only [Lmul_apply]
 
-theorem Lmul_rpow_strictlyPositive_apply {r : ℝ} {a x : H}
-    (ha : IsStrictlyPositive a := by cfc_tac) :
+variable [StarOrderedRing (H →L[𝕜] H)] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
+theorem Lmul_rpow_nonneg_apply
+    {r : ℝ} {a : H} (x : H) (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
     ((Lmul 𝕜 a) ^ r) x = a ^ r * x := by
-  rw [Lmul_rpow_strictlyPositive 𝕜]; simp
+  rw [CFC.rpow_eq_cfc_real ha, CFC.rpow_eq_cfc_real <| Lmul_nonneg 𝕜 ha]
+  exact Lmul_rpow_nonneg_apply' 𝕜 x hr ha
 
+theorem Lmul_rpow_strictlyPositive_apply
+    {r : ℝ} {a : H} (x : H) (ha : IsStrictlyPositive a := by cfc_tac) :
+    ((Lmul 𝕜 a) ^ r) x = a ^ r * x := by
+  rw [CFC.rpow_eq_cfc_real ha.nonneg, CFC.rpow_eq_cfc_real <| Lmul_nonneg 𝕜 ha.nonneg]
+  exact Lmul_rpow_strictlyPositive_apply' 𝕜 r x ha
 end Left
 
 section Right
@@ -441,39 +471,42 @@ theorem Rmul_map_cfc (f : ℝ → ℝ) (a : H)
     (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
     (ha : IsSelfAdjoint a := by cfc_tac) :
     rmulStarAlgHom 𝕜 (cfc f a) = cfc f (rmulStarAlgHom 𝕜 a) :=
-  (rmulStarAlgHom 𝕜).map_cfc _ _ hf (rmulAlgHom_continuous 𝕜) ha <|
-    Rmul_isSelfAdjoint_op 𝕜 ha
+  (@rmulStarAlgHom 𝕜 _ H _ _).map_cfc _ _ hf (@rmulAlgHom_continuous 𝕜 _ H _) ha <|
+    @Rmul_isSelfAdjoint_op 𝕜 _ H _ _ a ha
 
-variable [PartialOrder H] [StarOrderedRing H] [NonnegSpectrumClass ℝ H]
-variable [StarOrderedRing (H →L[𝕜] H)ᵐᵒᵖ] [NonnegSpectrumClass ℝ (H →L[𝕜] H)ᵐᵒᵖ]
+variable [PartialOrder H] [StarOrderedRing H]
 
 /-- Right multiplication commutes with nonneg real powers in `(H →L[𝕜] H)ᵐᵒᵖ`:
 `op(Rₐ)^r = op(R_{a^r})`. -/
 theorem Rmul_rpow_nonneg_op {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
-    (rmulStarAlgHom 𝕜 a) ^ r = rmulStarAlgHom 𝕜 (a ^ r) := by
-  -- rmulStarAlgHom 𝕜 a = op (Rmul 𝕜 a), so nonnegativity follows from op_nonneg + Rmul_nonneg
-  have h0 : 0 ≤ rmulStarAlgHom 𝕜 a := op_nonneg.mpr (Rmul_nonneg 𝕜 ha)
-  symm
-  rw [CFC.rpow_eq_cfc_real ha, CFC.rpow_eq_cfc_real h0]
-  exact Rmul_map_cfc 𝕜 (· ^ r) a
+    cfc (fun x : ℝ ↦ x ^ r) (rmulStarAlgHom 𝕜 a)
+      = rmulStarAlgHom 𝕜 (cfc (fun x : ℝ ↦ x ^ r) a) :=
+  Rmul_map_cfc 𝕜 (· ^ r) a (by cfc_cont_tac) (ha.isSelfAdjoint) |>.symm
 
 variable [StarModule ℝ (H →L[𝕜] H)] [StarOrderedRing (H →L[𝕜] H)]
 variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H) IsSelfAdjoint]
-variable [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
 
 -- Right multiplication commutes with nonneg real powers: `(R_a)^r = R_{a^r}`.
-omit [StarOrderedRing (H →L[𝕜] H)ᵐᵒᵖ] in
-theorem Rmul_rpow_nonneg {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
-    (Rmul 𝕜 a) ^ r = Rmul 𝕜 (a ^ r) := by
+theorem Rmul_rpow_nonneg'
+    {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
+    cfc (fun x : ℝ ↦ x ^ r) (Rmul 𝕜 a) = Rmul 𝕜 (cfc (fun x : ℝ ↦ x ^ r) a) := by
   apply op_injective
-  rw [← op_rpow_eq_rpow_op_nonneg hr (Rmul_nonneg 𝕜 ha)]
+  rw [← op_rpow_eq_rpow_op_nonneg' hr (Rmul_nonneg 𝕜 ha)]
   exact Rmul_rpow_nonneg_op 𝕜 hr ha
 
-omit [StarOrderedRing (H →L[𝕜] H)ᵐᵒᵖ] in
-theorem Rmul_rpow_nonneg_apply {r : ℝ} {a x : H}
+theorem Rmul_rpow_nonneg_apply' {r : ℝ} {a : H} (x : H)
     (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
-    ((Rmul 𝕜 a) ^ r) x =  x * a ^ r := by
-  rw [Rmul_rpow_nonneg 𝕜 hr]; simp
+    (cfc (fun x : ℝ ↦ x ^ r) (Rmul 𝕜 a)) x = x * cfc (fun x : ℝ ↦ x ^ r) a := by
+  rw [Rmul_rpow_nonneg' 𝕜 hr]
+  simp only [Rmul_apply]
+
+variable [NonnegSpectrumClass ℝ H] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
+
+theorem Rmul_rpow_nonneg_apply
+    {r : ℝ} {a : H} (x : H) (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
+    ((Rmul 𝕜 a) ^ r) x = x * a ^ r := by
+  rw [CFC.rpow_eq_cfc_real ha, CFC.rpow_eq_cfc_real <| Rmul_nonneg 𝕜 ha]
+  exact Rmul_rpow_nonneg_apply' 𝕜 x hr ha
 
 end Right
 

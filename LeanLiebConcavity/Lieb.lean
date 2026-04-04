@@ -25,7 +25,7 @@ private lemma Rmul_smul_real (a : ℝ) (A : H) :
       _ = a • Rmul ℂ A := by rw [<- Complex.coe_smul]
 
 variable [CompleteSpace H] [PartialOrder H] [StarOrderedRing H]
-  [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint] [NonnegSpectrumClass ℝ H]
+variable [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint] [NonnegSpectrumClass ℝ H]
 variable [StarOrderedRing (H →L[ℂ] H)]
 
 def PowerMean (α β : ℝ) (A B : H) : H →L[ℂ] H :=
@@ -39,10 +39,9 @@ theorem PowerMean_apply {α β : ℝ} {A B : H}
     GenPerspective_of_rpow_commute (Lmul_Rmul_comm ℂ).symm
       (Rmul_nonneg ℂ hB) (Lmul_isStrictlyPositive ℂ hA) hβ]
   rw [ContinuousLinearMap.mul_apply]
-  -- note: this part builds slower because typeclasses for (H →L[ℂ] H)ᵐᵒᵖ are inferred by machine.
-  rw [Rmul_rpow_nonneg_apply ℂ hα hB,
-      Lmul_rpow_strictlyPositive_apply ℂ hA]
-
+  -- note: this part builds slower because more aggressive unfolding is necessary
+  rw [Rmul_rpow_nonneg_apply ℂ _ hα hB,
+      Lmul_rpow_strictlyPositive_apply ℂ x hA]
 
 variable [PosSMulMono ℝ H]
 
@@ -194,21 +193,25 @@ variable {n : Type*} [Fintype n] [DecidableEq n]
 /-- `Matrix n n ℂ` abbrev -/
 local notation "M[" n "]" => Matrix n n ℂ
 
-set_option backward.isDefEq.respectTransparency false in
+set_option backward.isDefEq.respectTransparency false
+/-
+The rooted reason for `backward.isDefEq.respectTransparency` false throughout:
+need it to instantiate `CompleteSpace (Matrix n n ℂ)`,
+which in turn is needed by the `Star` structure on `M[n] →L[ℂ] M[n]`.
+-/
+
 local instance : Pow M[n] ℝ where
   pow a y := CFC.rpow a y
 
-set_option backward.isDefEq.respectTransparency false in
 /-- **Lieb's Extension Theorem** for matrices [Nik2013, Thm 1.2(b)]:
 `(A, B) ↦ re ((A ^ q * K * B ^ p * Kᴴ).trace)` is jointly concave in `(A, B)`
-for `p, q > 0` with `p + q ≤ 1`, `A` (strictly) positive definite and `B` positive semidefinite -/
+for `p, q > 0` with `p + q ≤ 1`, `A` positive definite and `B` positive semidefinite -/
 theorem LiebExtension_matrix {p q : ℝ} (hp : 0 < p) (hq : 0 < q) (hpq : p + q ≤ 1) (K : M[n]) :
     ConcaveOn ℝ {(A, B) : M[n] × M[n] | A.PosDef ∧ B.PosSemidef}
       (fun (A, B) => re ((A ^ q * K * B ^ p * Kᴴ).trace)) := by
   convert LiebExtension hp hq hpq K using 1
   simp_rw [Matrix.isStrictlyPositive_iff_posDef, Matrix.nonneg_iff_posSemidef]
 
-set_option backward.isDefEq.respectTransparency false in
 /-- **Lieb's Concavity Theorem** for matrices [Nik2013, Thm 1.2(a)]:
 `(A, B) ↦ re ((A ^ s * K * B ^ (1 - s) * Kᴴ).trace)` is jointly concave in `(A, B)`
 for `0 < s < 1`, `A` positive definite and `B` positive semidefinite -/
@@ -218,7 +221,6 @@ theorem LiebConcavity_matrix {s : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (K : M[n]) :
   convert LiebConcavity hs0 hs1 K using 1
   simp_rw [Matrix.isStrictlyPositive_iff_posDef, Matrix.nonneg_iff_posSemidef]
 
-set_option backward.isDefEq.respectTransparency false in
 /-- **Ando's Convexity Theorem** for matrices [Nik2013, Thm 1.4]:
 `(A, B) ↦ re ((A ^ (-r) * K * B ^ q * Kᴴ).trace)` is jointly convex in `(A, B)`
 for `1 ≤ q ≤ 2`, `0 < r`, `q - r > 1`, `A` positive definite and `B` positive semidefinite -/
