@@ -158,7 +158,7 @@ theorem op_rpow_eq_rpow_op_nonneg {a : A} {r : ℝ} (hr : 0 ≤ r) (ha : 0 ≤ a
   rw [CFC.rpow_eq_cfc_real, CFC.rpow_eq_cfc_real]
   exact op_rpow_eq_rpow_op_nonneg' hr
 
-/-- `op` commutes with real powers for strictly positive elements. -/
+/-- `op` commutes with real powers for `a` strictly positive. -/
 theorem op_rpow_eq_rpow_op {a : A} {r : ℝ} (ha : IsStrictlyPositive a := by cfc_tac) :
     (op a : Aᵐᵒᵖ) ^ r = op (a ^ r) := by
   rw [CFC.rpow_eq_cfc_real, CFC.rpow_eq_cfc_real]

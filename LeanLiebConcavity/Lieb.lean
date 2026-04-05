@@ -118,10 +118,10 @@ theorem LiebExtension {p q : ℝ} (hp : 0 < p) (hq : 0 < q) (hpq : p + q ≤ 1) 
 
 /-- **Lieb's Concavity Theorem** for general operators:
 Special case of `LiebExtension` with `p = 1 - s`, `q = s`. -/
-theorem LiebConcavity {s : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (x : H) :
+theorem LiebConcavity {s : ℝ} (hs : 0 < s ∧ s < 1) (x : H) :
     ConcaveOn ℝ {(A, B) : H × H | IsStrictlyPositive A ∧ 0 ≤ B}
       (fun (A, B) => re ⟪x, A ^ s * x * B ^ (1 - s)⟫_ℂ) :=
-  LiebExtension (by linarith) hs0 (by linarith) x
+  LiebExtension (by linarith) hs.1 (by linarith) x
 
 /-- **Generalised Ando Convexity** :
 `(A, B) ↦ re ⟪x, PowerMean α β A B x⟫` is jointly convex in `(A, B)`
@@ -183,7 +183,7 @@ Must be called inside the namespace `FrobeniusMat` to ensure fixed instances on 
 --- open the packed instances on Matrix n n ℂ
 namespace FrobeniusMat
 
-open scoped Matrix
+open Matrix
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
 
@@ -197,11 +197,8 @@ set_option backward.isDefEq.respectTransparency false
 /-
 The rooted reason for `backward.isDefEq.respectTransparency` false throughout:
 need it to instantiate `CompleteSpace (Matrix n n ℂ)`,
-which in turn is needed by the `Star` structure on `M[n] →L[ℂ] M[n]`.
+which in turn is needed by the star/adjoint on `M[n] →L[ℂ] M[n]`.
 -/
-
-local instance : Pow M[n] ℝ where
-  pow a y := CFC.rpow a y
 
 /-- **Lieb's Extension Theorem** for matrices [Nik2013, Thm 1.2(b)]:
 `(A, B) ↦ re ((A ^ q * K * B ^ p * Kᴴ).trace)` is jointly concave in `(A, B)`
@@ -210,16 +207,16 @@ theorem LiebExtension_matrix {p q : ℝ} (hp : 0 < p) (hq : 0 < q) (hpq : p + q 
     ConcaveOn ℝ {(A, B) : M[n] × M[n] | A.PosDef ∧ B.PosSemidef}
       (fun (A, B) => re ((A ^ q * K * B ^ p * Kᴴ).trace)) := by
   convert LiebExtension hp hq hpq K using 1
-  simp_rw [Matrix.isStrictlyPositive_iff_posDef, Matrix.nonneg_iff_posSemidef]
+  simp_rw [isStrictlyPositive_iff_posDef, nonneg_iff_posSemidef]
 
 /-- **Lieb's Concavity Theorem** for matrices [Nik2013, Thm 1.2(a)]:
 `(A, B) ↦ re ((A ^ s * K * B ^ (1 - s) * Kᴴ).trace)` is jointly concave in `(A, B)`
 for `0 < s < 1`, `A` positive definite and `B` positive semidefinite -/
-theorem LiebConcavity_matrix {s : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (K : M[n]) :
+theorem LiebConcavity_matrix {s : ℝ} (hs : 0 < s ∧ s < 1) (K : M[n]) :
     ConcaveOn ℝ {(A, B) : M[n] × M[n] | A.PosDef ∧ B.PosSemidef}
       (fun (A, B) => re ((A ^ s * K * B ^ (1 - s) * Kᴴ).trace)) := by
-  convert LiebConcavity hs0 hs1 K using 1
-  simp_rw [Matrix.isStrictlyPositive_iff_posDef, Matrix.nonneg_iff_posSemidef]
+  convert LiebConcavity hs K using 1
+  simp_rw [isStrictlyPositive_iff_posDef, nonneg_iff_posSemidef]
 
 /-- **Ando's Convexity Theorem** for matrices [Nik2013, Thm 1.4]:
 `(A, B) ↦ re ((A ^ (-r) * K * B ^ q * Kᴴ).trace)` is jointly convex in `(A, B)`
@@ -229,7 +226,7 @@ theorem AndoConvexity_matrix {q r : ℝ} (hq : 1 ≤ q ∧ q ≤ 2) (hr : 0 < r)
     ConvexOn ℝ {(A, B) : M[n] × M[n] | A.PosDef ∧ B.PosSemidef}
       (fun (A, B) => re ((A ^ (-r) * K * B ^ q * Kᴴ).trace)) := by
   convert AndoConvexity hq hr hqr K using 1
-  simp_rw [Matrix.isStrictlyPositive_iff_posDef, Matrix.nonneg_iff_posSemidef]
+  simp_rw [isStrictlyPositive_iff_posDef, nonneg_iff_posSemidef]
 
 end FrobeniusMat
 

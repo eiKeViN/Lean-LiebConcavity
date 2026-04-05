@@ -78,11 +78,7 @@ theorem inner_mul_right_eq (a x y : H) :
 
 /-! ### Left multiplication as an algebra homomorphism -/
 
-/-- Left multiplication as an algebra homomorphism `H →ₐ[𝕜] (H →L[𝕜] H)`.
-The primary algebraic object; `Lmul` is derived from this.
-
-We build the underlying `LinearMap` directly (rather than via `Algebra.lmul`) to
-avoid the module diamond between `Algebra.toModule` and `InnerProductSpace.toModule`. -/
+/-- Left multiplication as an algebra homomorphism `H →ₐ[𝕜] (H →L[𝕜] H)`. -/
 def lmulAlgHom : H →ₐ[𝕜] (H →L[𝕜] H) where
   toFun a :=
     { toLinearMap := LinearMap.mulLeft 𝕜 a
@@ -133,14 +129,9 @@ theorem inner_Lmul_right (a x y : H) :
 
 open MulOpposite
 
-/-- Right multiplication as an algebra homomorphism into the *opposite* operator algebra,
-`H →ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ`, mapping `a ↦ op(Rₐ)`.
-
-Since right multiplication is a ring *anti*-homomorphism on `H`
-(`R_{ab} = R_b ∘ R_a`), it is a genuine ring homomorphism into `B(H)ᵐᵒᵖ`,
-where multiplication is reversed: `op(Rₐ) * op(Rᵦ) = op(Rᵦ ∘ Rₐ) = op(R_{ab})`.
-
-This mirrors `lmulAlgHom : H →ₐ[𝕜] (H →L[𝕜] H)`. -/
+/-- Right multiplication is a ring *anti*-homomorphism on `H` (`R_{ab} = R_b ∘ R_a`),
+We thus realised it as an algebra homomorphism `H →ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ`,
+mapping `a ↦ op(Rₐ)`. -/
 def rmulAlgHom : H →ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ where
   toFun a := op
     { toLinearMap := LinearMap.mulRight 𝕜 a
@@ -205,20 +196,20 @@ theorem Rmul_eq_star_Lmul_star (a : H) : Rmul 𝕜 a = star ∘ Lmul 𝕜 (star 
 
 /-! ### Continuity of L and R as functions
 
-Multiplication is a bounded bilinear map (by `isBoundedBilinearMap_mul`),
+Multiplication is a bounded bilinear map,
 so its curried CLM `H →L[𝕜] H →L[𝕜] H` is automatically continuous.
 -/
 
 /-- The map `a ↦ Lₐ` is continuous w.r.t. the operator norm -/
 theorem Lmul_continuous :
     Continuous (fun a : H => Lmul 𝕜 a : H → H →L[𝕜] H) :=
-  (isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H)).toContinuousLinearMap.continuous
+  isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H) |>.toContinuousLinearMap.continuous
 
 /-- The map `a ↦ R_a` is continuous w.r.t. the operator norm -/
 theorem Rmul_continuous :
     Continuous (fun a : H => Rmul 𝕜 a : H → H →L[𝕜] H) :=
-  (ContinuousLinearMap.flip
-    (isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H)).toContinuousLinearMap).continuous
+  ContinuousLinearMap.flip
+    (isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H)).toContinuousLinearMap |>.continuous
 
 /-- The map `a ↦ op(Rₐ)` into the opposite algebra is continuous w.r.t. the operator norm -/
 theorem rmulAlgHom_continuous :
@@ -265,6 +256,8 @@ section nonneg
 
 left/right multiplication by nonnegative (semi-definite) elements are positive operators,
 which are operators nonnegative with respect to the Loewner partial order.
+
+This is where we need the inner product to be compatible with star.
 -/
 
 lemma re_inner_Lmul_star_mul_self_nonneg (s x : H) :
@@ -325,12 +318,7 @@ theorem Rmul_isStrictlyPositive {a : H} (ha : IsStrictlyPositive a) :
 end nonneg
 
 
-/-! ### `Lmul` and `Rmul` as star algebra homomorphisms (requires `CompleteSpace`)
-
-Only with H complete, star/adjoint structure can be instantiated on `H →L[𝕜] H`.
-
-Then left/right multiplication preserves stars (hence self-adjointness).
--/
+/-! ### `Lmul` and `Rmul` as star algebra homomorphisms -/
 
 section StarAlgHom
 variable [CompleteSpace H]
@@ -376,7 +364,6 @@ end StarAlgHom
 
 
 /-! ### CFC commutation: `L_{f(a)} = f(L_a)`, `R_{f(a)} = f(_a)` -/
---- noncomputable section
 
 private theorem rpow_continuousOn_pos {r : ℝ} :
     ContinuousOn (fun (x : ℝ) ↦ x ^ r) (Set.Ioi 0) :=
@@ -448,12 +435,15 @@ theorem Lmul_rpow_strictlyPositive_apply'
   simp only [Lmul_apply]
 
 variable [StarOrderedRing (H →L[𝕜] H)] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
+
+/-- `(L_a)^r` acts on `x` is `a ^ r * x` for nonnegative power. -/
 theorem Lmul_rpow_nonneg_apply
     {r : ℝ} {a : H} (x : H) (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
     ((Lmul 𝕜 a) ^ r) x = a ^ r * x := by
   rw [CFC.rpow_eq_cfc_real ha, CFC.rpow_eq_cfc_real <| Lmul_nonneg 𝕜 ha]
   exact Lmul_rpow_nonneg_apply' 𝕜 x hr ha
 
+/-- `(L_a)^r` acts on `x` is `a ^ r * x` for any power provided `a` is strictly pos. -/
 theorem Lmul_rpow_strictlyPositive_apply
     {r : ℝ} {a : H} (x : H) (ha : IsStrictlyPositive a := by cfc_tac) :
     ((Lmul 𝕜 a) ^ r) x = a ^ r * x := by
@@ -466,7 +456,7 @@ section Right
 variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H)ᵐᵒᵖ IsSelfAdjoint]
 
 /-- Right multiplication commutes with the continuous functional calculus:
-`op(R_{f(a)}) = f(op(Rₐ))` for self-adjoint `a` and continuous `f`. -/
+`op(R_{f(a)}) = f(op(R_a))` for self-adjoint `a` and continuous `f`. -/
 theorem Rmul_map_cfc (f : ℝ → ℝ) (a : H)
     (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
     (ha : IsSelfAdjoint a := by cfc_tac) :
@@ -477,7 +467,7 @@ theorem Rmul_map_cfc (f : ℝ → ℝ) (a : H)
 variable [PartialOrder H] [StarOrderedRing H]
 
 /-- Right multiplication commutes with nonneg real powers in `(H →L[𝕜] H)ᵐᵒᵖ`:
-`op(Rₐ)^r = op(R_{a^r})`. -/
+`op(R_a)^r = op(R_{a^r})`. -/
 theorem Rmul_rpow_nonneg_op {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
     cfc (fun x : ℝ ↦ x ^ r) (rmulStarAlgHom 𝕜 a)
       = rmulStarAlgHom 𝕜 (cfc (fun x : ℝ ↦ x ^ r) a) :=
@@ -494,19 +484,42 @@ theorem Rmul_rpow_nonneg'
   rw [← op_rpow_eq_rpow_op_nonneg' hr (Rmul_nonneg 𝕜 ha)]
   exact Rmul_rpow_nonneg_op 𝕜 hr ha
 
-theorem Rmul_rpow_nonneg_apply' {r : ℝ} {a : H} (x : H)
-    (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
+theorem Rmul_rpow_nonneg_apply'
+    {r : ℝ} {a : H} (x : H) (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
     (cfc (fun x : ℝ ↦ x ^ r) (Rmul 𝕜 a)) x = x * cfc (fun x : ℝ ↦ x ^ r) a := by
   rw [Rmul_rpow_nonneg' 𝕜 hr]
   simp only [Rmul_apply]
 
 variable [NonnegSpectrumClass ℝ H] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
 
+/-- `(R_a)^r` acts on `x` is `x * a ^ r` for nonneg power. -/
 theorem Rmul_rpow_nonneg_apply
     {r : ℝ} {a : H} (x : H) (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
     ((Rmul 𝕜 a) ^ r) x = x * a ^ r := by
   rw [CFC.rpow_eq_cfc_real ha, CFC.rpow_eq_cfc_real <| Rmul_nonneg 𝕜 ha]
   exact Rmul_rpow_nonneg_apply' 𝕜 x hr ha
+
+/-- Right multiplication commutes with real powers for strictly positive elements. -/
+theorem Rmul_rpow_strictlyPositive'
+    {r : ℝ} {a : H} (ha : IsStrictlyPositive a := by cfc_tac) :
+    cfc (fun x : ℝ ↦ x ^ r) (Rmul 𝕜 a) = Rmul 𝕜 (cfc (fun x : ℝ ↦ x ^ r) a) := by
+  apply op_injective
+  rw [← op_rpow_eq_rpow_op' (ha := Rmul_isStrictlyPositive 𝕜 ha)]
+  exact Rmul_map_cfc 𝕜 (· ^ r) a
+    (rpow_continuousOn_pos.mono fun _ hx => ha.spectrum_pos hx) |>.symm
+
+theorem Rmul_rpow_strictlyPositive_apply'
+    (r : ℝ) {a : H} (x : H) (ha : IsStrictlyPositive a := by cfc_tac) :
+    (cfc (fun y : ℝ ↦ y ^ r) (Rmul 𝕜 a)) x = x * cfc (fun y : ℝ ↦ y ^ r) a := by
+  rw [Rmul_rpow_strictlyPositive' 𝕜 ha]
+  simp only [Rmul_apply]
+
+/-- `(R_a)^r` acts on `x` as `x * a^r` for any `r : ℝ`, provided `a` is strictly positive. -/
+theorem Rmul_rpow_strictlyPositive_apply
+    {r : ℝ} {a : H} (x : H) (ha : IsStrictlyPositive a := by cfc_tac) :
+    ((Rmul 𝕜 a) ^ r) x = x * a ^ r := by
+  rw [CFC.rpow_eq_cfc_real ha.nonneg, CFC.rpow_eq_cfc_real <| Rmul_nonneg 𝕜 ha.nonneg]
+  exact Rmul_rpow_strictlyPositive_apply' 𝕜 r x ha
 
 end Right
 
