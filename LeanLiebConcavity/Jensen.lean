@@ -1,14 +1,90 @@
 import LeanLiebConcavity.Defs
+import LeanLiebConcavity.ConjugateWeightedSum
+import Mathlib.Analysis.CStarAlgebra.CStarMatrix
 
 noncomputable section
 
 
-namespace CFC
+
 
 universe u
 variable {A : Type u} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
 variable {f : ℝ → ℝ} {I : Set ℝ}
 
+/-! ## Sub-goal 2: The unitary `u` -/
+open scoped Matrix
+
+namespace CStarMatrix
+/-- The Li–Wu unitary matrix in `CStarMatrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A`.
+Constructed from `b : Fin n → A` with `∑ star (b i) * b i = 1`. -/
+private def liWuUnitary {n : ℕ} (b : Fin n → A) :
+    Matrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A :=
+  Matrix.fromBlocks
+    (Matrix.of fun i j => if i = j then 1 - b i * star (b j) else -(b i * star (b j)))
+    (Matrix.of fun i _ => b i)
+    (Matrix.of fun _ j => -(star (b j)))
+    (Matrix.of fun _ _ => (0 : A))
+
+omit [PartialOrder A] [StarOrderedRing A] in
+private lemma liWuUnitary_star {n : ℕ} (b : Fin n → A) :
+    star (liWuUnitary b) = Matrix.fromBlocks
+      (Matrix.of fun i j => if i = j then 1 - b i * star (b j) else -(b i * star (b j)))
+      (Matrix.of fun i _ => -(b i))
+      (Matrix.of fun _ j => star (b j))
+      (Matrix.of fun _ _ => (0 : A)) := by
+    let X := Matrix.of fun i j => if i = j then 1 - b i * star (b j) else -(b i * star (b j))
+    let Y := Matrix.of fun i (_ : Unit) => b i
+    let Z := Matrix.of fun (_ : Unit) j => -(star (b j))
+    let W := Matrix.of fun (_ _ : Unit) => (0 : A)
+    have hX : Xᴴ
+        = (Matrix.of fun i j => if i = j then 1 - b i * star (b j) else -(b i * star (b j))) := by
+      ext i j
+      simp only [X, Matrix.conjTranspose_apply, Matrix.of_apply,
+        apply_ite, ite_eq_left_iff, ite_eq_right_iff,
+        star_sub, star_one, star_mul, star_star, star_neg, sub_eq_neg_self]
+      split_ifs with h_eq <;> grind only
+    have hZ : Zᴴ
+        = (Matrix.of fun i _ => -(b i)) := by
+      ext i j
+      simp only [Z, Matrix.conjTranspose_apply, Matrix.of_apply, star_neg, star_star]
+    have hY : Yᴴ
+        = (Matrix.of fun _ j => star (b j)) := by
+      ext i j
+      simp only [Y, Matrix.conjTranspose_apply, Matrix.of_apply]
+    have hW : Wᴴ
+        = (Matrix.of fun _ _ => (0 : A)) := by
+      ext i j
+      simp only [W, Matrix.conjTranspose_apply, Matrix.of_apply, star_zero]
+    simpa only [hX, hZ, hY, hW] using Matrix.fromBlocks_conjTranspose X Y Z W
+
+/-- `star u * u = 1` for the Li–Wu unitary, using `∑ star (b i) * b i = 1`. -/
+private lemma liWuUnitary_star_mul_self' {n : ℕ} {b : Fin n → A}
+    (hb : ∑ i, star (b i) * b i = 1) :
+    star (liWuUnitary b) * liWuUnitary b = 1 := by
+  rw [liWuUnitary_star, liWuUnitary]
+
+
+private def liWuUnitary' {n : ℕ} (b : Fin n → A) :
+    CStarMatrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A :=
+  CStarMatrix.ofMatrix (liWuUnitary b)
+
+/-- The star (conjugate transpose) of `liWuUnitary b`, expressed as a block matrix. -/
+private lemma liWuUnitary_star' {n : ℕ} (b : Fin n → A) :
+    star (liWuUnitary' b) = CStarMatrix.ofMatrix (Matrix.fromBlocks
+      (Matrix.of fun i j => if i = j then 1 - b i * star (b j) else -(b i * star (b j)))
+      (Matrix.of fun i _ => -(b i))
+      (Matrix.of fun _ j => star (b j))
+      (Matrix.of fun _ _ => (0 : A))) := by
+  rw [star_eq_conjTranspose]
+
+
+/-- `star u * u = 1` for the Li–Wu unitary, using `∑ star (b i) * b i = 1`. -/
+private lemma liWuUnitary_star_mul_self' {n : ℕ} {b : Fin n → A}
+    (hb : ∑ i, star (b i) * b i = 1) :
+    star (liWuUnitary' b) * liWuUnitary' b = 1 := by
+  sorry
+
+end CStarMatrix
 /-! ## General (arbitrary n) Jensen's Operator Inequality -/
 
 /-- **Jensen's Operator Inequality** (Li–Wu 2012, Theorem 2.2, general n):
@@ -154,11 +230,3 @@ theorem JensenOperator_concave_nonneg
     ⟨IsSelfAdjoint.of_nonneg ha.1, IsSelfAdjoint.of_nonneg ha.2⟩
     ⟨fun _ h => spectrum_nonneg_of_nonneg ha.1 h, fun _ h => spectrum_nonneg_of_nonneg ha.2 h⟩
     hb
-
-end CFC
-
-open NNReal
-
-variable (a : ℝ≥0)
-example : Continuous (fun (x : ℝ) ↦ x ^ (a : ℝ)) :=
-  Real.continuous_rpow_const zero_le_coe
