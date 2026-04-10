@@ -1,12 +1,10 @@
 import LeanLiebConcavity.Defs
 import LeanLiebConcavity.ConjugateWeightedSum
+import LeanLiebConcavity.DiagonalStarAlgHom
 import Mathlib.Analysis.CStarAlgebra.CStarMatrix
 import Mathlib.RingTheory.RootsOfUnity.Complex
 
 noncomputable section
-
-
-
 
 universe u
 variable {A : Type u} [CStarAlgebra A]
@@ -14,6 +12,7 @@ variable {f : ℝ → ℝ} {I : Set ℝ}
 
 /-! ## Sub-goal 2: The unitary `u` -/
 open scoped Matrix
+open MatCStar
 
 namespace CStarMatrix
 /-- The Li–Wu unitary matrix in `CStarMatrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A`.
@@ -187,16 +186,17 @@ private lemma liWuUnitary_mul_star_self' {n : ℕ} {b : Fin n → A}
               neg_mul, mul_neg, neg_neg, zero_mul, Finset.sum_const_zero, add_zero,]
     exact hb
 
-/-- The Li–Wu diagonal matrix: `diag(a_1, ..., a_n, c)` as a block-diagonal matrix
-over `Fin n ⊕ Unit`. The last entry `c` is arbitrary; it does not affect the BR corner. -/
-private def liWuDiag {n : ℕ} (a : Fin n → A) (c : A) :
-    Matrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A :=
-  Matrix.diagonal (Sum.elim a (fun _ => c))
+/-- The Li–Wu diagonal matrix: `diag(a 0, …, a (n-1), a n)` as a `(Fin n ⊕ Unit)`-indexed
+diagonal matrix. `a : Fin (n+1) → A` supplies all `n+1` values; the first `n` go on the
+`Fin n` diagonal and the last `a (Fin.last n)` goes in the `Unit` slot. -/
+private def liWuDiag {n : ℕ} (a : Fin (n + 1) → A) :
+    Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A :=
+  Matrix.diagonal (Sum.elim (fun i => a i) (fun _ => a (Fin.last n)))
 
-/-- The bottom-right `(Unit, Unit)` corner of `star u * diag(a, c) * u` equals
-`∑ i, star (b i) * a i * b i`, regardless of the last diagonal entry `c`. -/
-private lemma liWuUnitary_BR_corner {n : ℕ} {b : Fin n → A} (a : Fin n → A) (c : A) :
-    (star (liWuUnitary b) * liWuDiag a c * liWuUnitary b) (Sum.inr ()) (Sum.inr ()) =
+/-- The bottom-right `(Unit, Unit)` corner of `star u * liWuDiag a * u` equals
+`∑ i, star (b i) * a i.castSucc * b i`. -/
+private lemma liWuUnitary_BR_corner {n : ℕ} {b : Fin (n + 1) → A} (a : Fin (n + 1) → A) :
+    (star (liWuUnitary b) * liWuDiag a * liWuUnitary b) (Sum.inr ()) (Sum.inr ()) =
       ∑ i, star (b i) * a i * b i := by
   rw [liWuUnitary_star, liWuUnitary]
   simp only [Matrix.mul_apply, liWuDiag, Matrix.diagonal_apply, Fintype.sum_sum_type]
@@ -222,7 +222,7 @@ private lemma liWuTheta_isPrimitiveRoot (n : ℕ) :
     IsPrimitiveRoot (liWuTheta n) (n + 1) := by
   have : liWuTheta n = exp (2 * ↑Real.pi * Complex.I / ↑(n + 1)) := by
     simp only [liWuTheta, Nat.cast_add, Nat.cast_one]
-  simpa [this] using isPrimitiveRoot_exp (n + 1) (by omega)
+  simpa only [this] using isPrimitiveRoot_exp (n + 1) (by omega)
 
 /-- `‖θ^m‖ = 1` for the `(n+1)`-th root of unity `θ`. -/
 private lemma liWuTheta_norm (n : ℕ) : ‖liWuTheta n‖ = 1 := by
@@ -256,7 +256,7 @@ private lemma liWuTheta_star_mul (n m : ℕ) :
 /-- `θ^m * star(θ^m) = 1` in `ℂ`, since `|θ| = 1`. -/
 private lemma liWuTheta_mul_star (n m : ℕ) :
     liWuTheta n ^ m * star (liWuTheta n ^ m) = 1 := by
-  simpa [mul_comm] using liWuTheta_star_mul n m
+  simpa only [mul_comm] using liWuTheta_star_mul n m
 
 /-- `star(θ^m) = θ^{-m}` in `ℂ`: conjugation inverts on the unit circle. -/
 private lemma liWuTheta_star_eq_zpow (n m : ℕ) :
@@ -352,9 +352,9 @@ private lemma liWuTheta_geom_sum (n : ℕ) (d : ℤ) :
       exact_mod_cast hdvd
     simp [h1]
   · -- Case: (n+1) ∤ d, so θ^d ≠ 1
-    have hne : liWuTheta n ^ d ≠ 1 := by
-      intro h
-      exact hdvd ((liWuTheta_isPrimitiveRoot n).zpow_eq_one_iff_dvd d |>.mp h)
+    have hne : liWuTheta n ^ d ≠ 1 :=
+      fun h =>
+        hdvd (liWuTheta_isPrimitiveRoot n |>.zpow_eq_one_iff_dvd d |>.mp h)
     -- (θ^d)^(n+1) = 1, because θ^(n+1) = 1
     have hpow1 : (liWuTheta n ^ d) ^ (n + 1) = 1 := by
       rw [← zpow_natCast (liWuTheta n ^ d), ← zpow_mul, mul_comm,
@@ -365,7 +365,7 @@ private lemma liWuTheta_geom_sum (n : ℕ) (d : ℤ) :
     rw [Finset.sum_congr rfl hrange]
     -- Use ∑ r^i * (r - 1) = r^(n+1) - 1 and cancel (θ^d - 1) ≠ 0
     apply eq_zero_of_ne_zero_of_mul_right_eq_zero <| sub_ne_zero.mpr hne
-    rw [geom_sum_mul, hpow1, sub_self]
+    rw [geom_sum_mul (liWuTheta n ^ d) (n + 1), hpow1, sub_self]
 
 /-! ### Fourier averaging formula -/
 
@@ -403,9 +403,9 @@ private lemma liWuIdx_dvd_iff {n : ℕ} (i j : Fin n ⊕ Unit) :
     exact_mod_cast (by linarith [abs_eq_zero.mp hdiff0] : (liWuIdx n i : ℤ) = liWuIdx n j)
   · rintro rfl; simp
 
-/-- Fourier averaging: summing the Fourier conjugates of `M` over all `k : Fin (n+1)` gives
+/-- Fourier summing: summing the Fourier conjugates of `M` over all `k : Fin (n+1)` gives
 `(n+1) • M i j` on the diagonal and `0` off it. -/
-private lemma liWuFourier_avg_apply {n : ℕ}
+private lemma liWuFourier_sum_apply {n : ℕ}
     (M : Matrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A) (i j : Fin n ⊕ Unit) :
     ∑ k : Fin (n + 1), (star (liWuFourier (A := A) k) * M * liWuFourier (A := A) k) i j =
       if i = j then (↑(n + 1) : ℂ) • M i j else 0 := by
@@ -426,9 +426,76 @@ private lemma liWuFourier_avg_apply {n : ℕ}
   · push_cast; rfl
   · simp
 
+/-- The `(inr (), inr ())` entry of the raw Fourier sum equals `(n+2 : ℂ)` times
+the weighted sum `∑ i, star (b i) * a i * b i`. -/
+private lemma liWuFourier_sum_BR {n : ℕ} (a b : Fin (n + 1) → A) :
+    let X := star (liWuUnitary b) * liWuDiag a * liWuUnitary b
+    (∑ k : Fin (n + 2), star (liWuFourier (A := A) k) * X * liWuFourier (A := A) k)
+        (Sum.inr ()) (Sum.inr ()) =
+      (↑(n + 2) : ℂ) • ∑ i, star (b i) * a i * b i := by
+  dsimp only
+  rw [Matrix.sum_apply, liWuFourier_sum_apply, liWuUnitary_BR_corner]
+  simp only [↓reduceIte]
+
+/-- The `(inr (), inr ())` entry of the ℝ-normalized Fourier average equals
+`∑ i, star (b i) * a i * b i`. The weights `1/(n+2) : ℝ` are exactly those needed
+to apply `ConvexOn.map_sum_le` in Step C. -/
+private lemma liWuFourier_avg_BR {n : ℕ} (a b : Fin (n + 1) → A) :
+    let X := star (liWuUnitary b) * liWuDiag a * liWuUnitary b
+    (∑ k : Fin (n + 2),
+        (1 / (n + 2) : ℝ) • (star (liWuFourier (A := A) k) * X * liWuFourier (A := A) k))
+        (Sum.inr ()) (Sum.inr ()) =
+      ∑ i, star (b i) * a i * b i := by
+  simp only [Matrix.smul_apply, ← Finset.smul_sum, liWuFourier_sum_BR]
+  have hn : (1 / (n + 2 : ℝ)) * ↑(n + 2) = 1 := by norm_cast; field_simp
+  calc (1 / (n + 2 : ℝ)) • (↑(n + 2) : ℝ) • ∑ i, star (b i) * a i * b i
+      = ((1 / (n + 2 : ℝ)) * ↑(n + 2)) • ∑ i, star (b i) * a i * b i := by rw [smul_smul]
+    _ = ∑ i, star (b i) * a i * b i := by rw [hn, one_smul]
+
+--- here's an example instance; to be deleted
+variable [PartialOrder A] [StarOrderedRing A]
+
+/-- CFC acts entry-wise on the Li–Wu diagonal lift. -/
+private lemma liWuDiag_cfc {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ}
+    (hf : ContinuousOn f (⋃ i, spectrum ℝ (a i)))
+    (hsa : ∀ i, IsSelfAdjoint (a i)) :
+    cfc f (liWuDiag a) = liWuDiag (fun i => cfc f (a i)) := by
+  dsimp only [liWuDiag]
+  let d : Fin (n + 1) ⊕ Unit → A := Sum.elim (fun i => a i) (fun _ => a (Fin.last n))
+  have spectrum_eq : (⋃ i : Fin (n + 1) ⊕ Unit, spectrum ℝ (d i)) = ⋃ i, spectrum ℝ (a i) := by
+    ext; simp only [Set.mem_iUnion, d]
+    constructor
+    · intro ⟨i, hi⟩
+      rcases i with j | ⟨⟩
+      · exact ⟨j, hi⟩
+      · exact ⟨Fin.last n, hi⟩
+    · exact fun ⟨i, hi⟩ => ⟨Sum.inl i, hi⟩
+  have hf' : ContinuousOn f (⋃ i, spectrum ℝ (d i)) := spectrum_eq ▸ hf
+  have hd : ∀ i, IsSelfAdjoint (d i) := fun i =>
+    match i with
+    | Sum.inl j => hsa j
+    | Sum.inr () => hsa (Fin.last n)
+  rw [cfc_diagonal hf' hd]
+  ext i; match i with
+  | Sum.inl j => rfl
+  | Sum.inr () => rfl
+
 end CStarMatrix
 
 variable [PartialOrder A] [StarOrderedRing A]
+
+/-- Specialization of `liWuDiag_cfc` to the Li–Wu setting:
+`a : Fin (n+1) → A`, the diagonal matrix is `diag(a 0, …, a (n-1), a n)` in an
+`(n+1) × (n+1)` block (indexed by `Fin n ⊕ Unit`).
+The spectrum hypothesis collapses to `ContinuousOn f I` since every `spectrum ℝ (a i) ⊆ I`. -/
+private lemma liWuDiag_cfc_LiWu {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ}
+    (hf : ContinuousOn f I)
+    (hsa : ∀ i, IsSelfAdjoint (a i)) (ha_spec : ∀ i, spectrum ℝ (a i) ⊆ I) :
+    cfc f (CStarMatrix.liWuDiag a) = CStarMatrix.liWuDiag (fun i => cfc f (a i)) := by
+  apply CStarMatrix.liWuDiag_cfc
+  · exact hf.mono (Set.iUnion_subset ha_spec)
+  · exact hsa
+
 /-! ## General (arbitrary n) Jensen's Operator Inequality -/
 
 /-- **Jensen's Operator Inequality** (Li–Wu 2012, Theorem 2.2, general n):
