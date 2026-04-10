@@ -185,6 +185,14 @@ theorem spectrum_diagonal (d : n → A) :
   push_neg
   rfl
 
+omit [PartialOrder A] [StarOrderedRing A] in
+/-- The spectrum of a diagonal matrix is contained in `I` when each entry's spectrum is. -/
+theorem spectrum_diagonal_subset {d : n → A} {I : Set ℝ}
+    (h : ∀ i, spectrum ℝ (d i) ⊆ I) :
+    spectrum ℝ (Matrix.diagonal d) ⊆ I := by
+  rw [spectrum_diagonal]
+  exact Set.iUnion_subset h
+
 /-- In a unital C⋆-algebra, `0 ≤ a` iff `a` is self-adjoint and `spectrum ℝ a ⊆ [0, ∞)`.
 This unwraps `nonneg_iff_isSelfAdjoint_and_quasispectrumRestricts` and bridges the
 `quasispectrum`/`spectrum` gap (in a unital algebra, `quasispectrum ℝ a = spectrum ℝ a ∪ {0}`

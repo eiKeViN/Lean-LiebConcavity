@@ -8,13 +8,11 @@ noncomputable section
 
 universe u
 variable {A : Type u} [CStarAlgebra A]
-variable {f : ℝ → ℝ} {I : Set ℝ}
 
 /-! ## Sub-goal 2: The unitary `u` -/
 open scoped Matrix
 open MatCStar
 
-namespace CStarMatrix
 /-- The Li–Wu unitary matrix in `CStarMatrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A`.
 Constructed from `b : Fin n → A` with `∑ star (b i) * b i = 1`. -/
 private def liWuUnitary {n : ℕ} (b : Fin n → A) :
@@ -329,6 +327,25 @@ private lemma liWuFourier_mul_star_self {n : ℕ} (k : Fin (n + 1)) :
     simp only [Pi.star_def, star_smul, smul_mul_smul_comm]
     rw [liWuTheta_mul_star, one_smul, star_one, mul_one]
 
+/-- `liWuDiag a` is self-adjoint when each `a i` is. -/
+private lemma liWuDiag_isSelfAdjoint {n : ℕ} {a : Fin (n + 1) → A}
+    (ha : ∀ i, IsSelfAdjoint (a i)) :
+    IsSelfAdjoint (liWuDiag a) :=
+  isSelfAdjoint_diagonal_sum_elim ha (ha (Fin.last n))
+
+/-- `liWuUnitary b` is a member of the unitary subgroup. -/
+private lemma liWuUnitary_mem_unitary {n : ℕ} {b : Fin (n + 1) → A}
+    (hb : ∑ i, star (b i) * b i = 1) :
+    liWuUnitary b ∈
+      unitary (Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A) :=
+  Unitary.mem_iff.mpr ⟨liWuUnitary_star_mul_self' hb, liWuUnitary_mul_star_self' hb⟩
+
+/-- `liWuFourier k` is a member of the unitary subgroup. -/
+private lemma liWuFourier_mem_unitary {n : ℕ} (k : Fin (n + 1)) :
+    liWuFourier (A := A) k ∈
+      unitary (Matrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A) :=
+  Unitary.mem_iff.mpr ⟨liWuFourier_star_mul_self k, liWuFourier_mul_star_self k⟩
+
 /-! ### Discrete Fourier orthogonality -/
 
 /-- Discrete Fourier orthogonality: summing `θ^(k*d)` over `k : Fin (n+1)` gives `n+1` if
@@ -452,7 +469,15 @@ private lemma liWuFourier_avg_BR {n : ℕ} (a b : Fin (n + 1) → A) :
       = ((1 / (n + 2 : ℝ)) * ↑(n + 2)) • ∑ i, star (b i) * a i * b i := by rw [smul_smul]
     _ = ∑ i, star (b i) * a i * b i := by rw [hn, one_smul]
 
---- here's an example instance; to be deleted
+/-- The spectrum of `liWuDiag a` is contained in `I` when each `spectrum ℝ (a i) ⊆ I`. -/
+private lemma liWuDiag_spectrum_subset {n : ℕ} {a : Fin (n + 1) → A} {I : Set ℝ}
+    (ha_spec : ∀ i, spectrum ℝ (a i) ⊆ I) :
+    spectrum ℝ (liWuDiag a) ⊆ I := by
+  apply MatCStar.spectrum_diagonal_subset
+  rintro (j | ⟨⟩)
+  · exact ha_spec j
+  · exact ha_spec (Fin.last n)
+
 variable [PartialOrder A] [StarOrderedRing A]
 
 /-- CFC acts entry-wise on the Li–Wu diagonal lift. -/
@@ -480,24 +505,24 @@ private lemma liWuDiag_cfc {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ}
   | Sum.inl j => rfl
   | Sum.inr () => rfl
 
-end CStarMatrix
-
-variable [PartialOrder A] [StarOrderedRing A]
-
 /-- Specialization of `liWuDiag_cfc` to the Li–Wu setting:
 `a : Fin (n+1) → A`, the diagonal matrix is `diag(a 0, …, a (n-1), a n)` in an
 `(n+1) × (n+1)` block (indexed by `Fin n ⊕ Unit`).
 The spectrum hypothesis collapses to `ContinuousOn f I` since every `spectrum ℝ (a i) ⊆ I`. -/
-private lemma liWuDiag_cfc_LiWu {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ}
+private lemma liWuDiag_cfc_LiWu {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ} {I : Set ℝ}
     (hf : ContinuousOn f I)
     (hsa : ∀ i, IsSelfAdjoint (a i)) (ha_spec : ∀ i, spectrum ℝ (a i) ⊆ I) :
-    cfc f (CStarMatrix.liWuDiag a) = CStarMatrix.liWuDiag (fun i => cfc f (a i)) := by
-  apply CStarMatrix.liWuDiag_cfc
+    cfc f (liWuDiag a) = liWuDiag (fun i => cfc f (a i)) := by
+  apply liWuDiag_cfc
   · exact hf.mono (Set.iUnion_subset ha_spec)
   · exact hsa
 
+variable {f : ℝ → ℝ} {I : Set ℝ}
+
 /-! ## General (arbitrary n) Jensen's Operator Inequality -/
 
+
+set_option backward.isDefEq.respectTransparency false in
 /-- **Jensen's Operator Inequality** (Li–Wu 2012, Theorem 2.2, general n):
 
 Let `A` be an ordered unital C⋆-algebra and `f : ℝ → ℝ` a continuous operator convex
@@ -519,6 +544,36 @@ theorem JensenOperator_convex_general
     (hb : ∑ i, star (b i) * b i = 1) :
     cfc f (∑ i, star (b i) * a i * b i) ≤
       ∑ i, star (b i) * cfc f (a i) * b i := by
+  have hconv : ConvexOn ℝ
+      {a : Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A |
+        IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I}
+      (cfc f) :=
+    @hf_opconvex (Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A)
+      instCStarAlgebra instPartialOrder instStarOrderedRing
+  -- The Li–Wu block matrix X = star u * diag(a) * u
+  let u := liWuUnitary b
+  let v := (fun k : Fin (n + 2) => liWuFourier (A := A) k)
+  let X := star u * liWuDiag a * u
+  -- Apply Jensen (ConvexOn.map_sum_le) to the (n+2) Fourier conjugates of X
+  have hJensen :
+      cfc f (∑ k, (1 / (n + 2) : ℝ) • (star (v k) * X * v k))
+      ≤ ∑ k, (1 / (n + 2) : ℝ) • cfc f (star (v k) * X * v k) := by
+    apply hconv.map_sum_le
+    · intro k _; positivity
+    · simp [Finset.sum_const]; field_simp
+    · -- each point is in the set: self-adjoint and spectrum ⊆ I
+      intro k _
+      simp only [Set.mem_setOf_eq]
+      constructor
+      · -- unitary conjugation preserves self-adjointness
+        exact (liWuDiag_isSelfAdjoint ha).conjugate' u |>.conjugate' (v k)
+      · -- spectrum ℝ (star vk * X * vk) ⊆ I
+        calc spectrum ℝ (star (v k) * X * v k)
+            = spectrum ℝ X :=
+                Unitary.spectrum_star_left_conjugate (U := ⟨v k, liWuFourier_mem_unitary k⟩)
+          _ = spectrum ℝ (liWuDiag a) :=
+                Unitary.spectrum_star_left_conjugate (U := ⟨u, liWuUnitary_mem_unitary hb⟩)
+          _ ⊆ I := liWuDiag_spectrum_subset ha_spec
   sorry
 
 -- [thm:jensen_2012'] Li-Wu 2012, Corollary 2.4 (general n)
@@ -542,8 +597,7 @@ theorem JensenOperator_convex_general'
 
 /-! ## n = 2 specializations -/
 
-open Matrix
-open Fin
+open Matrix Fin
 variable {a₁ a₂ b₁ b₂ : A}
 
 /-- Strong Jensen's Operator Inequality, n = 2 case.
@@ -610,8 +664,7 @@ theorem JensenOperator_concave'
   simp only [cfc_neg, mul_neg, neg_mul, ← neg_add] at h
   exact neg_le_neg_iff.mp h
 
-open NNReal
-open Set
+open NNReal Set
 
 /-- A version applies to nonnegative elements of the C* algebra,
 which is useful for our application.
