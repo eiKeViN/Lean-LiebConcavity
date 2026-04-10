@@ -185,6 +185,45 @@ theorem spectrum_diagonal (d : n → A) :
   push_neg
   rfl
 
+/-- In a unital C⋆-algebra, `0 ≤ a` iff `a` is self-adjoint and `spectrum ℝ a ⊆ [0, ∞)`.
+This unwraps `nonneg_iff_isSelfAdjoint_and_quasispectrumRestricts` and bridges the
+`quasispectrum`/`spectrum` gap (in a unital algebra, `quasispectrum ℝ a = spectrum ℝ a ∪ {0}`
+so non-negativity on the quasispectrum is equivalent to non-negativity on the spectrum). -/
+private lemma nonneg_iff_spectrum_nonneg {a : A} :
+    0 ≤ a ↔ IsSelfAdjoint a ∧ ∀ x ∈ spectrum ℝ a, 0 ≤ x := by
+  rw [nonneg_iff_isSelfAdjoint_and_quasispectrumRestricts, and_congr_right_iff]
+  intro _
+  rw [QuasispectrumRestricts.nnreal_iff]
+  constructor
+  · intro h x hx
+    exact h x (spectrum_subset_quasispectrum ℝ a hx)
+  · intro h x hx
+    rcases mem_quasispectrum_iff.mp hx with rfl | hx
+    · exact le_refl 0
+    · exact h x hx
+
+/-- A diagonal matrix over a C⋆-algebra is nonneg iff all its diagonal entries are nonneg. -/
+theorem nonneg_diagonal_iff {d : n → A} :
+    0 ≤ Matrix.diagonal d ↔ ∀ i, 0 ≤ d i := by
+  constructor
+  · intro h i
+    obtain ⟨hsa, hspec⟩ := nonneg_iff_spectrum_nonneg.mp h
+    rw [Matrix.isHermitian_iff_isSelfAdjoint.symm, Matrix.isHermitian_diagonal_iff] at hsa
+    refine nonneg_iff_spectrum_nonneg.mpr ⟨hsa i, fun x hx => hspec x ?_⟩
+    exact spectrum_diagonal d ▸ Set.mem_iUnion.mpr ⟨i, hx⟩
+  · intro h
+    refine nonneg_iff_spectrum_nonneg.mpr
+      ⟨isSelfAdjoint_diagonal <| fun i => (nonneg_iff_spectrum_nonneg.mp <| h i).1, ?_⟩
+    intro x hx
+    obtain ⟨i, hi⟩ := Set.mem_iUnion.mp <| (spectrum_diagonal d).symm ▸ hx
+    exact (nonneg_iff_spectrum_nonneg.mp <| h i).2 x hi
+
+/-- Ordering of diagonal matrices is entry-wise. -/
+theorem diagonal_le_diagonal_iff {d e : n → A} :
+    Matrix.diagonal d ≤ Matrix.diagonal e ↔ ∀ i, d i ≤ e i := by
+  rw [← sub_nonneg, Matrix.diagonal_sub, nonneg_diagonal_iff]
+  simp_rw [sub_nonneg]
+
 end MatCStar
 
 end
