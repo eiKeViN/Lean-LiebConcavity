@@ -24,8 +24,13 @@ transfers its norm and algebra instances to `Matrix n n A`. These are registered
 
 namespace Matrix
 
-variable (R : Type*) {n : Type*} {α : Type*} [CommSemiring R] [Fintype n] [DecidableEq n]
-  [Semiring α] [StarRing α] [Algebra R α]
+variable {n : Type*} [Fintype n] [DecidableEq n]
+variable {α : Type*} [Semiring α]
+
+section StarAlgHom
+
+variable (R : Type*) [CommSemiring R]
+variable [StarRing α] [Algebra R α]
 
 /-- `Matrix.diagonal` as a `StarAlgHom`. -/
 def diagonalStarAlgHom : StarAlgHom R (n → α) (Matrix n n α) :=
@@ -42,6 +47,37 @@ theorem diagonalStarAlgHom_continuous [TopologicalSpace α] [ContinuousAdd α] :
     Continuous (diagonalStarAlgHom R (n := n) (α := α)) := by
   change Continuous (diagonal (α := α))
   exact continuous_id.matrix_diagonal
+
+end StarAlgHom
+
+section Invertible
+
+/-- `IsUnit (diagonal d) ↔ ∀ i, IsUnit (d i)` for matrices over a (possibly non-commutative)
+ring. Note: `Matrix.isUnit_diagonal` in Mathlib requires `CommRing`, so we need a separate proof.
+The key: if `diagonal d * M = 1` then `M` must have `M i i = (d i)⁻¹`. -/
+theorem isUnit_diagonal_iff {d : n → α} :
+    IsUnit (diagonal d) ↔ ∀ i, IsUnit (d i) := by
+  constructor
+  · intro ⟨u, hu⟩ i
+    have hli := congr_fun (congr_fun u.mul_inv i) i
+    have hri := congr_fun (congr_fun u.inv_mul i) i
+    simp_rw [hu, mul_apply, diagonal_apply, one_apply, ite_mul,
+      zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true] at hli
+    simp_rw [hu, mul_apply, diagonal_apply, one_apply, mul_ite,
+      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at hri
+    exact ⟨⟨d i, u.inv i i, hli, hri⟩, rfl⟩
+  · intro h
+    refine ⟨⟨diagonal d, diagonal (fun i => (h i).unit.inv), ?_, ?_⟩, rfl⟩
+    all_goals
+    ext i j
+    simp only [Units.inv_eq_val_inv, mul_diagonal, diagonal_apply, ite_mul,
+      zero_mul, one_apply]
+    split_ifs with hij
+    · subst hij
+      first | exact (h i).unit.mul_inv | exact (h i).unit.inv_mul
+    · rfl
+
+end Invertible
 
 end Matrix
 
@@ -132,6 +168,22 @@ lemma cfc_diagonal {f : ℝ → ℝ} {d : n → A}
     cfc f (Matrix.diagonal d) = Matrix.diagonal (fun i => cfc f (d i)) := by
   rw [← Matrix.diagonal_map_cfc hf hd,
       cfc_map_pi (S := ℝ) f d hf (Pi.isSelfAdjoint.mpr hd) hd]
+
+-- `Matrix.isUnit_diagonal_iff` is proved in the `Matrix.Invertible` section above.
+
+omit [PartialOrder A] [StarOrderedRing A] in
+/-- The spectrum of a diagonal matrix equals the union of the spectra of its entries. -/
+theorem spectrum_diagonal (d : n → A) :
+    spectrum ℝ (Matrix.diagonal d) = ⋃ i, spectrum ℝ (d i) := by
+  ext r
+  simp only [spectrum.mem_iff, Set.mem_iUnion]
+  rw [show algebraMap ℝ (Matrix n n A) r = Matrix.diagonal (fun _ => algebraMap ℝ A r) by
+    simp [Matrix.algebraMap_eq_diagonal]]
+  simp only [show Matrix.diagonal (fun _ => algebraMap ℝ A r) - Matrix.diagonal d =
+      Matrix.diagonal (fun i => algebraMap ℝ A r - d i) by simp [Matrix.diagonal_sub],
+    Matrix.isUnit_diagonal_iff]
+  push_neg
+  rfl
 
 end MatCStar
 
