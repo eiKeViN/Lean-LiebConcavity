@@ -98,7 +98,7 @@ theorem CStarAlgebra.conjStarAlgAut_map_cfc (u : unitary A) (f : ℝ → ℝ) (a
 set_option backward.isDefEq.respectTransparency false in
 /-- Conjugation by a unitary commutes with CFC on a `CStarAlgebra` — left form:
 `cfc f (u * a * star u) = u * cfc f a * star u`. Continuity is automatic. -/
-theorem CStarAlgebra.cfc_unitary_conj (u : unitary A) (f : ℝ → ℝ) (a : A)
+theorem CStarAlgebra.cfc_unitary_conj {u : unitary A} {f : ℝ → ℝ} {a : A}
     (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
     (ha : p a := by cfc_tac)
     (hφa : p ((u : A) * a * star (u : A)) := by cfc_tac) :
@@ -108,7 +108,7 @@ theorem CStarAlgebra.cfc_unitary_conj (u : unitary A) (f : ℝ → ℝ) (a : A)
 set_option backward.isDefEq.respectTransparency false in
 /-- Conjugation by a unitary commutes with CFC on a `CStarAlgebra` — right form:
 `cfc f (star u * a * u) = star u * cfc f a * u`. Continuity is automatic. -/
-theorem CStarAlgebra.cfc_unitary_conj' (u : unitary A) (f : ℝ → ℝ) (a : A)
+theorem CStarAlgebra.cfc_unitary_conj' {u : unitary A} {f : ℝ → ℝ} {a : A}
     (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
     (ha : p a := by cfc_tac)
     (hφa : p (star (u : A) * a * (u : A)) := by cfc_tac) :

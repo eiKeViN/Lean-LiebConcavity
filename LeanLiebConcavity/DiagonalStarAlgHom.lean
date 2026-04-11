@@ -11,7 +11,7 @@ import Mathlib.Topology.Instances.Matrix
 `Matrix.diagonalAlgHom` exists in Mathlib but is only an `AlgHom`.
 Here we upgrade it to a `StarAlgHom` using `Matrix.diagonal_conjTranspose`.
 
-This is a candidate for upstream contribution to Mathlib.
+TODO : upstream contribution to Mathlib.
 
 ## C⋆-algebra instances on `Matrix n n A` — namespace `MatCStar`
 
@@ -27,34 +27,10 @@ namespace Matrix
 variable {n : Type*} [Fintype n] [DecidableEq n]
 variable {α : Type*} [Semiring α]
 
-section StarAlgHom
-
-variable (R : Type*) [CommSemiring R]
-variable [StarRing α] [Algebra R α]
-
-/-- `Matrix.diagonal` as a `StarAlgHom`. -/
-def diagonalStarAlgHom : StarAlgHom R (n → α) (Matrix n n α) :=
-  { diagonalAlgHom R with
-    map_star' := fun v => by simp [star_eq_conjTranspose, diagonal_conjTranspose] }
-
-@[simp]
-theorem diagonalStarAlgHom_apply (v : n → α) :
-    diagonalStarAlgHom R v = diagonal v := by simp [diagonalStarAlgHom]
-
-/-- `Matrix.diagonalStarAlgHom` is continuous (the topology on `Matrix n n α` is the product
-topology, and `Continuous.matrix_diagonal` is tagged `@[fun_prop]`). -/
-theorem diagonalStarAlgHom_continuous [TopologicalSpace α] [ContinuousAdd α] :
-    Continuous (diagonalStarAlgHom R (n := n) (α := α)) := by
-  change Continuous (diagonal (α := α))
-  exact continuous_id.matrix_diagonal
-
-end StarAlgHom
-
 section Invertible
 
 /-- `IsUnit (diagonal d) ↔ ∀ i, IsUnit (d i)` for matrices over a (possibly non-commutative)
-ring. Note: `Matrix.isUnit_diagonal` in Mathlib requires `CommRing`, so we need a separate proof.
-The key: if `diagonal d * M = 1` then `M` must have `M i i = (d i)⁻¹`. -/
+ring. This generalizes `Matrix.isUnit_diagonal` in Mathlib which requires `CommRing`. -/
 theorem isUnit_diagonal_iff {d : n → α} :
     IsUnit (diagonal d) ↔ ∀ i, IsUnit (d i) := by
   constructor
@@ -78,6 +54,28 @@ theorem isUnit_diagonal_iff {d : n → α} :
     · rfl
 
 end Invertible
+
+section StarAlgHom
+
+variable (R : Type*) [CommSemiring R]
+variable [StarRing α] [Algebra R α]
+
+/-- `Matrix.diagonal` as a `StarAlgHom`. -/
+def diagonalStarAlgHom : StarAlgHom R (n → α) (Matrix n n α) :=
+  { diagonalAlgHom R with
+    map_star' := fun v => by simp [star_eq_conjTranspose, diagonal_conjTranspose] }
+
+@[simp]
+theorem diagonalStarAlgHom_apply (v : n → α) :
+    diagonalStarAlgHom R v = diagonal v := by simp [diagonalStarAlgHom]
+
+/-- `Matrix.diagonalStarAlgHom` is continuous -/
+theorem diagonalStarAlgHom_continuous [TopologicalSpace α] [ContinuousAdd α] :
+    Continuous (diagonalStarAlgHom R (n := n) (α := α)) := by
+  change Continuous (diagonal (α := α))
+  exact continuous_id.matrix_diagonal
+
+end StarAlgHom
 
 end Matrix
 
@@ -129,16 +127,16 @@ scoped instance instPiCFCReal :
 
 omit [Fintype n] [PartialOrder A] [StarOrderedRing A] in
 /-- A diagonal matrix is self-adjoint iff all its diagonal entries are self-adjoint. -/
-lemma isSelfAdjoint_diagonal {d : n → A} (hd : ∀ i, IsSelfAdjoint (d i)) :
-    IsSelfAdjoint (Matrix.diagonal d) := by
-  rwa [← Matrix.isHermitian_iff_isSelfAdjoint, Matrix.isHermitian_diagonal_iff]
+lemma isSelfAdjoint_diagonal_iff {d : n → A} :
+    IsSelfAdjoint (Matrix.diagonal d) ↔ ∀ i, IsSelfAdjoint (d i) := by
+  rw [← Matrix.isHermitian_iff_isSelfAdjoint, Matrix.isHermitian_diagonal_iff]
 
 omit [PartialOrder A] [StarOrderedRing A] in
 /-- Specialization of `isSelfAdjoint_diagonal` to the `Sum.elim` form used in `liWuDiag`. -/
 lemma isSelfAdjoint_diagonal_sum_elim {m : ℕ} {a : Fin m → A} {c : A}
     (hsa : ∀ i, IsSelfAdjoint (a i)) (hsc : IsSelfAdjoint c) :
     IsSelfAdjoint (Matrix.diagonal (Sum.elim a (fun _ => c) : Fin m ⊕ Unit → A)) :=
-  isSelfAdjoint_diagonal (fun i => i.casesOn hsa (fun _ => hsc))
+  isSelfAdjoint_diagonal_iff.mpr (fun i => i.casesOn hsa (fun _ => hsc))
 
 /-- `Matrix.diagonalStarAlgHom` commutes with CFC. -/
 theorem Matrix.diagonalStarAlgHom_map_cfc {f : ℝ → ℝ} {d : n → A}
@@ -149,7 +147,7 @@ theorem Matrix.diagonalStarAlgHom_map_cfc {f : ℝ → ℝ} {d : n → A}
     (Pi.spectrum_eq (R := ℝ) (κ := fun _ => A) d ▸ hf)
     (Matrix.diagonalStarAlgHom_continuous ℝ)
     (Pi.isSelfAdjoint.mpr hd)
-    (isSelfAdjoint_diagonal hd)
+    (isSelfAdjoint_diagonal_iff.mpr hd)
 
 /-- `Matrix.diagonal` commutes with CFC:
 `diagonal (cfc f d) = cfc f (diagonal d)`. -/
@@ -221,7 +219,7 @@ theorem nonneg_diagonal_iff {d : n → A} :
     exact spectrum_diagonal d ▸ Set.mem_iUnion.mpr ⟨i, hx⟩
   · intro h
     refine nonneg_iff_spectrum_nonneg.mpr
-      ⟨isSelfAdjoint_diagonal <| fun i => (nonneg_iff_spectrum_nonneg.mp <| h i).1, ?_⟩
+      ⟨isSelfAdjoint_diagonal_iff.mpr <| fun i => (nonneg_iff_spectrum_nonneg.mp <| h i).1, ?_⟩
     intro x hx
     obtain ⟨i, hi⟩ := Set.mem_iUnion.mp <| (spectrum_diagonal d).symm ▸ hx
     exact (nonneg_iff_spectrum_nonneg.mp <| h i).2 x hi

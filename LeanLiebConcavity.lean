@@ -2,6 +2,7 @@ import LeanLiebConcavity.Basic
 import LeanLiebConcavity.Defs
 import LeanLiebConcavity.ForMathlib
 import LeanLiebConcavity.ConjugateWeightedSum
+import LeanLiebConcavity.UnitaryConjCFC
 import LeanLiebConcavity.Jensen
 import LeanLiebConcavity.Main
 import LeanLiebConcavity.Lieb

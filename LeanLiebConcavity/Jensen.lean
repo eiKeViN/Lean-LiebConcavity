@@ -625,8 +625,10 @@ theorem JensenOperator_convex_general
           · exact fun k _ => ⟨hXa_conj_sa k, hXa_conj_spec k⟩
     _ = ∑ k, (1 / (↑(n + 2) : ℝ)) • (star (v k) * X (fun i => cfc f (a i)) * v k) := by
           simp only [hsummand]
-    _ = Matrix.diagonal rd := by rw [liWuFourier_avg_diag <| X <| fun i => cfc f (a i)]
+    _ = Matrix.diagonal rd := by
+          rw [liWuFourier_avg_diag <| X <| fun i => cfc f (a i)]
 
+set_option backward.isDefEq.respectTransparency false in
 -- [thm:jensen_2012'] Li-Wu 2012, Corollary 2.4 (general n)
 /-- **Jensen's Operator Inequality, sub-unital version** (Li–Wu 2012, Corollary 2.4):
 
@@ -635,7 +637,7 @@ Same as `JensenOperator_convex_general` but with the weaker hypothesis
 
 Proof idea: extend to `n+1` elements with `b_{n+1} = (1 - ∑ b*b)^{1/2}` and `a_{n+1} = 0`,
 apply the `= 1` version, then drop the last term using `f 0 ≤ 0`. -/
-theorem JensenOperator_convex_general'
+theorem JensenOperator_convex_general_sub
     {n : ℕ} {a b : Fin (n + 1) → A}
     (hI : 0 ∈ I)
     (hf : ContinuousOn f I ∧ f 0 ≤ 0) (hf_opconvex : OperatorConvexOn.{u} I f)
@@ -644,7 +646,60 @@ theorem JensenOperator_convex_general'
     (hb : ∑ i, star (b i) * b i ≤ 1) :
     cfc f (∑ i, star (b i) * a i * b i) ≤
       ∑ i, star (b i) * cfc f (a i) * b i := by
-  sorry
+  -- define c = sqrt(1 - ∑ b*b) and collect its basic properties
+  have h1mb_nonneg : 0 ≤ 1 - ∑ i, star (b i) * b i := sub_nonneg.mpr hb
+  let c := CFC.sqrt (1 - ∑ i, star (b i) * b i)
+  have hc_nonneg : 0 ≤ c := CFC.sqrt_nonneg _
+  have hc_sa : IsSelfAdjoint c := IsSelfAdjoint.of_nonneg hc_nonneg
+  have hc_sq : star c * c = 1 - ∑ i, star (b i) * b i := by
+    rw [hc_sa.star_eq]; exact CFC.sqrt_mul_sqrt_self _
+  -- extended b' = Fin.snoc b c satisfies ∑ star(b' i) * b' i = 1
+  let b' : Fin (n + 2) → A := Fin.snoc b c
+  have hb' : ∑ i, star (b' i) * b' i = 1 :=
+    calc ∑ i, star (b' i) * b' i
+        = ∑ i : Fin (n + 1), star (b' i.castSucc) * b' i.castSucc +
+            star (b' (Fin.last _)) * b' (Fin.last _) := Fin.sum_univ_castSucc _
+      _ = ∑ i, star (b i) * b i + star c * c := by
+            simp only [b', Fin.snoc_castSucc, Fin.snoc_last]
+      _ = 1 := by rw [hc_sq]; abel
+  -- also extends `a` by a zero entry
+  let a' : Fin (n + 2) → A := Fin.snoc a 0
+  have ha' : ∀ i, IsSelfAdjoint (a' i) := fun i =>
+    i.lastCases (by simp [a', Fin.snoc_last]) (fun j => by simp [a', Fin.snoc_castSucc, ha j])
+  have ha'_spec : ∀ i, spectrum ℝ (a' i) ⊆ I := fun i =>
+    i.lastCases
+      (by
+        simp only [a', Fin.snoc_last]
+        rcases subsingleton_or_nontrivial A with hS | hN
+        · simp [spectrum.of_subsingleton]
+        · rw [spectrum.zero_eq]; exact Set.singleton_subset_iff.mpr hI)
+      (fun j => by simp [a', Fin.snoc_castSucc, ha_spec j])
+  -- final helper lemmas
+  have lhs_eq : ∑ i, star (b' i) * a' i * b' i = ∑ i, star (b i) * a i * b i :=
+    calc ∑ i, star (b' i) * a' i * b' i
+        = ∑ i : Fin (n + 1), star (b' i.castSucc) * a' i.castSucc * b' i.castSucc +
+            star (b' (Fin.last _)) * a' (Fin.last _) * b' (Fin.last _) :=
+              Fin.sum_univ_castSucc _
+      _ = ∑ i, star (b i) * a i * b i + star c * 0 * c := by
+            simp only [a', b', Fin.snoc_castSucc, Fin.snoc_last]
+      _ = ∑ i, star (b i) * a i * b i := by simp
+  have hcfc0_le : cfc f (0 : A) ≤ 0 := by
+    rw [cfc_apply_zero, Algebra.algebraMap_eq_smul_one]
+    exact smul_nonpos_of_nonpos_of_nonneg hf.2 zero_le_one
+  have last_term_le : star c * cfc f (0 : A) * c ≤ 0 :=
+    calc star c * cfc f (0 : A) * c
+        ≤ star c * 0 * c := star_left_conjugate_le_conjugate hcfc0_le c
+      _ = 0 := by simp
+  -- the main step
+  calc cfc f (∑ i, star (b i) * a i * b i)
+      = cfc f (∑ i, star (b' i) * a' i * b' i) := by rw [lhs_eq]
+      -- apply Jensen
+    _ ≤ ∑ i, star (b' i) * cfc f (a' i) * b' i :=
+          JensenOperator_convex_general hf.1 hf_opconvex ha' ha'_spec hb'
+    _ = ∑ i, star (b i) * cfc f (a i) * b i + star c * cfc f (0 : A) * c := by
+          rw [Fin.sum_univ_castSucc]
+          simp only [a', b', Fin.snoc_castSucc, Fin.snoc_last]
+    _ ≤ ∑ i, star (b i) * cfc f (a i) * b i := add_le_of_nonpos_right last_term_le
 
 /-! ## n = 2 specializations -/
 
@@ -669,7 +724,7 @@ theorem JensenOperator_convex
 
 /-- Sub-unital Jensen's Operator Inequality, n = 2 case.
 Specialization of `JensenOperator_convex_general'` to two summands. -/
-theorem JensenOperator_convex'
+theorem JensenOperator_convex_sub
     (hI : 0 ∈ I)
     (hf : ContinuousOn f I ∧ f 0 ≤ 0) (hf_opconvex : OperatorConvexOn.{u} I f)
     (ha : IsSelfAdjoint a₁ ∧ IsSelfAdjoint a₂)
@@ -677,7 +732,7 @@ theorem JensenOperator_convex'
     (hb : star b₁ * b₁ + star b₂ * b₂ ≤ 1) :
     cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) ≤
       star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ := by
-  have := JensenOperator_convex_general' hI hf hf_opconvex
+  have := JensenOperator_convex_general_sub hI hf hf_opconvex
     (a := ![a₁, a₂]) (b := ![b₁, b₂])
     (by intro i; fin_cases i <;> simp_all only [zero_eta, mk_one, cons_val_zero, cons_val_one])
     (by intro i; fin_cases i <;> simp_all only [zero_eta, mk_one, cons_val_zero, cons_val_one])
@@ -698,8 +753,7 @@ theorem JensenOperator_concave
   simp only [cfc_neg, mul_neg, neg_mul, ← neg_add] at h
   exact neg_le_neg_iff.mp h
 
-
-theorem JensenOperator_concave'
+theorem JensenOperator_concave_sub
     (hI : 0 ∈ I)
     (hf : ContinuousOn f I ∧ f 0 ≥ 0) (hf_opconcave : OperatorConcaveOn.{u} I f)
     (ha : IsSelfAdjoint a₁ ∧ IsSelfAdjoint a₂)
@@ -707,7 +761,7 @@ theorem JensenOperator_concave'
     (hb : star b₁ * b₁ + star b₂ * b₂ ≤ 1) :
     star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ ≤
       cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) := by
-  have h := JensenOperator_convex' hI
+  have h := JensenOperator_convex_sub hI
     ⟨hf.1.neg, neg_nonpos.mpr hf.2⟩
     (operatorConcaveOn_neg_iff_convexOn.mp hf_opconcave) ha ha_spec hb
   simp only [cfc_neg, mul_neg, neg_mul, ← neg_add] at h
@@ -724,7 +778,7 @@ theorem JensenOperator_convex_nonneg
     (hb : star b₁ * b₁ + star b₂ * b₂ ≤ 1) :
     cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) ≤
       star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ :=
-  JensenOperator_convex'
+  JensenOperator_convex_sub
     (Set.self_mem_Ici)
     hf hf_opconvex
     ⟨IsSelfAdjoint.of_nonneg ha.1, IsSelfAdjoint.of_nonneg ha.2⟩
@@ -737,7 +791,7 @@ theorem JensenOperator_concave_nonneg
     (hb : star b₁ * b₁ + star b₂ * b₂ ≤ 1) :
       star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ ≤
       cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) :=
-  JensenOperator_concave'
+  JensenOperator_concave_sub
     (Set.self_mem_Ici)
     hf hf_opconcave
     ⟨IsSelfAdjoint.of_nonneg ha.1, IsSelfAdjoint.of_nonneg ha.2⟩
