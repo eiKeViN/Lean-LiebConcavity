@@ -3,15 +3,17 @@ import LeanLiebConcavity.ConjugateWeightedSum
 import LeanLiebConcavity.DiagonalStarAlgHom
 import Mathlib.Analysis.CStarAlgebra.CStarMatrix
 import Mathlib.RingTheory.RootsOfUnity.Complex
+import LeanLiebConcavity.UnitaryConjCFC
 
 noncomputable section
 
 universe u
 variable {A : Type u} [CStarAlgebra A]
 
-/-! ## Sub-goal 2: The unitary `u` -/
 open scoped Matrix
 open MatCStar
+
+/-! ## Sub-goal 2: The unitary `u` -/
 
 /-- The Li–Wu unitary matrix in `CStarMatrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A`.
 Constructed from `b : Fin n → A` with `∑ star (b i) * b i = 1`. -/
@@ -54,8 +56,7 @@ private lemma liWuUnitary_star {n : ℕ} (b : Fin n → A) :
       simp only [W, Matrix.conjTranspose_apply, Matrix.of_apply, star_zero]
     simpa only [hX, hZ, hY, hW] using Matrix.fromBlocks_conjTranspose X Y Z W
 
-
-/-- `star u * u = 1` for the Li–Wu unitary, using `∑ star (b i) * b i = 1`. -/
+/-- `star u * u = 1` when `∑ star (b i) * b i = 1`. -/
 private lemma liWuUnitary_star_mul_self' {n : ℕ} {b : Fin n → A}
     (hb : ∑ i, star (b i) * b i = 1) :
     star (liWuUnitary b) * liWuUnitary b = 1 := by
@@ -117,17 +118,14 @@ private lemma liWuUnitary_star_mul_self' {n : ℕ} {b : Fin n → A}
               hb, Finset.univ_unique, mul_zero]
     simp only [Finset.sum_const_zero, add_zero, Matrix.one_apply_eq]
 
-/-- `u * star u = 1` for the Li–Wu unitary, using `∑ star (b i) * b i = 1`. -/
+/-- `u * star u = 1` when `∑ star (b i) * b i = 1`. -/
 private lemma liWuUnitary_mul_star_self' {n : ℕ} {b : Fin n → A}
     (hb : ∑ i, star (b i) * b i = 1) :
     liWuUnitary b * star (liWuUnitary b) = 1 := by
   rw [liWuUnitary_star, liWuUnitary, Matrix.fromBlocks_multiply,
       ← Matrix.fromBlocks_one, Matrix.fromBlocks_inj]
   refine ⟨?_tl, ?_tr, ?_bl, ?_br⟩
-  · -- Top-left: X*X + Y*(-Z') = δ,  same algebra as before
-    -- X_{ij} = δ_{ij} - P_{ij},  Y_{i,*} = b i,  (-Z')_{*,j} = star(b j)
-    -- (X*X)_{ij} = ∑_k X_{ik}*X_{kj}, (Y*(-Z'))_{ij} = b i * star(b j) = P_{ij}
-    -- same as TL of star u * u
+  · -- Top-left: X * X + Y * (-Z') = δ
     ext i j
     simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply]
     have : ∀ k : Fin n,
@@ -147,9 +145,7 @@ private lemma liWuUnitary_mul_star_self' {n : ℕ} {b : Fin n → A}
     simp only [this, sum_add_distrib, sum_sub_distrib, ← sum_mul, ← mul_sum, hb,
               sum_ite_eq, sum_ite_eq', mem_univ, univ_unique, sum_const, card_singleton,
               if_true, sub_add_cancel, one_smul, mul_one]
-  · -- Top-right: X*(-Y) + Y*0 = 0
-    -- Goal: ∑ x X_{ix} * (-b x) + b i * 0 = 0, i.e. -∑ x X_{ix} * b x = 0
-    -- same sum as TR of star u * u (proved zero), negated
+  · -- Top-right: X * (-Y) + Y * 0 = 0
     ext i (_ : Unit)
     simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply,
       mul_zero, Finset.sum_const_zero, add_zero]
@@ -162,9 +158,7 @@ private lemma liWuUnitary_mul_star_self' {n : ℕ} {b : Fin n → A}
     simp_rw [this, Finset.sum_add_distrib, Finset.sum_neg_distrib,
       Finset.sum_ite_eq, Finset.mem_univ, if_true,
       ← Finset.mul_sum, hb, mul_one, neg_add_cancel, Matrix.zero_apply]
-  · -- Bottom-left: Z*X + 0*(-Z') = 0
-    -- Goal: ∑ x (-star(b x)) * X_{xj} = 0, i.e. -∑ x star(b x) * X_{xj} = 0
-    -- same sum as BL of star u * u (proved zero), negated
+  · -- Bottom-left: Z * X + 0 * (-Z') = 0
     ext (_ : Unit) j
     simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply,
       zero_mul, Finset.sum_const_zero, add_zero]
@@ -177,19 +171,40 @@ private lemma liWuUnitary_mul_star_self' {n : ℕ} {b : Fin n → A}
     simp_rw [this, Finset.sum_add_distrib, Finset.sum_neg_distrib,
       Finset.sum_ite_eq', Finset.mem_univ, if_true,
       ← Finset.sum_mul, hb, one_mul, neg_add_cancel, Matrix.zero_apply]
-  · -- Bottom-right: Z*(-Y) + 0*0 = 1
-    -- Goal: ∑ x (-star(b x)) * (-b x) = 1, i.e. ∑ x star(b x) * b x = 1
+  · -- Bottom-right: Z * (-Y) + 0 * 0 = 1
     ext (_ : Unit) (_ : Unit)
     simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply_eq,
               neg_mul, mul_neg, neg_neg, zero_mul, Finset.sum_const_zero, add_zero,]
     exact hb
 
-/-- The Li–Wu diagonal matrix: `diag(a 0, …, a (n-1), a n)` as a `(Fin n ⊕ Unit)`-indexed
-diagonal matrix. `a : Fin (n+1) → A` supplies all `n+1` values; the first `n` go on the
-`Fin n` diagonal and the last `a (Fin.last n)` goes in the `Unit` slot. -/
+/-- `liWuUnitary b` is a member of the unitary subgroup. -/
+private theorem liWuUnitary_mem_unitary {n : ℕ} {b : Fin (n + 1) → A}
+    (hb : ∑ i, star (b i) * b i = 1) :
+    liWuUnitary b ∈
+      unitary (Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A) :=
+  Unitary.mem_iff.mpr ⟨liWuUnitary_star_mul_self' hb, liWuUnitary_mul_star_self' hb⟩
+
+/-- The Li–Wu diagonal matrix: `diag(a 0, …, a n, a n)` as a `(Fin (n + 1) ⊕ Unit)`-indexed
+diagonal matrix. `a : Fin (n+1) → A` supplies all n+1 values; the first n+1 values go on the
+`Fin (n + 1)` diagonal and the last `a (Fin.last n)` goes in the `Unit` slot. -/
 private def liWuDiag {n : ℕ} (a : Fin (n + 1) → A) :
     Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A :=
   Matrix.diagonal (Sum.elim (fun i => a i) (fun _ => a (Fin.last n)))
+
+/-- `liWuDiag a` is self-adjoint when each `a i` is. -/
+private theorem liWuDiag_isSelfAdjoint {n : ℕ} {a : Fin (n + 1) → A}
+    (ha : ∀ i, IsSelfAdjoint (a i)) :
+    IsSelfAdjoint (liWuDiag a) :=
+  isSelfAdjoint_diagonal_sum_elim ha (ha (Fin.last n))
+
+/-- The spectrum of `liWuDiag a` is contained in `I` when each `spectrum ℝ (a i) ⊆ I`. -/
+private theorem liWuDiag_spectrum_subset {n : ℕ} {a : Fin (n + 1) → A} {I : Set ℝ}
+    (ha_spec : ∀ i, spectrum ℝ (a i) ⊆ I) :
+    spectrum ℝ (liWuDiag a) ⊆ I := by
+  apply MatCStar.spectrum_diagonal_subset
+  rintro (j | ⟨⟩)
+  · exact ha_spec j
+  · exact ha_spec (Fin.last n)
 
 /-- The bottom-right `(Unit, Unit)` corner of `star u * liWuDiag a * u` equals
 `∑ i, star (b i) * a i.castSucc * b i`. -/
@@ -206,6 +221,12 @@ private lemma liWuUnitary_BR_corner {n : ℕ} {b : Fin (n + 1) → A} (a : Fin (
              Finset.univ_unique, Sum.inl.injEq]
   congr 1; ext x
   simp_rw [mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+
+/-- The last diagonal entry of `star u * liWuDiag a * u` is `∑ i, star (b i) * a i * b i`. -/
+private theorem liWuDiag_diag_last {n : ℕ} (a b : Fin (n + 1) → A) :
+    (star (liWuUnitary b) * liWuDiag a * liWuUnitary b).diag (Sum.inr ()) =
+      ∑ i, star (b i) * a i * b i :=
+  liWuUnitary_BR_corner a
 
 /-! ## Sub-goal 3 (Fourier averaging): the `v k` Fourier matrices and their unitarity -/
 
@@ -327,19 +348,6 @@ private lemma liWuFourier_mul_star_self {n : ℕ} (k : Fin (n + 1)) :
     simp only [Pi.star_def, star_smul, smul_mul_smul_comm]
     rw [liWuTheta_mul_star, one_smul, star_one, mul_one]
 
-/-- `liWuDiag a` is self-adjoint when each `a i` is. -/
-private lemma liWuDiag_isSelfAdjoint {n : ℕ} {a : Fin (n + 1) → A}
-    (ha : ∀ i, IsSelfAdjoint (a i)) :
-    IsSelfAdjoint (liWuDiag a) :=
-  isSelfAdjoint_diagonal_sum_elim ha (ha (Fin.last n))
-
-/-- `liWuUnitary b` is a member of the unitary subgroup. -/
-private lemma liWuUnitary_mem_unitary {n : ℕ} {b : Fin (n + 1) → A}
-    (hb : ∑ i, star (b i) * b i = 1) :
-    liWuUnitary b ∈
-      unitary (Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A) :=
-  Unitary.mem_iff.mpr ⟨liWuUnitary_star_mul_self' hb, liWuUnitary_mul_star_self' hb⟩
-
 /-- `liWuFourier k` is a member of the unitary subgroup. -/
 private lemma liWuFourier_mem_unitary {n : ℕ} (k : Fin (n + 1)) :
     liWuFourier (A := A) k ∈
@@ -443,6 +451,21 @@ private lemma liWuFourier_sum_apply {n : ℕ}
   · push_cast; rfl
   · simp
 
+/-- The ℝ-normalized Fourier average of any matrix `M` equals `diagonal (Matrix.diag M)`. -/
+private theorem liWuFourier_avg_diag {n : ℕ}
+    (M : Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A) :
+    ∑ k : Fin (n + 2), (1 / (↑(n + 2) : ℝ)) •
+        (star (liWuFourier (A := A) k) * M * liWuFourier (A := A) k) =
+      Matrix.diagonal M.diag := by
+  ext i j
+  simp only [Matrix.sum_apply, Matrix.smul_apply, ← Finset.smul_sum,
+             liWuFourier_sum_apply, Matrix.diagonal_apply, Matrix.diag]
+  split_ifs with hij
+  · subst hij
+    suffices (1 / (↑(n + 2) : ℝ)) • (↑(n + 2) : ℝ) • M i i = M i i by exact this
+    rw [smul_smul, one_div, inv_mul_cancel₀ (by positivity), one_smul]
+  · simp
+
 /-- The `(inr (), inr ())` entry of the raw Fourier sum equals `(n+2 : ℂ)` times
 the weighted sum `∑ i, star (b i) * a i * b i`. -/
 private lemma liWuFourier_sum_BR {n : ℕ} (a b : Fin (n + 1) → A) :
@@ -454,34 +477,21 @@ private lemma liWuFourier_sum_BR {n : ℕ} (a b : Fin (n + 1) → A) :
   rw [Matrix.sum_apply, liWuFourier_sum_apply, liWuUnitary_BR_corner]
   simp only [↓reduceIte]
 
-/-- The `(inr (), inr ())` entry of the ℝ-normalized Fourier average equals
-`∑ i, star (b i) * a i * b i`. The weights `1/(n+2) : ℝ` are exactly those needed
-to apply `ConvexOn.map_sum_le` in Step C. -/
+/- The `(inr (), inr ())` entry of the ℝ-normalized Fourier average equals
+`∑ i, star (b i) * a i * b i`.
 private lemma liWuFourier_avg_BR {n : ℕ} (a b : Fin (n + 1) → A) :
     let X := star (liWuUnitary b) * liWuDiag a * liWuUnitary b
     (∑ k : Fin (n + 2),
         (1 / (n + 2) : ℝ) • (star (liWuFourier (A := A) k) * X * liWuFourier (A := A) k))
         (Sum.inr ()) (Sum.inr ()) =
       ∑ i, star (b i) * a i * b i := by
-  simp only [Matrix.smul_apply, ← Finset.smul_sum, liWuFourier_sum_BR]
-  have hn : (1 / (n + 2 : ℝ)) * ↑(n + 2) = 1 := by norm_cast; field_simp
-  calc (1 / (n + 2 : ℝ)) • (↑(n + 2) : ℝ) • ∑ i, star (b i) * a i * b i
-      = ((1 / (n + 2 : ℝ)) * ↑(n + 2)) • ∑ i, star (b i) * a i * b i := by rw [smul_smul]
-    _ = ∑ i, star (b i) * a i * b i := by rw [hn, one_smul]
-
-/-- The spectrum of `liWuDiag a` is contained in `I` when each `spectrum ℝ (a i) ⊆ I`. -/
-private lemma liWuDiag_spectrum_subset {n : ℕ} {a : Fin (n + 1) → A} {I : Set ℝ}
-    (ha_spec : ∀ i, spectrum ℝ (a i) ⊆ I) :
-    spectrum ℝ (liWuDiag a) ⊆ I := by
-  apply MatCStar.spectrum_diagonal_subset
-  rintro (j | ⟨⟩)
-  · exact ha_spec j
-  · exact ha_spec (Fin.last n)
+  simp [liWuFourier_avg_diag, Matrix.diagonal_apply, liWuDiag_diag_last]
+-/
 
 variable [PartialOrder A] [StarOrderedRing A]
 
 /-- CFC acts entry-wise on the Li–Wu diagonal lift. -/
-private lemma liWuDiag_cfc {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ}
+private theorem liWuDiag_cfc {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ}
     (hf : ContinuousOn f (⋃ i, spectrum ℝ (a i)))
     (hsa : ∀ i, IsSelfAdjoint (a i)) :
     cfc f (liWuDiag a) = liWuDiag (fun i => cfc f (a i)) := by
@@ -506,10 +516,10 @@ private lemma liWuDiag_cfc {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ}
   | Sum.inr () => rfl
 
 /-- Specialization of `liWuDiag_cfc` to the Li–Wu setting:
-`a : Fin (n+1) → A`, the diagonal matrix is `diag(a 0, …, a (n-1), a n)` in an
-`(n+1) × (n+1)` block (indexed by `Fin n ⊕ Unit`).
+`a : Fin (n+1) → A`, the diagonal matrix is `diag(a 0, …, a n, a n)` in an
+`(n+2) × (n+2)` block (indexed by `Fin (n + 1) ⊕ Unit`).
 The spectrum hypothesis collapses to `ContinuousOn f I` since every `spectrum ℝ (a i) ⊆ I`. -/
-private lemma liWuDiag_cfc_LiWu {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ} {I : Set ℝ}
+private theorem liWuDiag_cfc_LiWu {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ} {I : Set ℝ}
     (hf : ContinuousOn f I)
     (hsa : ∀ i, IsSelfAdjoint (a i)) (ha_spec : ∀ i, spectrum ℝ (a i) ⊆ I) :
     cfc f (liWuDiag a) = liWuDiag (fun i => cfc f (a i)) := by
@@ -517,10 +527,9 @@ private lemma liWuDiag_cfc_LiWu {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → �
   · exact hf.mono (Set.iUnion_subset ha_spec)
   · exact hsa
 
-variable {f : ℝ → ℝ} {I : Set ℝ}
-
 /-! ## General (arbitrary n) Jensen's Operator Inequality -/
 
+variable {f : ℝ → ℝ} {I : Set ℝ}
 
 set_option backward.isDefEq.respectTransparency false in
 /-- **Jensen's Operator Inequality** (Li–Wu 2012, Theorem 2.2, general n):
@@ -537,7 +546,6 @@ Then:
 -- [thm:jensen_2012] Li-Wu 2012, Theorem 2.2 (general n)
 theorem JensenOperator_convex_general
     {n : ℕ} {a b : Fin (n + 1) → A}
-    (hI : Convex ℝ I)
     (hf : ContinuousOn f I) (hf_opconvex : OperatorConvexOn.{u} I f)
     (ha : ∀ i, IsSelfAdjoint (a i))
     (ha_spec : ∀ i, spectrum ℝ (a i) ⊆ I)
@@ -552,29 +560,72 @@ theorem JensenOperator_convex_general
       instCStarAlgebra instPartialOrder instStarOrderedRing
   -- The Li–Wu block matrix X = star u * diag(a) * u
   let u := liWuUnitary b
-  let v := (fun k : Fin (n + 2) => liWuFourier (A := A) k)
-  let X := star u * liWuDiag a * u
-  -- Apply Jensen (ConvexOn.map_sum_le) to the (n+2) Fourier conjugates of X
-  have hJensen :
-      cfc f (∑ k, (1 / (n + 2) : ℝ) • (star (v k) * X * v k))
-      ≤ ∑ k, (1 / (n + 2) : ℝ) • cfc f (star (v k) * X * v k) := by
-    apply hconv.map_sum_le
+  let v := fun k : Fin (n + 2) => liWuFourier (A := A) k
+  let X := fun a : (Fin (n + 1) → A) => star u * liWuDiag a * u
+  let ld := fun i => cfc f ((X a).diag i) -- LHS diag
+  let rd := (X <| fun i => cfc f (a i)).diag -- RHS diag
+  have ld_last : ld (Sum.inr ()) = cfc f (∑ i, star (b i) * a i * b i) := by
+    simp only [ld]; congr 1; exact liWuDiag_diag_last a b
+  have rd_last : rd (Sum.inr ()) = ∑ i, star (b i) * cfc f (a i) * b i :=
+    liWuDiag_diag_last (fun i => cfc f (a i)) b
+  -- helpers
+  have hXa_conj_sa : ∀ k, IsSelfAdjoint (star (v k) * X a * v k) :=
+    fun k => liWuDiag_isSelfAdjoint ha |>.conjugate' u |>.conjugate' (v k)
+  have hXa_conj_spec : ∀ k, spectrum ℝ (star (v k) * X a * v k) ⊆ I :=
+    fun k =>
+      calc spectrum ℝ (star (v k) * X a * v k)
+        = spectrum ℝ (X a):=
+            Unitary.spectrum_star_left_conjugate (U := ⟨v k, liWuFourier_mem_unitary k⟩)
+      _ = spectrum ℝ (liWuDiag a) :=
+            Unitary.spectrum_star_left_conjugate (U := ⟨u, liWuUnitary_mem_unitary hb⟩)
+      _ ⊆ I := liWuDiag_spectrum_subset ha_spec
+  have hXa_conv : ∑ k, (1 / (↑(n + 2) : ℝ)) • (star (v k) * X a * v k) ∈
+      {a : Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A |
+        IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} := by
+    apply hconv.1.sum_mem
     · intro k _; positivity
     · simp [Finset.sum_const]; field_simp
-    · -- each point is in the set: self-adjoint and spectrum ⊆ I
-      intro k _
-      simp only [Set.mem_setOf_eq]
-      constructor
-      · -- unitary conjugation preserves self-adjointness
-        exact (liWuDiag_isSelfAdjoint ha).conjugate' u |>.conjugate' (v k)
-      · -- spectrum ℝ (star vk * X * vk) ⊆ I
-        calc spectrum ℝ (star (v k) * X * v k)
-            = spectrum ℝ X :=
-                Unitary.spectrum_star_left_conjugate (U := ⟨v k, liWuFourier_mem_unitary k⟩)
-          _ = spectrum ℝ (liWuDiag a) :=
-                Unitary.spectrum_star_left_conjugate (U := ⟨u, liWuUnitary_mem_unitary hb⟩)
-          _ ⊆ I := liWuDiag_spectrum_subset ha_spec
-  sorry
+    · exact fun k _ => ⟨hXa_conj_sa k, hXa_conj_spec k⟩
+  have hsummand : ∀ k, cfc f (star (v k) * X a * v k)
+      = star (v k) * X (fun i => cfc f (a i)) * v k := by
+    intro k
+    let U := u * v k
+    have hU_mem : U ∈ unitary (Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A) :=
+      mul_mem (liWuUnitary_mem_unitary hb) (liWuFourier_mem_unitary k)
+    calc cfc f (star (v k) * X a * v k)
+      = cfc f ((star (v k) * star u) * liWuDiag a * (u * v k)) := by grind only
+    _ = cfc f (star U * liWuDiag a * U) := by simp only [star_mul, U]
+    _ = star U * cfc f (liWuDiag a) * U :=
+          CStarAlgebra.cfc_unitary_conj' (u := ⟨U, hU_mem⟩) (a := liWuDiag a)
+            (hf := hf.mono (liWuDiag_spectrum_subset ha_spec))
+            (ha := liWuDiag_isSelfAdjoint ha)
+            (hφa := liWuDiag_isSelfAdjoint ha |>.conjugate' U)
+    _ = (star (v k) * star u) * liWuDiag (fun i => cfc f (a i)) * (u * v k) := by
+          rw [star_mul, ← liWuDiag_cfc_LiWu hf ha ha_spec]
+    _ = star (v k) * X (fun i => cfc f (a i)) * v k := by
+          simp only [X, mul_assoc]
+  -- ineq at an entry follows from ineq at entire diagonal matrix
+  suffices Matrix.diagonal ld ≤ Matrix.diagonal rd by
+    rw [diagonal_le_diagonal_iff] at this
+    exact ld_last ▸ rd_last ▸ this (Sum.inr ())
+  -- the main assembly
+  calc Matrix.diagonal ld
+      = cfc f (Matrix.diagonal (X a).diag) := by
+          symm; apply cfc_diagonal
+          · rw [← MatCStar.spectrum_diagonal, ← liWuFourier_avg_diag (X a)]
+            exact hf.mono hXa_conv.2
+          · exact isSelfAdjoint_diagonal_iff.mp <| liWuFourier_avg_diag (X a) ▸ hXa_conv.1
+    _ = cfc f (∑ k, (1 / (↑(n + 2) : ℝ)) • (star (v k) * X a * v k)) := by
+          rw [liWuFourier_avg_diag (X a)]
+      -- apply convexity
+    _ ≤ ∑ k, (1 / (↑(n + 2) : ℝ)) • cfc f (star (v k) * X a * v k) := by
+          apply hconv.map_sum_le
+          · intro k _; positivity
+          · simp [Finset.sum_const]; field_simp
+          · exact fun k _ => ⟨hXa_conj_sa k, hXa_conj_spec k⟩
+    _ = ∑ k, (1 / (↑(n + 2) : ℝ)) • (star (v k) * X (fun i => cfc f (a i)) * v k) := by
+          simp only [hsummand]
+    _ = Matrix.diagonal rd := by rw [liWuFourier_avg_diag <| X <| fun i => cfc f (a i)]
 
 -- [thm:jensen_2012'] Li-Wu 2012, Corollary 2.4 (general n)
 /-- **Jensen's Operator Inequality, sub-unital version** (Li–Wu 2012, Corollary 2.4):
@@ -586,7 +637,7 @@ Proof idea: extend to `n+1` elements with `b_{n+1} = (1 - ∑ b*b)^{1/2}` and `a
 apply the `= 1` version, then drop the last term using `f 0 ≤ 0`. -/
 theorem JensenOperator_convex_general'
     {n : ℕ} {a b : Fin (n + 1) → A}
-    (hI : Convex ℝ I ∧ 0 ∈ I)
+    (hI : 0 ∈ I)
     (hf : ContinuousOn f I ∧ f 0 ≤ 0) (hf_opconvex : OperatorConvexOn.{u} I f)
     (ha : ∀ i, IsSelfAdjoint (a i))
     (ha_spec : ∀ i, spectrum ℝ (a i) ⊆ I)
@@ -603,14 +654,13 @@ variable {a₁ a₂ b₁ b₂ : A}
 /-- Strong Jensen's Operator Inequality, n = 2 case.
 Specialization of `JensenOperator_convex_general` to two summands. -/
 theorem JensenOperator_convex
-    (hI : Convex ℝ I)
     (hf : ContinuousOn f I) (hf_opconvex : OperatorConvexOn.{u} I f)
     (ha : IsSelfAdjoint a₁ ∧ IsSelfAdjoint a₂)
     (ha_spec : spectrum ℝ a₁ ⊆ I ∧ spectrum ℝ a₂ ⊆ I)
     (hb : star b₁ * b₁ + star b₂ * b₂ = 1) :
     cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) ≤
       star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ := by
-  have := JensenOperator_convex_general (n := 1) hI hf hf_opconvex
+  have := JensenOperator_convex_general (n := 1) hf hf_opconvex
     (a := ![a₁, a₂]) (b := ![b₁, b₂])
     (by intro i; fin_cases i <;> simp_all only [zero_eta, mk_one, cons_val_zero, cons_val_one])
     (by intro i; fin_cases i <;> simp_all only [zero_eta, mk_one, cons_val_zero, cons_val_one])
@@ -620,7 +670,7 @@ theorem JensenOperator_convex
 /-- Sub-unital Jensen's Operator Inequality, n = 2 case.
 Specialization of `JensenOperator_convex_general'` to two summands. -/
 theorem JensenOperator_convex'
-    (hI : Convex ℝ I ∧ 0 ∈ I)
+    (hI : 0 ∈ I)
     (hf : ContinuousOn f I ∧ f 0 ≤ 0) (hf_opconvex : OperatorConvexOn.{u} I f)
     (ha : IsSelfAdjoint a₁ ∧ IsSelfAdjoint a₂)
     (ha_spec : spectrum ℝ a₁ ⊆ I ∧ spectrum ℝ a₂ ⊆ I)
@@ -637,21 +687,20 @@ theorem JensenOperator_convex'
 /-! ## Concave versions (derived by negation) -/
 
 theorem JensenOperator_concave
-    (hI : Convex ℝ I)
     (hf : ContinuousOn f I) (hf_opconcave : OperatorConcaveOn.{u} I f)
     (ha : IsSelfAdjoint a₁ ∧ IsSelfAdjoint a₂)
     (ha_spec : spectrum ℝ a₁ ⊆ I ∧ spectrum ℝ a₂ ⊆ I)
     (hb : star b₁ * b₁ + star b₂ * b₂ = 1) :
     star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ ≤
       cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) := by
-  have h := JensenOperator_convex hI hf.neg
+  have h := JensenOperator_convex hf.neg
     (operatorConcaveOn_neg_iff_convexOn.mp hf_opconcave) ha ha_spec hb
   simp only [cfc_neg, mul_neg, neg_mul, ← neg_add] at h
   exact neg_le_neg_iff.mp h
 
 
 theorem JensenOperator_concave'
-    (hI : Convex ℝ I ∧ 0 ∈ I)
+    (hI : 0 ∈ I)
     (hf : ContinuousOn f I ∧ f 0 ≥ 0) (hf_opconcave : OperatorConcaveOn.{u} I f)
     (ha : IsSelfAdjoint a₁ ∧ IsSelfAdjoint a₂)
     (ha_spec : spectrum ℝ a₁ ⊆ I ∧ spectrum ℝ a₂ ⊆ I)
@@ -676,7 +725,7 @@ theorem JensenOperator_convex_nonneg
     cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) ≤
       star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ :=
   JensenOperator_convex'
-    ⟨convex_Ici 0, Set.self_mem_Ici⟩
+    (Set.self_mem_Ici)
     hf hf_opconvex
     ⟨IsSelfAdjoint.of_nonneg ha.1, IsSelfAdjoint.of_nonneg ha.2⟩
     ⟨fun _ h => spectrum_nonneg_of_nonneg ha.1 h, fun _ h => spectrum_nonneg_of_nonneg ha.2 h⟩
@@ -689,7 +738,7 @@ theorem JensenOperator_concave_nonneg
       star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ ≤
       cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) :=
   JensenOperator_concave'
-    ⟨convex_Ici 0, Set.self_mem_Ici⟩
+    (Set.self_mem_Ici)
     hf hf_opconcave
     ⟨IsSelfAdjoint.of_nonneg ha.1, IsSelfAdjoint.of_nonneg ha.2⟩
     ⟨fun _ h => spectrum_nonneg_of_nonneg ha.1 h, fun _ h => spectrum_nonneg_of_nonneg ha.2 h⟩
