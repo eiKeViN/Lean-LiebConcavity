@@ -1,4 +1,3 @@
-import LeanLiebConcavity.Basic
 import LeanLiebConcavity.Defs
 import LeanLiebConcavity.ForMathlib
 import LeanLiebConcavity.ConjugateWeightedSum

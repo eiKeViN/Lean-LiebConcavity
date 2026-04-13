@@ -1,6 +1,10 @@
-import Mathlib.Algebra.Star.UnitaryStarAlgAut
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unique
-import Mathlib.Analysis.CStarAlgebra.Spectrum
+module
+
+public import Mathlib.Algebra.Star.UnitaryStarAlgAut
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Unique
+public import Mathlib.Analysis.CStarAlgebra.Spectrum
+
+@[expose] public section
 
 /-!
 # CFC commutes with unitary conjugation

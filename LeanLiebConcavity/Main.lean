@@ -1,14 +1,53 @@
-import LeanLiebConcavity.Jensen
+module
 
-/-- now need properties of Hermitian matrices -/
-example : 1 = 1 := rfl
+public import LeanLiebConcavity.Jensen
+
+@[expose] public section
 
 noncomputable section
 
-
 open Set NNReal CFC
 
---namespace IsSelfAdjoint
+section CFC
+
+variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+
+/-! ## CFC-level statements (waiting for Mathlib) -/
+
+/-- The power function `x ↦ x ^ r` is operator convex on `[0, ∞)` for `1 ≤ r ≤ 2`. -/
+lemma CFC.rpow_operatorConvexOn {r : ℝ} (hr : 1 ≤ r ∧ r ≤ 2) :
+    ConvexOn ℝ {a : A | 0 ≤ a} (cfc (fun x : ℝ => x ^ r)) := by
+  sorry
+
+/-- The power function `x ↦ x ^ r` is operator concave on `[0, ∞)` for `0 < r ≤ 1`. -/
+lemma CFC.rpow_operatorConcaveOn {r : ℝ} (hr : 0 < r ∧ r ≤ 1) :
+    ConcaveOn ℝ {a : A | 0 ≤ a} (cfc (fun x : ℝ => x ^ r)) := by
+  sorry
+
+end CFC
+
+section Operator
+
+/-! ## Derived using `OperatorConvexOn` / `OperatorConcaveOn` -/
+
+-- [cor:power_convex] Löwner: x ↦ x^r is operator convex on [0,∞) for 1 ≤ r ≤ 2
+theorem PowerOperatorConvex {r : ℝ} (hr : 1 ≤ r ∧ r ≤ 2) :
+    OperatorConvexOn (Ici 0) (· ^ r) := by
+  intro B _ _ _
+  simp_rw [← nonneg_iff_sa_spectrum_nonneg']
+  exact @CFC.rpow_operatorConvexOn B _ _ _ r hr
+
+-- [cor:power_concave] Löwner: x ↦ x^r is operator concave on [0,∞) for 0 < r ≤ 1
+theorem PowerOperatorConcave {r : ℝ} (hr : 0 < r ∧ r ≤ 1) :
+    OperatorConcaveOn (Ici 0) (· ^ r) := by
+  intro B _ _ _
+  simp_rw [← nonneg_iff_sa_spectrum_nonneg']
+  exact @CFC.rpow_operatorConcaveOn B _ _ _ r hr
+
+end Operator
+
+section Perspective
+
 universe u
 
 variable {A : Type u} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
@@ -29,8 +68,6 @@ private lemma smul_rpow_conj
           simp only [smul_mul_assoc, mul_assoc, mul_smul_comm, smul_smul]
     _ = c • L := by
           grind only [mul_self_half, rpow_neg_mul_rpow', rpow_mul_rpow_neg']
-
-
 
 -- [thm:gen_perspective_jointly_convex] Eba2011 Thm 2.5, generalized perspective jointly convex
 theorem PerspectiveJointConvex
@@ -183,18 +220,6 @@ theorem PerspectiveJointConcave
       hg_opconcave
   rwa [GenPerspective_neg' f g, neg_convexOn_iff] at this
 
--- [cor:power_convex] Löwner, x ↦ x^r is operator convex on [0,∞) for 1 ≤ r ≤ 2
-theorem PowerOperatorConvex
-    {r : ℝ} (hr : 1 ≤ r ∧ r ≤ 2) :
-    OperatorConvexOn.{u} (Ici 0) (· ^ r) := by
-  sorry
-
--- [cor:power_concave] Löwner, x ↦ x^r is operator concave on [0,∞) for 0 < r ≤ 1
-theorem PowerOperatorConcave
-    {r : ℝ} (hr : 0 < r ∧ r ≤ 1) :
-    OperatorConcaveOn.{u} (Ici 0) (· ^ r) := by
-  sorry
-
 /-
 Nik2013, operator (α,β)-power mean
 The operator (α,β)-power mean: `R #_{(α,β)} L := g(R)^{½} f(g(R)^{-½} L g(R)^{-½}) g(R)^{½}`
@@ -228,18 +253,4 @@ theorem PowerMeanJointlyConvex
     (PowerOperatorConvex hα)
     (PowerOperatorConcave hβ)
 
-/-
-variable {L₁ : A} (r : ℝ)
-example : 0 ≤ L₁ ^ r := by simp
-example : IsSelfAdjoint (cfc f L₁) := by simp
-example : IsSelfAdjoint (L₁ ^ r) := IsSelfAdjoint.of_nonneg (by simp)
-example : (1 / 2: ℝ) + 1 / 2 = (1 : ℝ) := add_halves 1
-
-example {a b c d : A} : a * b * d + a * c * d= a * (b + c) * d := by grind only
-example {a : A} (ha : IsUnit a) (ha' : 0 ≤ a := by cfc_tac) : a ^ (1 : ℝ) * a ^ (-1 : ℝ) = 1 := by
-  grind [rpow_neg_mul_rpow (-1) ha ha']
-example {a : A} (ha : IsStrictlyPositive a) : IsUnit a := IsStrictlyPositive.isUnit ha
-example : 0 ≤ ½ := by linarith
-example {a b c d : A} : a * b * d + a * c * d= a * (b + c) * d := by
-  simp [mul_add, add_mul]
--/
+end Perspective

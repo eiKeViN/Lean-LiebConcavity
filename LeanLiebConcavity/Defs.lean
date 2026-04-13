@@ -1,8 +1,12 @@
-import LeanLiebConcavity.ForMathlib
+module
 
+public import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus
+
+@[expose] public section
 
 noncomputable section
 
+section Operator
 
 universe u
 
@@ -12,14 +16,6 @@ with a compatible partial order, `cfc f` is convex on the set of self-adjoint el
 def OperatorConvexOn (I : Set ℝ) (f : ℝ → ℝ) : Prop :=
   ∀ {B : Type u} [CStarAlgebra B] [PartialOrder B] [StarOrderedRing B],
     ConvexOn ℝ {a : B | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f)
-
-variable {ι : Type*} {B : ι → Type*}
-[∀ i, CStarAlgebra (B i)] [∀ i, PartialOrder (B i)] [∀ i, StarOrderedRing (B i)]
-
-def OperatorConvexOn'' (I : Set ℝ) (f : ℝ → ℝ) : Prop :=
-  ∀ i,
-    ConvexOn ℝ {a : B i | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f)
-
 
 /-- `f : ℝ → ℝ` is *operator concave* on `I : Set ℝ` if, for every unital C⋆-algebra `B`
 with a compatible partial order, `cfc f` is concave on the set of self-adjoint elements of
@@ -66,14 +62,14 @@ open Set
 
 theorem operatorConvex_on_nonneg (hf : OperatorConvexOn.{u} (Ici 0) f) :
     ConvexOn ℝ {a : A | 0 ≤ a} (cfc f) := by
-  have : {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ Ici 0} = {a : A | 0 ≤ a} :=
-    ext CFC.nonneg_iff_spec_nonneg
+  have : {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ Ici 0} = {a : A | 0 ≤ a} := by
+    simp only [nonneg_iff_sa_spectrum_nonneg']
   exact this ▸ operatorConvex_apply hf
 
 theorem operatorConcave_on_nonneg (hf : OperatorConcaveOn.{u} (Ici 0) f) :
     ConcaveOn ℝ {a : A | 0 ≤ a} (cfc f) := by
-  have : {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ Ici 0} = {a : A | 0 ≤ a} :=
-    ext CFC.nonneg_iff_spec_nonneg
+  have : {a : A | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ Ici 0} = {a : A | 0 ≤ a} := by
+    simp only [nonneg_iff_sa_spectrum_nonneg']
   exact this ▸ operatorConcave_apply hf
 
 
@@ -95,16 +91,9 @@ theorem OperatorConcaveOn.subset (hf : OperatorConcaveOn.{u} I f)
       (fun _ ⟨h_sa, h_spec⟩ => ⟨h_sa, h_spec.trans hJI⟩)
       (convex_selfAdjoint_spectrum_subset hJ)
 
-section positive
-open NNReal
---helpful? definition for operator convexity of positive elements only
+end Operator
 
-def OperatorConcaveOn_pos (f : ℝ≥0 → ℝ≥0) : Prop :=
-  ∀ {B : Type*} [CStarAlgebra B] [PartialOrder B] [StarOrderedRing B],
-    ConcaveOn ℝ {a : B | 0 ≤ a} (cfc f)
-
-end positive
-
+section Perspective
 
 local notation "½" => (1/2 : ℝ)
 
@@ -126,14 +115,10 @@ theorem GenPerspective_neg {a : A × A} :
     GenPerspective A (fun x ↦ -(f x)) g a = - GenPerspective A f g a := by
   simp_rw [GenPerspective, cfc_neg]; simp
 
-example (a : A × A) : GenPerspective A (-f) g a = - GenPerspective A f g a :=
-  GenPerspective_neg f g
-
 /-- Function-level version of `GenPerspective_neg`. -/
 theorem GenPerspective_neg' :
     GenPerspective A (-f) g = -(GenPerspective A f g) :=
   funext fun _ => GenPerspective_neg f g
-
 
 variable [IsTopologicalRing A] [T2Space A]
 open CFC
@@ -179,3 +164,5 @@ theorem GenPerspective_of_rpow_commute {L R : A} {α β : ℝ} (hLR : Commute L 
           rw [rpow_rpow R (β * -1) α hR₀ (by positivity) hRn]
     _ = L ^ α * R ^ (β * (1 - α)) := by
           rw [mul_assoc, ← rpow_add hR₀]; congr 2; ring
+
+end Perspective

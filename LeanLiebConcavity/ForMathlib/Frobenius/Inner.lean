@@ -3,9 +3,9 @@ module
 public import Mathlib.Analysis.Matrix.Normed
 
 /-!
-# Inner product space structure on `Matrix n n ℂ`
+# Inner product space structure on `Matrix n n 𝕜`
 
-Builds `InnerProductSpace ℂ (Matrix n n ℂ)` with inner product `⟪X, Y⟫ = (Y * Xᴴ).trace`,
+Builds `InnerProductSpace 𝕜 (Matrix n n 𝕜)` with inner product `⟪X, Y⟫ = (Y * Xᴴ).trace`,
 whose norm `‖X‖ = √(∑ᵢⱼ |Xᵢⱼ|²)` is identical with the Frobenius norm.
 -/
 @[expose] public section

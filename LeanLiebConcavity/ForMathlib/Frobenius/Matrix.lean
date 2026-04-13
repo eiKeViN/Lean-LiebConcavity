@@ -1,7 +1,7 @@
 module
 
 public import LeanLiebConcavity.HStarAlgebra
-public import LeanLiebConcavity.Inner
+public import LeanLiebConcavity.ForMathlib.Frobenius.Inner
 public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 
@@ -20,6 +20,7 @@ together with `CStarAlgebra` and `StarOrderedRing` instances on endomorphisms.
 noncomputable section
 
 namespace FrobeniusMat
+
 open scoped ComplexOrder Matrix
 
 variable {n : Type*}
@@ -30,11 +31,11 @@ section RCLike
 variable {𝕜 : Type*} [RCLike 𝕜]
 
 
-section underpin
+section Basic
 
 variable [Fintype n]
 
-/-! ### Norm and InnerProductSpace -/
+/-! ## Norm and InnerProductSpace -/
 
 /-- The Frobenius norm on `Matrix n n 𝕜`: `‖X‖_F = (∑ᵢⱼ |Xᵢⱼ|²)^(1/2)`.
 Built on nested `PiLp 2` layers, so topology is the standard product topology, diamond avoid -/
@@ -54,13 +55,13 @@ variable [DecidableEq n]
 instance (priority := high) instNormedRing : NormedRing (Matrix n n 𝕜) :=
   Matrix.frobeniusNormedRing
 
-/-! ### HStarAlgebra instance -/
+/-! ## HStarAlgebra instance -/
 
 open Matrix in
 /-- `Matrix n n ℂ` with the Frobenius inner product is an H*-algebra.
 
 The two H*-algebra axioms follow from trace cyclicity `tr(AB) = tr(BA)`. -/
-@[instance_reducible, scoped instance]
+@[implicit_reducible, scoped instance]
 def instHStarAlgebra : HStarAlgebra 𝕜 (Matrix n n 𝕜) where
   __ := (inferInstance : NormedRing (Matrix n n 𝕜))
   __ := (inferInstance : InnerProductSpace 𝕜 (Matrix n n 𝕜))
@@ -72,11 +73,11 @@ def instHStarAlgebra : HStarAlgebra 𝕜 (Matrix n n 𝕜) where
   inner_mul_right {a x y} := by
     simp [frobenius_inner_def, conjTranspose_mul, star_eq_conjTranspose, mul_assoc]
 
-end underpin
+end Basic
 
 section Order
 
-/-! ### PartialOrder, StarOrderedRing -/
+/-! ## PartialOrder, StarOrderedRing -/
 
 --- Loewner (PSD) partial order: `A ≤ B ↔ (B - A).PosSemidef`.
 instance LoewnerOrder : PartialOrder (Matrix n n 𝕜) :=
@@ -88,20 +89,20 @@ variable [Fintype n]
 instance instStarOrderedRing : StarOrderedRing (Matrix n n 𝕜) :=
    Matrix.instStarOrderedRing
 
-/-! ### PosSMulMono ℝ (Matrix n n ℂ) -/
+/-! ## PosSMulMono ℝ (Matrix n n ℂ) -/
 
 set_option linter.unusedFintypeInType false in
 /-- Nonneg real scalar multiplication preserves the Loewner order on `Matrix n n 𝕜`. -/
 instance instPosSMulMono : PosSMulMono ℝ (Matrix n n 𝕜) := IsOrderedModule.toPosSMulMono
 
-/-! ### NonnegSpectrumClass -/
+/-! ## NonnegSpectrumClass -/
 --- Nonnegativity With respect to loewner order.
 instance instNonnegSpectrumClass : NonnegSpectrumClass ℝ (Matrix n n 𝕜) :=
   Matrix.instNonnegSpectrumClass
 
 end Order
 
-/-! ### ContinuousFunctionalCalculus (inferred) -/
+/-! ## ContinuousFunctionalCalculus (inferred) -/
 
 /-!
 ## Instances on (continuous) linear endomorphisms
@@ -111,24 +112,24 @@ The (operator) norm on `Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜` is instantia
 For CStarAlgebra and StarOrderRing instances, need to set 𝕜 = ℂ
 -/
 
-/-! ### NormedRing (inferred) -/
+/-! ## NormedRing (inferred) -/
 
-/-! ### Partial Order -/
+/-! ## Partial Order -/
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Loewner partial order on `Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜`. -/
 instance LoewnerOrderCLM [Fintype n] : PartialOrder (Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜) :=
-  ContinuousLinearMap.instLoewnerPartialOrder --- `inferInstance` √
+  ContinuousLinearMap.instLoewnerPartialOrder
 
 end RCLike
 
-section Complex
+--- section Complex
 
-/-! ### CStarAlgebra (inferred) -/
+/-! ## CStarAlgebra (inferred) -/
 
-/-! ### StarOrderedRing (inferred) -/
+/-! ## StarOrderedRing (inferred) -/
 
-end Complex
+--- end Complex
 
 attribute [scoped instance] instNormedAddCommGroup instNormedRing instInnerProductSpace
 LoewnerOrder instPosSMulMono instNonnegSpectrumClass instStarOrderedRing

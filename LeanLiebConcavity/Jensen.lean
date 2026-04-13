@@ -1,9 +1,12 @@
-import LeanLiebConcavity.Defs
-import LeanLiebConcavity.ConjugateWeightedSum
-import LeanLiebConcavity.DiagonalStarAlgHom
-import Mathlib.Analysis.CStarAlgebra.CStarMatrix
-import Mathlib.RingTheory.RootsOfUnity.Complex
-import LeanLiebConcavity.UnitaryConjCFC
+module
+
+public import LeanLiebConcavity.Defs
+public import LeanLiebConcavity.ConjugateWeightedSum
+public import LeanLiebConcavity.DiagonalStarAlgHom
+public import Mathlib.RingTheory.RootsOfUnity.Complex
+public import LeanLiebConcavity.UnitaryConjCFC
+
+@[expose] public section
 
 noncomputable section
 
@@ -531,7 +534,6 @@ private theorem liWuDiag_cfc_LiWu {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ →
 
 variable {f : ℝ → ℝ} {I : Set ℝ}
 
-set_option backward.isDefEq.respectTransparency false in
 /-- **Jensen's Operator Inequality** (Li–Wu 2012, Theorem 2.2, general n):
 
 Let `A` be an ordered unital C⋆-algebra and `f : ℝ → ℝ` a continuous operator convex
@@ -556,37 +558,39 @@ theorem JensenOperator_convex_general
       {a : Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A |
         IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I}
       (cfc f) :=
-    @hf_opconvex (Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A)
-      instCStarAlgebra instPartialOrder instStarOrderedRing
-  -- The Li–Wu block matrix X = star u * diag(a) * u
+    @hf_opconvex (Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A) _ _ _
+  -- set ups
   let u := liWuUnitary b
   let v := fun k : Fin (n + 2) => liWuFourier (A := A) k
   let X := fun a : (Fin (n + 1) → A) => star u * liWuDiag a * u
+  have hXa_conj : ∀ k, star (v k) * X a * v k ∈
+      {a | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} := by
+    refine fun k => ⟨?_, ?_⟩
+    · exact liWuDiag_isSelfAdjoint ha |>.conjugate' u |>.conjugate' (v k)
+    · calc spectrum ℝ (star (v k) * X a * v k)
+        = spectrum ℝ (X a):=
+            Unitary.spectrum_star_left_conjugate (U := ⟨v k, liWuFourier_mem_unitary k⟩)
+      _ = spectrum ℝ (liWuDiag a) :=
+            Unitary.spectrum_star_left_conjugate (U := ⟨u, liWuUnitary_mem_unitary hb⟩)
+      _ ⊆ I := liWuDiag_spectrum_subset ha_spec
+  have hXa_conj_sum : ∑ k, (1 / (↑(n + 2) : ℝ)) • (star (v k) * X a * v k) ∈
+      {a | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} := by
+    apply hconv.1.sum_mem
+    · intro k _; positivity
+    · simp [Finset.sum_const]; field_simp
+    · exact fun k _ => hXa_conj k
   let ld := fun i => cfc f ((X a).diag i) -- LHS diag
   let rd := (X <| fun i => cfc f (a i)).diag -- RHS diag
   have ld_last : ld (Sum.inr ()) = cfc f (∑ i, star (b i) * a i * b i) := by
     simp only [ld]; congr 1; exact liWuDiag_diag_last a b
   have rd_last : rd (Sum.inr ()) = ∑ i, star (b i) * cfc f (a i) * b i :=
     liWuDiag_diag_last (fun i => cfc f (a i)) b
-  -- helpers
-  have hXa_conj_sa : ∀ k, IsSelfAdjoint (star (v k) * X a * v k) :=
-    fun k => liWuDiag_isSelfAdjoint ha |>.conjugate' u |>.conjugate' (v k)
-  have hXa_conj_spec : ∀ k, spectrum ℝ (star (v k) * X a * v k) ⊆ I :=
-    fun k =>
-      calc spectrum ℝ (star (v k) * X a * v k)
-        = spectrum ℝ (X a):=
-            Unitary.spectrum_star_left_conjugate (U := ⟨v k, liWuFourier_mem_unitary k⟩)
-      _ = spectrum ℝ (liWuDiag a) :=
-            Unitary.spectrum_star_left_conjugate (U := ⟨u, liWuUnitary_mem_unitary hb⟩)
-      _ ⊆ I := liWuDiag_spectrum_subset ha_spec
-  have hXa_conv : ∑ k, (1 / (↑(n + 2) : ℝ)) • (star (v k) * X a * v k) ∈
-      {a : Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A |
-        IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} := by
-    apply hconv.1.sum_mem
-    · intro k _; positivity
-    · simp [Finset.sum_const]; field_simp
-    · exact fun k _ => ⟨hXa_conj_sa k, hXa_conj_spec k⟩
-  have hsummand : ∀ k, cfc f (star (v k) * X a * v k)
+  -- main assembly: an entry follows from ineq at entire diagonal matrix
+  suffices Matrix.diagonal ld ≤ Matrix.diagonal rd by
+    rw [diagonal_le_diagonal_iff] at this
+    exact ld_last ▸ rd_last ▸ this (Sum.inr ())
+  -- helper
+  have hcfc_push : ∀ k, cfc f (star (v k) * X a * v k)
       = star (v k) * X (fun i => cfc f (a i)) * v k := by
     intro k
     let U := u * v k
@@ -604,31 +608,27 @@ theorem JensenOperator_convex_general
           rw [star_mul, ← liWuDiag_cfc_LiWu hf ha ha_spec]
     _ = star (v k) * X (fun i => cfc f (a i)) * v k := by
           simp only [X, mul_assoc]
-  -- ineq at an entry follows from ineq at entire diagonal matrix
-  suffices Matrix.diagonal ld ≤ Matrix.diagonal rd by
-    rw [diagonal_le_diagonal_iff] at this
-    exact ld_last ▸ rd_last ▸ this (Sum.inr ())
-  -- the main assembly
+  -- the main calc
   calc Matrix.diagonal ld
       = cfc f (Matrix.diagonal (X a).diag) := by
           symm; apply cfc_diagonal
           · rw [← MatCStar.spectrum_diagonal, ← liWuFourier_avg_diag (X a)]
-            exact hf.mono hXa_conv.2
-          · exact isSelfAdjoint_diagonal_iff.mp <| liWuFourier_avg_diag (X a) ▸ hXa_conv.1
+            exact hf.mono hXa_conj_sum.2
+          · exact isSelfAdjoint_diagonal_iff.mp <| liWuFourier_avg_diag (X a) ▸ hXa_conj_sum.1
     _ = cfc f (∑ k, (1 / (↑(n + 2) : ℝ)) • (star (v k) * X a * v k)) := by
           rw [liWuFourier_avg_diag (X a)]
       -- apply convexity
     _ ≤ ∑ k, (1 / (↑(n + 2) : ℝ)) • cfc f (star (v k) * X a * v k) := by
+          set_option backward.isDefEq.respectTransparency false in
           apply hconv.map_sum_le
           · intro k _; positivity
           · simp [Finset.sum_const]; field_simp
-          · exact fun k _ => ⟨hXa_conj_sa k, hXa_conj_spec k⟩
+          · exact fun k _ => hXa_conj k
     _ = ∑ k, (1 / (↑(n + 2) : ℝ)) • (star (v k) * X (fun i => cfc f (a i)) * v k) := by
-          simp only [hsummand]
+          simp_rw [hcfc_push]
     _ = Matrix.diagonal rd := by
           rw [liWuFourier_avg_diag <| X <| fun i => cfc f (a i)]
 
-set_option backward.isDefEq.respectTransparency false in
 -- [thm:jensen_2012'] Li-Wu 2012, Corollary 2.4 (general n)
 /-- **Jensen's Operator Inequality, sub-unital version** (Li–Wu 2012, Corollary 2.4):
 
@@ -673,22 +673,22 @@ theorem JensenOperator_convex_general_sub
         rcases subsingleton_or_nontrivial A with hS | hN
         · simp [spectrum.of_subsingleton]
         · rw [spectrum.zero_eq]; exact Set.singleton_subset_iff.mpr hI)
-      (fun j => by simp [a', Fin.snoc_castSucc, ha_spec j])
+      (fun j => by simp only [Fin.snoc_castSucc, ha_spec j, a'])
   -- final helper lemmas
   have lhs_eq : ∑ i, star (b' i) * a' i * b' i = ∑ i, star (b i) * a i * b i :=
     calc ∑ i, star (b' i) * a' i * b' i
-        = ∑ i : Fin (n + 1), star (b' i.castSucc) * a' i.castSucc * b' i.castSucc +
-            star (b' (Fin.last _)) * a' (Fin.last _) * b' (Fin.last _) :=
-              Fin.sum_univ_castSucc _
+        = ∑ i : Fin (n + 1), star (b' i.castSucc) * a' i.castSucc * b' i.castSucc
+          + star (b' (Fin.last _)) * a' (Fin.last _) * b' (Fin.last _) :=
+            Fin.sum_univ_castSucc _
       _ = ∑ i, star (b i) * a i * b i + star c * 0 * c := by
             simp only [a', b', Fin.snoc_castSucc, Fin.snoc_last]
       _ = ∑ i, star (b i) * a i * b i := by simp
-  have hcfc0_le : cfc f (0 : A) ≤ 0 := by
-    rw [cfc_apply_zero, Algebra.algebraMap_eq_smul_one]
-    exact smul_nonpos_of_nonpos_of_nonneg hf.2 zero_le_one
   have last_term_le : star c * cfc f (0 : A) * c ≤ 0 :=
     calc star c * cfc f (0 : A) * c
-        ≤ star c * 0 * c := star_left_conjugate_le_conjugate hcfc0_le c
+        ≤ star c * 0 * c := by
+            apply star_left_conjugate_le_conjugate
+            rw [cfc_apply_zero, Algebra.algebraMap_eq_smul_one]
+            exact smul_nonpos_of_nonpos_of_nonneg hf.2 zero_le_one
       _ = 0 := by simp
   -- the main step
   calc cfc f (∑ i, star (b i) * a i * b i)
@@ -767,7 +767,7 @@ theorem JensenOperator_concave_sub
   simp only [cfc_neg, mul_neg, neg_mul, ← neg_add] at h
   exact neg_le_neg_iff.mp h
 
-open NNReal Set
+open Set
 
 /-- A version applies to nonnegative elements of the C* algebra,
 which is useful for our application.

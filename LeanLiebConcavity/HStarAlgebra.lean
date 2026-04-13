@@ -3,6 +3,7 @@ module
 public import Mathlib.Analysis.InnerProductSpace.Defs
 public import Mathlib.Analysis.InnerProductSpace.Positive
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+public import LeanLiebConcavity.ForMathlib.Continuity
 import LeanLiebConcavity.MulOppositeStarAlgEquiv
 
 /-!
@@ -16,23 +17,29 @@ The induced norm makes it a normed ring: `‖x * y‖ ≤ ‖x‖ * ‖y‖` for
 
 - `HStarAlgebra`: typeclass extending `InnerProductSpace 𝕜 H`, `Semiring H`, `StarRing H`
   with the H*-algebra axiom.
-- `HStarAlgebra.lmulStarAlgHom`: left multiplication as a star algebra homomorphism
-  `H →⋆ₐ[𝕜] (H →L[𝕜] H)`.
-- `HStarAlgebra.rmulStarAlgHom`: right multiplication as a star algebra homomorphism
-  `H →⋆ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ`.
+- `lmulStarAlgHom`: left multiplication as a star algebra homomorphism `H →⋆ₐ[𝕜] (H →L[𝕜] H)`.
+- `rmulStarAlgHom`: right mulitplication as a star algebra homomorphism `H →⋆ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ`
 
-## Design note
+## Main results
 
-The class uses `extends` (not mixin) to merge the `AddCommGroup H` diamond:
-both `InnerProductSpace 𝕜 H` (via `NormedAddCommGroup`) and `Semiring H`
-provide `AddCommGroup H`. The `extends` mechanism unifies them into a single
-field, avoiding instance conflicts for abstract types.
+### Order properties
+- `Lmul_nonneg`, `Rmul_nonneg`: if `0 ≤ a` then `0 ≤ Lmul a` and `0 ≤ Rmul a`
+  (as operators in the Loewner order on `H →L[𝕜] H`).
+- `Lmul_isStrictlyPositive`, `Rmul_isStrictlyPositive`: strict positivity is preserved.
+
+### CFC commutativity: `L_{f(a)} = f(L_a)`, `R_{f(a)} = f(R_a)`
+- `Lmul_map_cfc`: `lmulStarAlgHom (cfc f a) = cfc f (lmulStarAlgHom a)` for continuous `f`.
+- `Rmul_map_cfc`: the same for `rmulStarAlgHom` (in `(H →L[𝕜] H)ᵐᵒᵖ`).
+- `Lmul_rpow_nonneg_apply`: `(Lmul a)^r x = a^r * x` for `0 ≤ r`, `0 ≤ a`.
+- `Lmul_rpow_strictlyPositive_apply`: `(Lmul a)^r x = a^r * x` for any `r`, strictly positive `a`.
+- `Rmul_rpow_nonneg_apply` and `Rmul_rpow_strictlyPositive_apply`: the same for `Rmul`
 
 ## References
 
 - Warren Ambrose, *Structure theorems for a special class of Banach algebras*,
   Trans. AMS 57 (1945), 364–386.
 -/
+
 @[expose] public section
 
 open scoped ComplexOrder
@@ -200,7 +207,7 @@ Multiplication is a bounded bilinear map,
 so its curried CLM `H →L[𝕜] H →L[𝕜] H` is automatically continuous.
 -/
 
-/-- The map `a ↦ Lₐ` is continuous w.r.t. the operator norm -/
+/-- The map `a ↦ L_a` is continuous w.r.t. the operator norm -/
 theorem Lmul_continuous :
     Continuous (fun a : H => Lmul 𝕜 a : H → H →L[𝕜] H) :=
   isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H) |>.toContinuousLinearMap.continuous
@@ -248,7 +255,6 @@ theorem Rmul_isSymmetric {a : H} (ha : IsSelfAdjoint a) :
   fun x y => by
     change ⟪x * a, y⟫ = ⟪x, y * a⟫
     rw [inner_mul_left_eq, ha.star_eq]
-
 
 section nonneg
 
@@ -321,8 +327,9 @@ end nonneg
 /-! ### `Lmul` and `Rmul` as star algebra homomorphisms -/
 
 section StarAlgHom
-variable [CompleteSpace H]
+
 -- notes: with H complete, star/adjoint structure can be instantiated on `H →L[𝕜] H`.
+variable [CompleteSpace H]
 
 theorem Lmul_star (a : H) :
     Lmul 𝕜 (star a) = star (Lmul 𝕜 a) := by
@@ -362,14 +369,9 @@ theorem Rmul_isSelfAdjoint {a : H} (ha : IsSelfAdjoint a) :
 
 end StarAlgHom
 
+section CFC
 
 /-! ### CFC commutation: `L_{f(a)} = f(L_a)`, `R_{f(a)} = f(_a)` -/
-
-private theorem rpow_continuousOn_pos {r : ℝ} :
-    ContinuousOn (fun (x : ℝ) ↦ x ^ r) (Set.Ioi 0) :=
-  continuousOn_id.rpow_const (by grind only [= Set.mem_Ioi, = id.eq_1])
-
-section CFC
 
 variable [CompleteSpace H] [Algebra ℝ H] [IsScalarTower ℝ 𝕜 H]
 variable [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint]
@@ -449,6 +451,7 @@ theorem Lmul_rpow_strictlyPositive_apply
     ((Lmul 𝕜 a) ^ r) x = a ^ r * x := by
   rw [CFC.rpow_eq_cfc_real ha.nonneg, CFC.rpow_eq_cfc_real <| Lmul_nonneg 𝕜 ha.nonneg]
   exact Lmul_rpow_strictlyPositive_apply' 𝕜 r x ha
+
 end Left
 
 section Right
@@ -504,7 +507,7 @@ theorem Rmul_rpow_strictlyPositive'
     {r : ℝ} {a : H} (ha : IsStrictlyPositive a := by cfc_tac) :
     cfc (fun x : ℝ ↦ x ^ r) (Rmul 𝕜 a) = Rmul 𝕜 (cfc (fun x : ℝ ↦ x ^ r) a) := by
   apply op_injective
-  rw [← op_rpow_eq_rpow_op' (ha := Rmul_isStrictlyPositive 𝕜 ha)]
+  rw [← op_rpow_eq_rpow_op_strictlyPositive' (ha := Rmul_isStrictlyPositive 𝕜 ha)]
   exact Rmul_map_cfc 𝕜 (· ^ r) a
     (rpow_continuousOn_pos.mono fun _ hx => ha.spectrum_pos hx) |>.symm
 

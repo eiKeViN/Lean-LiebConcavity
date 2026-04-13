@@ -1,9 +1,9 @@
-import Mathlib.Analysis.CStarAlgebra.Classes
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Instances
-import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Pi
-import Mathlib.Analysis.CStarAlgebra.CStarMatrix
-import Mathlib.LinearAlgebra.Matrix.Hermitian
-import Mathlib.Topology.Instances.Matrix
+module
+
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Pi
+public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
+public import Mathlib.LinearAlgebra.Matrix.Hermitian
+public import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus.Unital
 
 /-!
 # `Matrix.diagonal` as a star algebra homomorphism
@@ -18,9 +18,11 @@ TODO : upstream contribution to Mathlib.
 `CStarMatrix n n A` is defined as `Matrix n n A` (via `Equiv.refl`), so `inferInstanceAs`
 transfers its norm and algebra instances to `Matrix n n A`. These are registered as
 `scoped instance`s inside the `MatCStar` namespace to avoid a norm diamond with
-`MatrixSpecialization` (Frobenius norm) when `A` is `RCLike`. Callers activate them with
+`FrobeniusMat` (Frobenius norm) when `A` is `RCLike`. Callers activate them with
 `open MatCStar`.
 -/
+
+@[expose] public section
 
 namespace Matrix
 
@@ -115,6 +117,9 @@ scoped instance instCFCComplex : ContinuousFunctionalCalculus ℂ (Matrix n n A)
 scoped instance instCFCReal : ContinuousFunctionalCalculus ℝ (Matrix n n A) IsSelfAdjoint :=
   IsSelfAdjoint.instContinuousFunctionalCalculus
 
+scoped instance instNonnegSpectrumClass : NonnegSpectrumClass ℝ (Matrix n n A) :=
+  CStarAlgebra.instNonnegSpectrumClass
+
 set_option linter.unusedFintypeInType false in
 scoped instance instPiCFCComplex :
     ContinuousFunctionalCalculus ℂ (n → A) IsStarNormal :=
@@ -191,38 +196,22 @@ theorem spectrum_diagonal_subset {d : n → A} {I : Set ℝ}
   rw [spectrum_diagonal]
   exact Set.iUnion_subset h
 
-/-- In a unital C⋆-algebra, `0 ≤ a` iff `a` is self-adjoint and `spectrum ℝ a ⊆ [0, ∞)`.
-This unwraps `nonneg_iff_isSelfAdjoint_and_quasispectrumRestricts` and bridges the
-`quasispectrum`/`spectrum` gap (in a unital algebra, `quasispectrum ℝ a = spectrum ℝ a ∪ {0}`
-so non-negativity on the quasispectrum is equivalent to non-negativity on the spectrum). -/
-private lemma nonneg_iff_spectrum_nonneg {a : A} :
-    0 ≤ a ↔ IsSelfAdjoint a ∧ ∀ x ∈ spectrum ℝ a, 0 ≤ x := by
-  rw [nonneg_iff_isSelfAdjoint_and_quasispectrumRestricts, and_congr_right_iff]
-  intro _
-  rw [QuasispectrumRestricts.nnreal_iff]
-  constructor
-  · intro h x hx
-    exact h x (spectrum_subset_quasispectrum ℝ a hx)
-  · intro h x hx
-    rcases mem_quasispectrum_iff.mp hx with rfl | hx
-    · exact le_refl 0
-    · exact h x hx
-
+set_option backward.isDefEq.respectTransparency false in
 /-- A diagonal matrix over a C⋆-algebra is nonneg iff all its diagonal entries are nonneg. -/
 theorem nonneg_diagonal_iff {d : n → A} :
     0 ≤ Matrix.diagonal d ↔ ∀ i, 0 ≤ d i := by
   constructor
   · intro h i
-    obtain ⟨hsa, hspec⟩ := nonneg_iff_spectrum_nonneg.mp h
+    obtain ⟨hsa, hspec⟩ := (nonneg_iff_sa_spectrum_nonneg).mp h
     rw [Matrix.isHermitian_iff_isSelfAdjoint.symm, Matrix.isHermitian_diagonal_iff] at hsa
-    refine nonneg_iff_spectrum_nonneg.mpr ⟨hsa i, fun x hx => hspec x ?_⟩
+    refine nonneg_iff_sa_spectrum_nonneg.mpr ⟨hsa i, fun x hx => hspec x ?_⟩
     exact spectrum_diagonal d ▸ Set.mem_iUnion.mpr ⟨i, hx⟩
   · intro h
-    refine nonneg_iff_spectrum_nonneg.mpr
-      ⟨isSelfAdjoint_diagonal_iff.mpr <| fun i => (nonneg_iff_spectrum_nonneg.mp <| h i).1, ?_⟩
+    refine nonneg_iff_sa_spectrum_nonneg.mpr
+      ⟨isSelfAdjoint_diagonal_iff.mpr <| fun i => (nonneg_iff_sa_spectrum_nonneg.mp <| h i).1, ?_⟩
     intro x hx
     obtain ⟨i, hi⟩ := Set.mem_iUnion.mp <| (spectrum_diagonal d).symm ▸ hx
-    exact (nonneg_iff_spectrum_nonneg.mp <| h i).2 x hi
+    exact (nonneg_iff_sa_spectrum_nonneg.mp <| h i).2 x hi
 
 /-- Ordering of diagonal matrices is entry-wise. -/
 theorem diagonal_le_diagonal_iff {d e : n → A} :

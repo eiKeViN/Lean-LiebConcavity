@@ -1,13 +1,21 @@
-import LeanLiebConcavity.Main
-import LeanLiebConcavity.MatrixSpecialization
+module
+
+public import LeanLiebConcavity.Main
+public import LeanLiebConcavity.ForMathlib.Frobenius.Matrix
+public import LeanLiebConcavity.ForMathlib.InnerProductSpace.Positive
+
+@[expose] public section
 
 noncomputable section
 
 open scoped ComplexOrder InnerProductSpace
+open RCLike
+
+section HStarAlgebra
 
 variable {H : Type*} [HStarAlgebra ℂ H]
 
-/-- ad-hoc ℝ in ℂ scalar multiplication lemmas -/
+-- ℝ-scalar specialization of Lmul_smul/Rmul_smul via Complex.coe_smul
 @[simp, grind .]
 private lemma Lmul_smul_real (a : ℝ) (A : H) :
     Lmul ℂ (a • A) = a • Lmul ℂ A := by
@@ -28,15 +36,14 @@ variable [CompleteSpace H] [PartialOrder H] [StarOrderedRing H]
 variable [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint] [NonnegSpectrumClass ℝ H]
 variable [StarOrderedRing (H →L[ℂ] H)]
 
-def PowerMean (α β : ℝ) (A B : H) : H →L[ℂ] H :=
+abbrev PowerMean (α β : ℝ) (A B : H) : H →L[ℂ] H :=
   GenPerspective (H →L[ℂ] H) (· ^ α) (· ^ β) (Rmul ℂ B, Lmul ℂ A)
 
 set_option backward.isDefEq.respectTransparency false in
 theorem PowerMean_apply {α β : ℝ} {A B : H}
     (hA : IsStrictlyPositive A) (hB : 0 ≤ B) (hα : 0 ≤ α) (hβ : β ≠ 0) (x : H) :
     PowerMean α β A B x = A ^ (β * (1 - α)) * x * B ^ α := by
-  simp only [PowerMean,
-    GenPerspective_of_rpow_commute (Lmul_Rmul_comm ℂ).symm
+  simp only [GenPerspective_of_rpow_commute (Lmul_Rmul_comm ℂ).symm
       (Rmul_nonneg ℂ hB) (Lmul_isStrictlyPositive ℂ hA) hβ]
   rw [ContinuousLinearMap.mul_apply]
   -- note: this part builds slower because more aggressive unfolding is necessary
@@ -51,7 +58,7 @@ theorem PowerMean_jointly_concave {α β : ℝ}
       (fun (A, B) => PowerMean α β A B) := by
   refine ⟨convex_strictlyPositive_nonneg, fun ⟨A₁, B₁⟩ h₁ ⟨A₂, B₂⟩ h₂ a b ha hb hab => ?_⟩
   have hc := (@PowerMeanJointlyConcave (H →L[ℂ] H) _ _ _ α β hα hβ)
-  simp only [PowerMean, Prod.smul_mk, Lmul_add, Rmul_add, Lmul_smul_real, Rmul_smul_real]
+  simp only [PowerMean, Prod.smul_mk, Rmul_add, Rmul_smul_real, Lmul_add, Lmul_smul_real]
   exact @hc.2 ⟨Rmul ℂ B₁, Lmul ℂ A₁⟩ ⟨Rmul_nonneg ℂ h₁.2, Lmul_isStrictlyPositive ℂ h₁.1⟩
               ⟨Rmul ℂ B₂, Lmul ℂ A₂⟩ ⟨Rmul_nonneg ℂ h₂.2, Lmul_isStrictlyPositive ℂ h₂.1⟩
               a b ha hb hab
@@ -67,7 +74,6 @@ theorem PowerMean_jointly_convex {α β : ℝ}
               ⟨Rmul ℂ B₂, Lmul ℂ A₂⟩ ⟨Rmul_nonneg ℂ h₂.2, Lmul_isStrictlyPositive ℂ h₂.1⟩
               a b ha hb hab
 
-open RCLike
 /-- **Generalised Lieb Concavity**
 `(A, B) ↦ re ⟪x, PowerMean α β A B x⟫` is jointly concave in `(A, B)`
 for `0 < α, β ≤ 1`, `A` strictly positive and `B` non-negative. -/
@@ -171,19 +177,20 @@ theorem AndoConvexity {q r : ℝ} (hq : 1 ≤ q ∧ q ≤ 2) (hr : 0 < r)
   obtain ⟨hα₁, hα₂, hβ₁, hβ₂, hexp⟩ := ando_param_aux hq hr hqr
   simpa only [hexp] using AndoConvexity_general ⟨hα₁, hα₂⟩ ⟨hβ₁, hβ₂⟩ x
 
+end HStarAlgebra
+
+section Matrix
+
 /-! ## Specialization to n×n Complex Matrices
 
 The specialized matrix theorems follow from instantiating the abstract theorems with the
-relevant instances packaged in `MatrixSpecialization.lean`.
+relevant instances packaged in `FrobeniusMat.lean`.
 
-Must be called inside the namespace `FrobeniusMat` to ensure fixed instances on matrices.
+Must be called inside `FrobeniusMat` to ensure fixed instances on matrices.
 -/
 
-
 --- open the packed instances on Matrix n n ℂ
-namespace FrobeniusMat
-
-open Matrix
+open FrobeniusMat Matrix
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
 
@@ -228,6 +235,6 @@ theorem AndoConvexity_matrix {q r : ℝ} (hq : 1 ≤ q ∧ q ≤ 2) (hr : 0 < r)
   convert AndoConvexity hq hr hqr K using 1
   simp_rw [isStrictlyPositive_iff_posDef, nonneg_iff_posSemidef]
 
-end FrobeniusMat
+end Matrix
 
 end
