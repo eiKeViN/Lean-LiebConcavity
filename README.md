@@ -1,16 +1,10 @@
 # Lean-LiebConcavity
 
-A **Lean 4 / Mathlib** formalization of **Lieb's concavity theorem**, a key result in
-quantum information theory, together with Lieb's extension theorem and Ando's convexity
-theorem. The formalization works in full generality for any H\*-algebra (Ambrose 1945)
-satisfying appropriate order axioms — a Hilbert space equipped with a compatible normed
-ring structure and star operation. The motivating example is the space of n×n complex
-matrices with Frobenius inner product and conjugate-transpose star.
+This is a **Lean 4** formalization of **Lieb's concavity theorem**, a key result in
+quantum information theory, together with its relatives Lieb's extension theorem and Ando's convexity
+theorem. The formalization follows the paper [Simplest proof of Lieb Concavity Theorem](https://www.sciencedirect.com/science/article/pii/S0001870813003010). This paper depends a couple of results in the topic of [perspective functions](https://www.pnas.org/doi/10.1073/pnas.1102518108), which in turn depends on [operator Jensen's inequality](https://link.springer.com/article/10.1007/BF01450679), but we follow [this](https://link.springer.com/article/10.1007/s10114-013-2065-8) that generalizes Jensen to any unital C\*-algebra. 
 
-The main theorems — `LiebConcavity` [Thm 1.2(a)], `LiebExtension` [Thm 1.2(b)], and
-`AndoConvexity` [Thm 1.4] — are fully proved. The two remaining open sorries are
-structural: `mul_rpow_of_commute` (requires two-variable CFC not yet in Mathlib) and the
-Löwner-theorem corollaries `PowerOperatorConvex`/`PowerOperatorConcave`.
+Modulo two sorries, all main theorems are now formalized. We also managed to prove Lieb in the generality of [H\*-algebra](https://www.jstor.org/stable/1990182) — a Hilbert space equipped with a compatible star operation and is a normed ring. This generalizes the space of n by n complex matrices with Frobenius inner product and conjugate-transpose star. As matrices in Mathlib don't come equipped with canonical inner product/norm, we provided independent packaging of the necessary ad hoc typeclass instantiations (and we did this too in the proof of Jensen, in which we need CStarAlgebra instance on matrix types).
 
 ## References
 
@@ -31,7 +25,7 @@ Löwner-theorem corollaries `PowerOperatorConvex`/`PowerOperatorConcave`.
 
 ## Structure
 
-### Core theory
+### Core
 
 | File | Contents |
 |------|----------|
@@ -40,14 +34,6 @@ Löwner-theorem corollaries `PowerOperatorConvex`/`PowerOperatorConcave`.
 | `LeanLiebConcavity/Jensen.lean` | **Jensen's operator inequality** (Li–Wu 2012): `JensenOperator_convex_general` ✓; `JensenOperator_convex_general_sub` ✓; n=2 specializations and concave/nonneg variants ✓ |
 | `LeanLiebConcavity/Main.lean` | `PerspectiveJointConvex` / `PerspectiveJointConcave` ✓; `PowerMeanJointlyConcave` / `PowerMeanJointlyConvex` ✓; `PowerOperatorConvex` / `PowerOperatorConcave` |
 | `LeanLiebConcavity/Lieb.lean` | `LiebConcavity` [Thm 1.2(a)] ✓; `LiebExtension` [Thm 1.2(b)] ✓; `AndoConvexity` [Thm 1.4] ✓; matrix specializations with explicit trace formula ✓ |
-
-### Jensen proof infrastructure
-
-These files exist solely to support `Jensen.lean` and are not imported elsewhere.
-
-| File | Contents |
-|------|----------|
-| `LeanLiebConcavity/ConjugateWeightedSum.lean` | Spectrum and self-adjointness of conjugate-weighted sums `∑ star(b i) * a i * b i`; `algebraMap_le_sum_conj` |
 
 ### Mathlib candidates (`ForMathlib/`)
 
