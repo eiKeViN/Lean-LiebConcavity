@@ -9,17 +9,16 @@ public import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus.Unital
 # `Matrix.diagonal` as a star algebra homomorphism
 
 `Matrix.diagonalAlgHom` exists in Mathlib but is only an `AlgHom`.
-Here we upgrade it to a `StarAlgHom` using `Matrix.diagonal_conjTranspose`.
-
-TODO : upstream contribution to Mathlib.
+Here we upgrade it to a `StarAlgHom`.
 
 ## C⋆-algebra instances on `Matrix n n A` — namespace `MatCStar`
 
-`CStarMatrix n n A` is defined as `Matrix n n A` (via `Equiv.refl`), so `inferInstanceAs`
-transfers its norm and algebra instances to `Matrix n n A`. These are registered as
-`scoped instance`s inside the `MatCStar` namespace to avoid a norm diamond with
-`FrobeniusMat` (Frobenius norm) when `A` is `RCLike`. Callers activate them with
-`open MatCStar`.
+`CStarMatrix n n A` is definitionally equal to `Matrix n n A`, so `inferInstanceAs`
+transfers its norm and algebra instances to `Matrix n n A`.
+
+These are registered scoped inside the `MatCStar` namespace to avoid a norm diamond with
+`FrobeniusMat` (Frobenius norm) when `A` is `RCLike`.
+Callers activate them with `open MatCStar`.
 -/
 
 @[expose] public section

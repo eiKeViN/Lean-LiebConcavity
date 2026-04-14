@@ -15,7 +15,7 @@ public import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus
 
 ## References
 
-- A. Ebadian, I. Nikoufar, M. Eshaghi Gordji, *Perspectives of matrix convex functions*,
+- A. Ebadian, I. Nikoufar, M. E. Gordji, *Perspectives of matrix convex functions*,
   PNAS 108 (2011) 7313–7314
 -/
 

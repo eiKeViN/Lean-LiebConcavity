@@ -6,9 +6,7 @@ import Mathlib.LinearAlgebra.Matrix.ConjTranspose
 /-!
 # Auxiliary `ofMatrix` lemmas for `CStarMatrix`
 
-These lemmas relate operations on `Matrix` to the corresponding operations on `CStarMatrix`
-via `CStarMatrix.ofMatrix`. They follow the simp-normal form convention of CStarMatrix.lean:
-pull `ofMatrix` to the outside.
+Follows `CStarMatrix`.
 -/
 
 @[expose] public section

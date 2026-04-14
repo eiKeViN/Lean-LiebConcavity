@@ -1,5 +1,7 @@
 module
 
+public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
+public import Mathlib.Analysis.InnerProductSpace.StarOrder
 public import LeanLiebConcavity.Main
 public import LeanLiebConcavity.ForMathlib.Frobenius.Matrix
 public import LeanLiebConcavity.ForMathlib.InnerProductSpace.Positive
@@ -22,7 +24,7 @@ which is a generalization of `Matrix n n ℂ` endowed with Frobenius trace inner
 
 ## References
 
-- I. Nikoufar, M. Ebadian, M. Eshaghi Gordji, *The simplest proof of Lieb concavity theorem*,
+- I. Nikoufar, A. Ebadian, M. Eshaghi Gordji, *The simplest proof of Lieb concavity theorem*,
   Adv. Math. 248 (2013) 531–533
 - E. H. Lieb, *Convex trace functions and the Wigner–Yanase–Dyson conjecture*,
   Adv. Math. 11 (1973) 267–288

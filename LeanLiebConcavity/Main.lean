@@ -3,10 +3,14 @@ module
 public import LeanLiebConcavity.Jensen
 
 /-!
-# Löwner's theorem and joint convexity/concavity of generalized perspective functions
+# Joint convexity/concavity of generalized perspective functions
 
 This file contains the necessary pieces to prove Lieb's Concavity under the approach of
-(generalized) perspective functions, modulo Operator Jensen Inequality.
+(generalized) perspective functions.
+
+It also records the sorried statements that the power function `x ↦ x ^ r` is operator convex
+(for `1 ≤ r ≤ 2`) and operator concave (for `0 < r ≤ 1`) on `[0, ∞)`.
+These sorries are ongoing work by Frédéric Dupuis.
 
 ## Main results
 
@@ -16,15 +20,20 @@ This file contains the necessary pieces to prove Lieb's Concavity under the appr
 - `PerspectiveJointConvex` / `PerspectiveJointConcave`: joint convexity/concavity of
   `GenPerspective A f g` under suitable operator convexity/concavity of `f` and `g`.
 - `PowerMeanJointlyConcave` / `PowerMeanJointlyConvex`: the operator `(α,β)`-power mean
-  `R #_{(α,β)} L = R^{β/2} (R^{-β/2} L R^{-β/2})^α R^{β/2}` is jointly concave for
+  `R #_{(α,β)} L := R^{β/2} (R^{-β/2} L R^{-β/2})^α R^{β/2}` is jointly concave for
   `0 < α, β ≤ 1`, and jointly convex for `1 ≤ α ≤ 2`, `0 < β ≤ 1`.
+
+Note: The working definition of operator power mean appears in `Lieb.lean`;
+that one is indexed by the algebra elements rather than operators L and R themselves.
 
 ## References
 
 - K. Löwner, *Über monotone Matrixfunktionen*, Math. Z. 38 (1934) 177–216
-- A. Ebadian, I. Nikoufar, M. Eshaghi Gordji, *Perspectives of matrix convex functions*,
+- F. Hansen, G. K. Pedersen, *Jensen's inequality for operators and Löwner's theorem*,
+  Math. Ann. 258 (1982) 229–241
+- A. Ebadian, I. Nikoufar, M. E. Gordji, *Perspectives of matrix convex functions*,
   PNAS 108 (2011) 7313–7314
-- I. Nikoufar, M. Ebadian, M. Eshaghi Gordji, *The simplest proof of Lieb concavity theorem*,
+- I. Nikoufar, M. Ebadian, M. E. Gordji, *The simplest proof of Lieb concavity theorem*,
   Adv. Math. 248 (2013) 531–533
 -/
 
@@ -35,46 +44,31 @@ noncomputable section
 open Set NNReal CFC
 
 section Loewner
-/-!
-## Löwner's theorem: operator convexity/concavity of power functions
-
-This section records that the power function `x ↦ x ^ r` is operator convex
-(for `1 ≤ r ≤ 2`) and operator concave (for `0 < r ≤ 1`) on `[0, ∞)`.
-
-The sorries are ongoing work by Frédéric Dupuis.
-
-### References
-
-- K. Löwner, *Über monotone Matrixfunktionen*, Math. Z. 38 (1934) 177–216
-- F. Hansen, G. K. Pedersen, *Jensen's inequality for operators and Löwner's theorem*,
-  Math. Ann. 258 (1982) 229–241
--/
 
 variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
 
 /-! ### Mathlib-level statements -/
 
-/-- The power function `x ↦ x ^ r` is operator convex on `[0, ∞)` for `1 ≤ r ≤ 2`. -/
+/-- `x ↦ x ^ r` is operator convex on `[0, ∞)` for `1 ≤ r ≤ 2`. -/
 lemma CFC.rpow_operatorConvexOn {r : ℝ} (hr : 1 ≤ r ∧ r ≤ 2) :
     ConvexOn ℝ {a : A | 0 ≤ a} (cfc (fun x : ℝ => x ^ r)) := by
   sorry
 
-/-- The power function `x ↦ x ^ r` is operator concave on `[0, ∞)` for `0 < r ≤ 1`. -/
+/-- `x ↦ x ^ r` is operator concave on `[0, ∞)` for `0 < r ≤ 1`. -/
 lemma CFC.rpow_operatorConcaveOn {r : ℝ} (hr : 0 < r ∧ r ≤ 1) :
     ConcaveOn ℝ {a : A | 0 ≤ a} (cfc (fun x : ℝ => x ^ r)) := by
   sorry
 
+/-! ### `OperatorConvexOn/ConcaveOn` statements -/
 
-/-! ### Expressed using `OperatorConvexOn` / `OperatorConcaveOn` -/
-
--- [cor:power_convex] Löwner: x ↦ x^r is operator convex on [0,∞) for 1 ≤ r ≤ 2
+/-- `x ↦ x ^ r` is operator convex on `[0, ∞)` for `1 ≤ r ≤ 2`. -/
 theorem PowerOperatorConvex {r : ℝ} (hr : 1 ≤ r ∧ r ≤ 2) :
     OperatorConvexOn (Ici 0) (· ^ r) := by
   intro B _ _ _
   simp_rw [← nonneg_iff_sa_spectrum_nonneg']
   exact @CFC.rpow_operatorConvexOn B _ _ _ r hr
 
--- [cor:power_concave] Löwner: x ↦ x^r is operator concave on [0,∞) for 0 < r ≤ 1
+/-- `x ↦ x ^ r` is operator concave on `[0, ∞)` for `0 < r ≤ 1`. -/
 theorem PowerOperatorConcave {r : ℝ} (hr : 0 < r ∧ r ≤ 1) :
     OperatorConcaveOn (Ici 0) (· ^ r) := by
   intro B _ _ _
@@ -92,8 +86,7 @@ variable {f g : ℝ → ℝ}
 
 local notation "½" => (1/2 : ℝ)
 
-/-- The inner conjugation identity: contracting `L` through `(c • S)^{1/2}` and `S^{-1/2}`
-collapses to `c • L`. Used twice in `PerspectiveJointConvex`. -/
+/-- The inner conjugation by squareroot identity. -/
 private lemma smul_rpow_conj
     {S : A} (hS : IsStrictlyPositive S) {c : ℝ} (hc : 0 < c) (L : A) :
     (c • S) ^ ½ * (S ^ (-½) * L * S ^ (-½)) * (c • S) ^ ½ = c • L := by
@@ -258,16 +251,6 @@ theorem PerspectiveJointConcave
       (operatorConcaveOn_neg_iff_convexOn.mp hf_opconcave)
       hg_opconcave
   rwa [GenPerspective_neg' f g, neg_convexOn_iff] at this
-
-
---Nik2013, operator (α,β)-power mean
---The operator (α,β)-power mean: `R #_{(α,β)} L := g(R)^{½} f(g(R)^{-½} L g(R)^{-½}) g(R)^{½}`
---    with `f(t) = t^α`, `g(t) = t^β`
---def OperatorPowerMean (α β : ℝ) (R L : A) : A :=
---  GenPerspective A (· ^ α) (· ^ β) (L, R)
---
--- Note: The actual definition appears in `Lieb.lean` which is indexed by the algebra elements
--- rather than operators L and R.
 
 /-- `(α,β)-power mean` is jointly concave for `0 < α, β ≤ 1` [Nik2013 Thm 1.1]. -/
 theorem PowerMeanJointlyConcave

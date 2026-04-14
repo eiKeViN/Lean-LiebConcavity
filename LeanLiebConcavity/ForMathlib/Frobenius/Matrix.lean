@@ -2,17 +2,17 @@ module
 
 public import LeanLiebConcavity.HStarAlgebra
 public import LeanLiebConcavity.ForMathlib.Frobenius.Inner
-public import Mathlib.Analysis.InnerProductSpace.StarOrder
-public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
-
 
 /-!
 # Specialization to n×n Complex Matrices
 
-This file instantiates all typeclasses required by `HStarAlgebra ℂ` on
-`Matrix n n ℂ` with the Frobenius inner product
-`⟪X, Y⟫ = Tr(Y * Xᴴ)` and the Loewner (PSD) partial order,
-together with `CStarAlgebra` and `StarOrderedRing` instances on endomorphisms.
+This file instantiates all typeclasses required by `HStarAlgebra ℂ` instance on
+`Matrix n n ℂ` endowed with the Frobenius inner product `⟪X, Y⟫ = Tr(Y * Xᴴ)`
+and the Loewner (PSD) partial order.
+Together `CStarAlgebra` and `StarOrderedRing` instances on continuous endomorphisms.
+
+These are scoped instances registered in `FrobeniusMat` namespace,
+the caller need to activate them by `open FrobeniusMat`.
 -/
 
 @[expose] public section
@@ -23,13 +23,7 @@ namespace FrobeniusMat
 
 open scoped ComplexOrder Matrix
 
-variable {n : Type*}
-
-
-section RCLike
-
-variable {𝕜 : Type*} [RCLike 𝕜]
-
+variable {n 𝕜 : Type*} [RCLike 𝕜]
 
 section Basic
 
@@ -89,7 +83,7 @@ variable [Fintype n]
 instance instStarOrderedRing : StarOrderedRing (Matrix n n 𝕜) :=
    Matrix.instStarOrderedRing
 
-/-! ## PosSMulMono ℝ (Matrix n n ℂ) -/
+/-! ## PosSMulMono ℝ (Matrix n n 𝕜) -/
 
 set_option linter.unusedFintypeInType false in
 /-- Nonneg real scalar multiplication preserves the Loewner order on `Matrix n n 𝕜`. -/
@@ -102,34 +96,20 @@ instance instNonnegSpectrumClass : NonnegSpectrumClass ℝ (Matrix n n 𝕜) :=
 
 end Order
 
-/-! ## ContinuousFunctionalCalculus (inferred) -/
-
 /-!
 ## Instances on (continuous) linear endomorphisms
 
 Once we setup the norm for `Matrix n n 𝕜`,
 The (operator) norm on `Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜` is instantiated.
-For CStarAlgebra and StarOrderRing instances, need to set 𝕜 = ℂ
+For CStarAlgebra and StarOrderRing instances, set 𝕜 = ℂ
+- CStaralgebra needs `Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap`,
+- StarOrderedRing needs `Mathlib.Analysis.InnerProductSpace.StarOrder`.
 -/
-
-/-! ## NormedRing (inferred) -/
-
-/-! ## Partial Order -/
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Loewner partial order on `Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜`. -/
 instance LoewnerOrderCLM [Fintype n] : PartialOrder (Matrix n n 𝕜 →L[𝕜] Matrix n n 𝕜) :=
   ContinuousLinearMap.instLoewnerPartialOrder
-
-end RCLike
-
---- section Complex
-
-/-! ## CStarAlgebra (inferred) -/
-
-/-! ## StarOrderedRing (inferred) -/
-
---- end Complex
 
 attribute [scoped instance] instNormedAddCommGroup instNormedRing instInnerProductSpace
 LoewnerOrder instPosSMulMono instNonnegSpectrumClass instStarOrderedRing

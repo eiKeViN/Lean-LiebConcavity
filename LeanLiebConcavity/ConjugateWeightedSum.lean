@@ -10,7 +10,7 @@ public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 Lemmas for sums of the form `∑ i, star (b i) * a i * b i` subject to
 `∑ i, star (b i) * b i = 1` — the non-commutative analogue of a convex combination.
 
-## Main results
+## Main result
 
 - `spectrum_sum_conj_subset`: if each `a i` has spectrum in `I` (convex) and the
   `b i` satisfy the unit constraint, then `∑ star (b i) * a i * b i` also has spectrum in `I`.
@@ -77,12 +77,11 @@ lemma sum_conj_le_algebraMap (hb : ∑ i, star (b i) * b i = 1)
 
 end AlgebraMap
 
-variable {A : Type*} [Ring A] [StarRing A]
-    [TopologicalSpace A] [PartialOrder A] [StarOrderedRing A] [Algebra ℝ A]
-    [ContinuousFunctionalCalculus ℝ A IsSelfAdjoint] [NonnegSpectrumClass ℝ A]
+variable {A : Type*} [Ring A] [StarRing A] [TopologicalSpace A] [PartialOrder A]
+    [StarOrderedRing A] [Algebra ℝ A] [NonnegSpectrumClass ℝ A]
+    [ContinuousFunctionalCalculus ℝ A IsSelfAdjoint]
 
-/-- **Spectral bounds for a conjugate-weighted sum** (Sub-goal 1 of Jensen):
-If each `a i` has `spectrum ℝ (a i) ⊆ I` and `∑ i, star (b i) * b i = 1`,
+/-- If each `a i` has `spectrum ℝ (a i) ⊆ I` and `∑ i, star (b i) * b i = 1`,
 then `spectrum ℝ (∑ i, star (b i) * a i * b i) ⊆ I`. -/
 theorem spectrum_sum_conj_subset {I : Set ℝ} (hI : Convex ℝ I)
     {n : ℕ} {a b : Fin n → A}

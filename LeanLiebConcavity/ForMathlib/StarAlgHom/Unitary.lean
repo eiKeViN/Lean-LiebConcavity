@@ -9,20 +9,18 @@ public import Mathlib.Analysis.CStarAlgebra.Spectrum
 /-!
 # CFC commutes with unitary conjugation
 
-## Section 1 — General
+## General
 
 `conjStarAlgAut_map_cfc`, `cfc_unitary_conj`, `cfc_unitary_conj'` with minimal
 typeclasses mirroring `StarAlgHom.map_cfc`. Continuity of the conjugation map
 is an **explicit hypothesis** `hφ`.
 
-## Section 2 — CStarAlgebra specialization
+## CStarAlgebra specialization
 
 The same three results specialized to `[CStarAlgebra A]` with `S = ℂ`. Here
 `hφ` is discharged automatically via `StarAlgEquiv.isometry`, so it does not
 appear in the statement.
 -/
-
-/-! ### Section 1 — General -/
 
 section General
 
@@ -71,8 +69,6 @@ theorem cfc_unitary_conj' (u : unitary A) (f : R → R) (a : A)
   simpa only [Unitary.conjStarAlgAut_star_apply] using this.symm
 
 end General
-
-/-! ### Section 2 — CStarAlgebra specialization -/
 
 section CStarAlgebra
 
