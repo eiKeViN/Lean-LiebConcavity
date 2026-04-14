@@ -14,23 +14,20 @@ Löwner-theorem corollaries `PowerOperatorConvex`/`PowerOperatorConcave`.
 
 ## References
 
-- M. Nikoufar, A. Ebadian, M. Eshaghi Gordji, *Adv. Math.* **248** (2013) 531–533
-- A. Ebadian, M. Nikoufar, M. Eshaghi Gordji, *PNAS* **108** (2011) 7313–7314
-- F. Hansen, G. K. Pedersen, *Bull. London Math. Soc.* **35** (2003) 553–564
-- F. Hansen, G. K. Pedersen, *Math. Ann.* **258** (1982) 229–241
-- Y. Li, D. Wu, *J. Operator Theory* **67** (2012) 329–337
-
-## Sorry status
-
-| Declaration | File | Status |
-|-------------|------|--------|
-| `mul_rpow_of_commute` | `ForMathlib.lean` | **open** — requires two-variable CFC not in Mathlib |
-| `PowerOperatorConvex` | `Main.lean` | **open** — depends on Löwner's theorem |
-| `PowerOperatorConcave` | `Main.lean` | **open** — depends on Löwner's theorem |
-| `JensenOperator_convex_general` | `Jensen.lean` | ✓ proved (Li–Wu 2012 Thm 2.2) |
-| `JensenOperator_convex_general_sub` | `Jensen.lean` | ✓ proved (Li–Wu 2012 Cor 2.4) |
-| All theorems in `Lieb.lean` | `Lieb.lean` | ✓ proved |
-| All theorems in `Main.lean` except above | `Main.lean` | ✓ proved |
+- I. Nikoufar, A. Ebadian, M. E. Gordji, *The simplest proof of Lieb concavity theorem*,
+  Adv. Math. **248** (2013) 531–533
+- A. Ebadian, I. Nikoufar, M. E. Gordji, *Perspectives of matrix convex functions*,
+  PNAS **108** (2011) 7313–7314
+- F. Hansen, G. K. Pedersen, *Jensen's inequality for operators and Löwner's theorem*,
+  Math. Ann. **258** (1982) 229–241
+- X. Li, W. Wu, *Operator Jensen's inequality on C⋆-algebras*,
+  Act. Math. Sinica **30** (2013) 35–50
+- E. H. Lieb, *Convex trace functions and the Wigner–Yanase–Dyson conjecture*,
+  Adv. Math. **11** (1973) 267–288
+- K. Löwner, *Über monotone Matrixfunktionen*,
+  Math. Z. **38** (1934) 177–216
+- W. Ambrose, *Structure theorems for a special class of Banach algebras*,
+  Trans. AMS **57** (1945) 364–386
 
 ## Structure
 
@@ -38,21 +35,11 @@ Löwner-theorem corollaries `PowerOperatorConvex`/`PowerOperatorConcave`.
 
 | File | Contents |
 |------|----------|
-| `Defs.lean` | `OperatorConvexOn` / `OperatorConcaveOn`; `PerspectiveFunction`; `GenPerspectiveFunction`; `OperatorPowerMean`; `GenPerspective_of_commute` ✓; `GenPerspective_of_rpow_commute` ✓ (pending `mul_rpow_of_commute`) |
-| `HStarAlgebra.lean` | H\*-algebra typeclass; `Lmul` / `Rmul` as star-algebra homs ✓; CFC commutativity `L_{f(a)} = f(L_a)` and `R_{f(a)} = f(R_a)` ✓; `Rmul_rpow_strictlyPositive` variants ✓ |
-| `Jensen.lean` | **Jensen's operator inequality** (Li–Wu 2012): `JensenOperator_convex_general` ✓; `JensenOperator_convex_general_sub` ✓; n=2 specializations and concave/nonneg variants ✓ |
-| `Main.lean` | `GenPerspectiveJointlyConcave` / `GenPerspectiveJointlyConvex` ✓; `PowerMeanJointlyConcave` / `PowerMeanJointlyConvex` ✓; `PowerOperatorConvex` / `PowerOperatorConcave` (open — Löwner) |
-| `Lieb.lean` | `LiebConcavity` [Thm 1.2(a)] ✓; `LiebExtension` [Thm 1.2(b)] ✓; `AndoConvexity` [Thm 1.4] ✓; matrix specializations with explicit trace formula ✓ |
-
-### Supporting infrastructure
-
-| File | Contents |
-|------|----------|
-| `Basic.lean` | Shared imports and basic lemmas |
-| `Inner.lean` | Frobenius inner product `⟪A, B⟫_𝕜 = (B * Aᴴ).trace` and its properties ✓ |
-| `MatrixSpecialization.lean` | `FrobeniusMat` namespace: `NormedAddCommGroup`, `InnerProductSpace`, `NormedRing`, `CompleteSpace`, `HStarAlgebra`, `ContinuousFunctionalCalculus` instances for `Matrix n n 𝕜` with Frobenius norm ✓ |
-| `MulOppositeStarAlgEquiv.lean` | `starAlgEquiv : A ≃⋆ₐ[ℝ] Aᵐᵒᵖ`; CFC and rpow commutativity across `MulOpposite` ✓ |
-| `ForMathlib.lean` | Candidates for upstream Mathlib: `Commute.rpow_right/left`; `mul_rpow_of_commute` (open); `cfc_isStrictlyPositive_of_pos/nonneg`; `spectrum_subset_convex_comb` |
+| `LeanLiebConcavity/Defs.lean` | `OperatorConvexOn` / `OperatorConcaveOn`; `PerspectiveFunction`; `GenPerspectiveFunction`; `OperatorPowerMean`; `GenPerspective_of_commute` ✓; `GenPerspective_of_rpow_commute` ✓ |
+| `LeanLiebConcavity/HStarAlgebra.lean` | H\*-algebra typeclass; `Lmul` / `Rmul` as star-algebra homs ✓; CFC commutativity `L_{f(a)} = f(L_a)` and `R_{f(a)} = f(R_a)` ✓; `Rmul_rpow_strictlyPositive` variants ✓ |
+| `LeanLiebConcavity/Jensen.lean` | **Jensen's operator inequality** (Li–Wu 2012): `JensenOperator_convex_general` ✓; `JensenOperator_convex_general_sub` ✓; n=2 specializations and concave/nonneg variants ✓ |
+| `LeanLiebConcavity/Main.lean` | `PerspectiveJointConvex` / `PerspectiveJointConcave` ✓; `PowerMeanJointlyConcave` / `PowerMeanJointlyConvex` ✓; `PowerOperatorConvex` / `PowerOperatorConcave` |
+| `LeanLiebConcavity/Lieb.lean` | `LiebConcavity` [Thm 1.2(a)] ✓; `LiebExtension` [Thm 1.2(b)] ✓; `AndoConvexity` [Thm 1.4] ✓; matrix specializations with explicit trace formula ✓ |
 
 ### Jensen proof infrastructure
 
@@ -60,30 +47,47 @@ These files exist solely to support `Jensen.lean` and are not imported elsewhere
 
 | File | Contents |
 |------|----------|
-| `ConjugateWeightedSum.lean` | Spectrum and self-adjointness of conjugate-weighted sums `∑ star(b i) * a i * b i`; `algebraMap_le_sum_conj` |
-| `DiagonalStarAlgHom.lean` | `diagonalStarAlgHom` as a `StarAlgHom`; `cfc_diagonal`; spectrum and order facts for diagonal matrices in `CStarMatrix` |
-| `UnitaryConjCFC.lean` | `CStarAlgebra.cfc_unitary_conj'` — CFC commutes with unitary conjugation |
-| `CStarMatrixAux.lean` | Auxiliary instances for `CStarMatrix` used in the Li–Wu block-matrix construction |
+| `LeanLiebConcavity/ConjugateWeightedSum.lean` | Spectrum and self-adjointness of conjugate-weighted sums `∑ star(b i) * a i * b i`; `algebraMap_le_sum_conj` |
 
-## Blueprint correspondence
+### Mathlib candidates (`ForMathlib/`)
 
-| Blueprint label | Lean declaration |
-|-----------------|-----------------|
-| `thm:jensen_1982` | (not yet formalized — HP1982 version) |
-| `thm:jensen_2012` | `JensenOperator_convex_general` |
-| `thm:jensen_2012'` | `JensenOperator_convex_general_sub` |
-| `thm:perspective_iff_matrix_convex` | `PerspectiveIffMatrixConvex` |
-| `thm:gen_perspective_jointly_convex` | `GenPerspectiveJointlyConvex` |
-| `cor:gen_perspective_jointly_concave` | `GenPerspectiveJointlyConcave` |
-| `thm:power_mean_jointly_concave` | `PowerMeanJointlyConcave` |
-| `thm:lieb` | `LiebConcavity` |
-| `thm:lieb_extension` | `LiebExtension` |
-| `thm:ando_convexity` | `AndoConvexity` |
+Lemmas missing from Mathlib, organized by topic. `ForMathlib.lean` is a flat aggregator
+importing all of these.
+
+| File | Contents |
+|------|----------|
+| `Continuity.lean` | `rpow_continuousOn_pos` |
+| `SelfAdjoint.lean` | `IsSelfAdjoint.star_mul_eq`; `isSelfAdjoint_linear_comb` |
+| `CStarMatrix.lean` | Auxiliary `ofMatrix` lemmas for `CStarMatrix` |
+| `InnerProductSpace/Positive.lean` | `reApplyInnerSelf_mono_right/left` |
+| `Frobenius/Inner.lean` | Frobenius inner product `⟪A, B⟫_𝕜 = (B * Aᴴ).trace` and its properties |
+| `Frobenius/Matrix.lean` | `NormedAddCommGroup`, `InnerProductSpace`, `NormedRing`, `HStarAlgebra`, `ContinuousFunctionalCalculus`, `PartialOrder`, `StarOrderedRing`, `NonnegSpectrumClass` instances for `Matrix n n 𝕜` with Frobenius norm |
+| `ContinuousFunctionalCalculus/Unital.lean` | `nonneg_iff_sa_spectrum_nonneg` and variant |
+| `ContinuousFunctionalCalculus/Order.lean` | `isUnit_of_le_general`; `isStrictlyPositive_of_le`; `isStrictlyPositive_add_nonneg` |
+| `ContinuousFunctionalCalculus/Commute.lean` | `Commute.cfc_cfc`; `IsSelfAdjoint.cfc_cfc`; `Commute.cfc_cfc_real` |
+| `ContinuousFunctionalCalculus/Rpow.lean` | `mul_rpow_of_commute` (ADMITTED); `Commute.rpow_right/left/rpow_rpow`; `cfc_isStrictlyPositive_of_pos/nonneg`; rpow–mul identities |
+| `ContinuousFunctionalCalculus/Convex.lean` | `isStrictlyPositive_convex_comb`; `spectrum_subset_convex_comb`; convexity lemmas for self-adjoint elements |
+| `StarAlgHom/Diagonal.lean` | `diagonalStarAlgHom` as a `StarAlgHom`; `cfc_diagonal`; spectrum and order facts for diagonal matrices |
+| `StarAlgHom/Unitary.lean` | `CStarAlgebra.cfc_unitary_conj'` — CFC commutes with unitary conjugation |
+| `StarAlgHom/OpStar.lean` | `starAlgEquiv : A ≃⋆ₐ[R] Aᵐᵒᵖ`; `opStar_map_cfc`; CFC and rpow commutativity across `MulOpposite` |
+
+## Sorries
+
+| Declaration | File | Reason |
+|-------------|------|--------|
+| `mul_rpow_of_commute` | `ForMathlib/ContinuousFunctionalCalculus/Rpow.lean` | Requires two-variable CFC not yet in Mathlib |
+| `CFC.rpow_operatorConvexOn` | `Main.lean` | Requires Löwner's theorem |
+| `CFC.rpow_operatorConcaveOn` | `Main.lean` | Requires Löwner's theorem |
 
 ## Building
 
-Requires a compatible Lean 4 toolchain (see `lean-toolchain`).
+Requires Lean `v4.29.0-rc6` (see `lean-toolchain`).
 
 ```bash
+lake exe cache get   # fetch Mathlib build cache
 lake build
 ```
+
+## License
+
+Apache 2.0 — see [LICENSE](LICENSE).

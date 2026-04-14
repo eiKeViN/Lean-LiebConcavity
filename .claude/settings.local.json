@@ -46,7 +46,32 @@
       "Bash(grep -i \"\\\\.lean$\")",
       "Bash(grep -rn \"Opposite\\\\|ᵐᵒᵖ\" /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib/Analysis/CStarAlgebra/ContinuousFunctionalCalculus/*.lean)",
       "Bash(grep -n \"StarAlgEquiv\\\\|AlgEquiv\\\\|IsometryCFC\" /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib/Analysis/CStarAlgebra/ContinuousFunctionalCalculus/*.lean)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(find /c/Users/eiKevinZ/my_coursework/Lean-LiebConcavity/.lake/packages/mathlib/Mathlib/Analysis -name *PiL2* -o -name *innerProductSpace*)",
+      "Bash(/tmp/analyze.lean:*)",
+      "Read(//tmp/**)",
+      "Skill(lean4-tci)",
+      "Skill(lean4-tci:*)",
+      "WebFetch(domain:lean-lang.org)",
+      "WebFetch(domain:leanprover-community.github.io)",
+      "Read(//c/Users/eiKevinZ/.claude/commands/**)",
+      "Bash(gh auth:*)",
+      "Read(//c/Users/eiKevinZ/.claude/**)",
+      "Bash(curl -s \"https://leansearch.net/api/search?query=isStrictlyPositive+iff+PosDef&num_results=5\")",
+      "Bash(curl -sv \"https://leansearch.net/api/search?query=isStrictlyPositive+iff+PosDef&num_results=3\")",
+      "Bash(curl -s \"https://leansearch.net/search\" -X POST -H \"Content-Type: application/json\" -d '{\"query\":[\"matrix X is positive semi definite iff 0 leq X\"],\"num_results\":8}')",
+      "Bash(python3 -c ':*)",
+      "Bash(node -e ':*)",
+      "WebFetch(domain:link.springer.com)",
+      "Bash(curl -s https://leansearch.net/search -X POST -H 'Content-Type: application/json' -d '{\"query\":[\"sum of powers of primitive root of unity equals zero geometric sum\"],\"num_results\":8}')",
+      "WebFetch(domain:www.sciencedirect.com)",
+      "WebFetch(domain:www.academia.edu)",
+      "Bash(xargs sed:*)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\eiKevinZ\\.claude\\plans",
+      "\\tmp",
+      "C:\\Users\\eiKevinZ\\.claude\\commands"
     ]
   }
 }
