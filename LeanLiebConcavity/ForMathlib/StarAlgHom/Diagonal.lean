@@ -81,14 +81,17 @@ end StarAlgHom
 
 end Matrix
 
+
+noncomputable section
+
 /-!
 ## `MatCStar` namespace
 
 Open with `open MatCStar` to activate C⋆-algebra instances on `Matrix n n A`
-(operator norm, CFC) without polluting the global instance graph.
--/
+(operator norm, CFC) by borrowing from CStarMatrix without polluting the global instance.
 
-noncomputable section
+TODO : replaces ℝ and ℂ and `IsSelfAdjoint` by more general type
+-/
 
 namespace MatCStar
 
@@ -111,9 +114,6 @@ scoped instance instPartialOrder : PartialOrder (Matrix n n A) :=
 scoped instance instStarOrderedRing : StarOrderedRing (Matrix n n A) :=
   inferInstanceAs (StarOrderedRing (CStarMatrix n n A))
 
-scoped instance instCFCComplex : ContinuousFunctionalCalculus ℂ (Matrix n n A) IsStarNormal :=
-  inferInstance
-
 scoped instance instCFCReal : ContinuousFunctionalCalculus ℝ (Matrix n n A) IsSelfAdjoint :=
   IsSelfAdjoint.instContinuousFunctionalCalculus
 
@@ -132,13 +132,13 @@ scoped instance instPiCFCReal :
 
 omit [Fintype n] [PartialOrder A] [StarOrderedRing A] in
 /-- A diagonal matrix is self-adjoint iff all its diagonal entries are self-adjoint. -/
-lemma isSelfAdjoint_diagonal_iff {d : n → A} :
+theorem isSelfAdjoint_diagonal_iff {d : n → A} :
     IsSelfAdjoint (Matrix.diagonal d) ↔ ∀ i, IsSelfAdjoint (d i) := by
   rw [← Matrix.isHermitian_iff_isSelfAdjoint, Matrix.isHermitian_diagonal_iff]
 
 omit [PartialOrder A] [StarOrderedRing A] in
 /-- Specialization of `isSelfAdjoint_diagonal` to the `Sum.elim` form used in `liWuDiag`. -/
-lemma isSelfAdjoint_diagonal_sum_elim {m : ℕ} {a : Fin m → A} {c : A}
+theorem isSelfAdjoint_diagonal_sum_elim {m : ℕ} {a : Fin m → A} {c : A}
     (hsa : ∀ i, IsSelfAdjoint (a i)) (hsc : IsSelfAdjoint c) :
     IsSelfAdjoint (Matrix.diagonal (Sum.elim a (fun _ => c) : Fin m ⊕ Unit → A)) :=
   isSelfAdjoint_diagonal_iff.mpr (fun i => i.casesOn hsa (fun _ => hsc))
@@ -163,7 +163,7 @@ theorem Matrix.diagonal_map_cfc {f : ℝ → ℝ} {d : n → A}
   simpa only [Matrix.diagonalStarAlgHom_apply] using
     Matrix.diagonalStarAlgHom_map_cfc hf hd
 
-/-- CFC acts entry-wise on `Matrix.diagonal`:
+/-- CFC acts entry-wise on diagonal matrices:
 `cfc f (diagonal d) = diagonal (fun i => cfc f (d i))`. -/
 lemma cfc_diagonal {f : ℝ → ℝ} {d : n → A}
     (hf : ContinuousOn f (⋃ i, spectrum ℝ (d i)))
@@ -171,8 +171,6 @@ lemma cfc_diagonal {f : ℝ → ℝ} {d : n → A}
     cfc f (Matrix.diagonal d) = Matrix.diagonal (fun i => cfc f (d i)) := by
   rw [← Matrix.diagonal_map_cfc hf hd,
       cfc_map_pi (S := ℝ) f d hf (Pi.isSelfAdjoint.mpr hd) hd]
-
--- `Matrix.isUnit_diagonal_iff` is proved in the `Matrix.Invertible` section above.
 
 omit [PartialOrder A] [StarOrderedRing A] in
 /-- The spectrum of a diagonal matrix equals the union of the spectra of its entries. -/
@@ -213,7 +211,7 @@ theorem nonneg_diagonal_iff {d : n → A} :
     obtain ⟨i, hi⟩ := Set.mem_iUnion.mp <| (spectrum_diagonal d).symm ▸ hx
     exact (nonneg_iff_sa_spectrum_nonneg.mp <| h i).2 x hi
 
-/-- Ordering of diagonal matrices is entry-wise. -/
+/-- (Star) ordering of diagonal matrices is entry-wise. -/
 theorem diagonal_le_diagonal_iff {d e : n → A} :
     Matrix.diagonal d ≤ Matrix.diagonal e ↔ ∀ i, d i ≤ e i := by
   rw [← sub_nonneg, Matrix.diagonal_sub, nonneg_diagonal_iff]

@@ -5,13 +5,16 @@ public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 @[expose] public section
 
 /-!
-# Conjugate-Weighted Sums: Algebraic and Spectral Lemmas
+# Conjugate-weighted sums
 
-lemmas for expressions of the form `∑ i, star (b i) * a i * b i`
-under the constraint `∑ i, star (b i) * b i = 1`.
+Lemmas for sums of the form `∑ i, star (b i) * a i * b i` subject to
+`∑ i, star (b i) * b i = 1` — the non-commutative analogue of a convex combination.
 
-Essentially non-commutative generalization of convex combination.
-The theory can be much expanded in the future.
+## Main results
+
+- `spectrum_sum_conj_subset`: if each `a i` has spectrum in `I` (convex) and the
+  `b i` satisfy the unit constraint, then `∑ star (b i) * a i * b i` also has spectrum in `I`.
+  This is Sub-goal 1 of the Jensen proof.
 -/
 
 section Finset
@@ -102,7 +105,7 @@ theorem spectrum_sum_conj_subset {I : Set ℝ} (hI : Convex ℝ I)
     exact algebraMap_le_sum_conj hb fun i =>
       (algebraMap_le_iff_le_spectrum (ha i)).mpr fun _ hx =>
         Finset.inf'_le _ (Finset.mem_univ i) |>.trans <| csInf_le (hcompact i).bddBelow hx
-  have higher : ∑ i, star (b i) * a i * b i ≤ algebraMap ℝ A β :=
+  have upper : ∑ i, star (b i) * a i * b i ≤ algebraMap ℝ A β :=
     sum_conj_le_algebraMap hb fun i =>
       (le_algebraMap_iff_spectrum_le (ha i)).mpr fun _ hx =>
         le_csSup (hcompact i).bddAbove hx |>.trans <|
@@ -110,7 +113,7 @@ theorem spectrum_sum_conj_subset {I : Set ℝ} (hI : Convex ℝ I)
   intro t ht
   refine hI.ordConnected.out ?_ ?_
     ⟨(algebraMap_le_iff_le_spectrum hsa).mp lower t ht,
-     (le_algebraMap_iff_spectrum_le hsa).mp higher t ht⟩
+     (le_algebraMap_iff_spectrum_le hsa).mp upper t ht⟩
   · exact Finset.inf'_mem_of_forall_mem hne
       fun i _ => ha_spec i <| (hcompact i).sInf_mem (hnonempty i)
   · exact Finset.sup'_mem_of_forall_mem hne

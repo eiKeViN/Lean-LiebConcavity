@@ -4,6 +4,30 @@ public import LeanLiebConcavity.Main
 public import LeanLiebConcavity.ForMathlib.Frobenius.Matrix
 public import LeanLiebConcavity.ForMathlib.InnerProductSpace.Positive
 
+/-!
+# Lieb's concavity theorem, Lieb's extension, and Ando's convexity theorem
+
+This file proves Lieb Concavity and two its variations under the context of `HStarAlgebra`,
+which is a generalization of `Matrix n n ℂ` endowed with Frobenius trace inner product.
+
+## Main results
+
+- `LiebConcavity`: `(A, B) ↦ re ⟪K, A^s K B^(1-s)⟫` is jointly concave for `0 < s < 1`.
+- `LiebExtension`: `(A, B) ↦ re ⟪K, A^p K B^q⟫` is jointly concave for `p, q > 0`,
+  `p + q ≤ 1`.
+- `AndoConvexity`: `(A, B) ↦ re ⟪K, A^q K B^r⟫` is jointly convex for `1 ≤ q ≤ 2`,
+  `r > 0`, `q - r ≤ 1`.
+- Matrix specializations: `LiebConcavity_matrix`, `LiebExtension_matrix`,
+  `AndoConvexity_matrix`.
+
+## References
+
+- I. Nikoufar, M. Ebadian, M. Eshaghi Gordji, *The simplest proof of Lieb concavity theorem*,
+  Adv. Math. 248 (2013) 531–533
+- E. H. Lieb, *Convex trace functions and the Wigner–Yanase–Dyson conjecture*,
+  Adv. Math. 11 (1973) 267–288
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -93,7 +117,7 @@ theorem LiebConcavity_general' {α β : ℝ} (hα : 0 < α ∧ α ≤ 1) (hβ : 
     _ ≤ re ⟪x, PowerMean α β (a • A₁ + b • A₂) (a • B₁ + b • B₂) x⟫_ℂ :=
           reApplyInnerSelf_mono_right ((PowerMean_jointly_concave hα hβ).2 h₁ h₂ ha hb hab) x
 
-/-- **Generalised Lieb Concavity** With the explicit formula:
+/-- **Generalised Lieb Concavity** with the explicit formula:
 `(A, B) ↦ re ⟪x, A ^ (β * (1 - α)) * x * B ^ α⟫` is jointly concave `(A, B)`
 for `0 < α, β ≤ 1`, `A` strictly positive and `B` non-negative. -/
 theorem LiebConcavity_general {α β : ℝ} (hα : 0 < α ∧ α ≤ 1) (hβ : 0 < β ∧ β ≤ 1) (x : H) :
@@ -102,8 +126,33 @@ theorem LiebConcavity_general {α β : ℝ} (hα : 0 < α ∧ α ≤ 1) (hβ : 0
   refine LiebConcavity_general' hα hβ x |>.congr fun ⟨A, B⟩ ⟨hA, hB⟩ => ?_
   simp only [PowerMean_apply hA hB hα.1.le hβ.1.ne']
 
+/-- **Generalised Ando Convexity** :
+`(A, B) ↦ re ⟪x, PowerMean α β A B x⟫` is jointly convex in `(A, B)`
+for `1 ≤ α ≤ 2`, `0 < β ≤ 1`, `A` strictly positive and `B` nonneg -/
+theorem AndoConvexity_general' {α β : ℝ} (hα : 1 ≤ α ∧ α ≤ 2) (hβ : 0 < β ∧ β ≤ 1) (x : H) :
+    ConvexOn ℝ {(A, B) : H × H | IsStrictlyPositive A ∧ 0 ≤ B}
+      (fun (A, B) => re ⟪x, PowerMean α β A B x⟫_ℂ) := by
+  refine ⟨(PowerMean_jointly_convex hα hβ).1,
+        fun ⟨A₁, B₁⟩ h₁ ⟨A₂, B₂⟩ h₂ a b ha hb hab => ?_⟩
+  calc re ⟪x, PowerMean α β (a • A₁ + b • A₂) (a • B₁ + b • B₂) x⟫_ℂ
+      ≤ re ⟪x, (a • PowerMean α β A₁ B₁ + b • PowerMean α β A₂ B₂) x⟫_ℂ :=
+          reApplyInnerSelf_mono_right ((PowerMean_jointly_convex hα hβ).2 h₁ h₂ ha hb hab) x
+    _ = a * re ⟪x, PowerMean α β A₁ B₁ x⟫_ℂ
+      + b * re ⟪x, PowerMean α β A₂ B₂ x⟫_ℂ := by
+          simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
+                     inner_add_right, map_add]
+          congr 1 <;>
+          · rw [← Complex.coe_smul, inner_smul_right]
+            simp
 
-/-! ### Special cases -/
+/-- **Generalised Ando Convexity** with the explicit formula:
+`(A, B) ↦ re ⟪x, A ^ (β * (1 - α)) * x * B ^ α⟫` is jointly convex
+for `1 ≤ α ≤ 2`, `0 < β ≤ 1`, `A` strictly positive and `B` nonneg -/
+theorem AndoConvexity_general {α β : ℝ} (hα : 1 ≤ α ∧ α ≤ 2) (hβ : 0 < β ∧ β ≤ 1) (x : H) :
+    ConvexOn ℝ {(A, B) : H × H | IsStrictlyPositive A ∧ 0 ≤ B}
+      (fun (A, B) => re ⟪x, A ^ (β * (1 - α)) * x * B ^ α⟫_ℂ) := by
+  refine (AndoConvexity_general' hα hβ x).congr fun ⟨A, B⟩ ⟨hA, hB⟩ => ?_
+  simp only [PowerMean_apply hA hB (by linarith [hα.1] : (0 : ℝ) ≤ α) hβ.1.ne']
 
 -- arithmetic facts used in the parameter correspondences below.
 private lemma lieb_param_aux {p q : ℝ} (hp : 0 < p) (hq : 0 < q) (hpq : p + q ≤ 1) :
@@ -128,34 +177,6 @@ theorem LiebConcavity {s : ℝ} (hs : 0 < s ∧ s < 1) (x : H) :
     ConcaveOn ℝ {(A, B) : H × H | IsStrictlyPositive A ∧ 0 ≤ B}
       (fun (A, B) => re ⟪x, A ^ s * x * B ^ (1 - s)⟫_ℂ) :=
   LiebExtension (by linarith) hs.1 (by linarith) x
-
-/-- **Generalised Ando Convexity** :
-`(A, B) ↦ re ⟪x, PowerMean α β A B x⟫` is jointly convex in `(A, B)`
-for `1 ≤ α ≤ 2`, `0 < β ≤ 1`, `A` strictly positive and `B` nonneg -/
-theorem AndoConvexity_general' {α β : ℝ} (hα : 1 ≤ α ∧ α ≤ 2) (hβ : 0 < β ∧ β ≤ 1) (x : H) :
-    ConvexOn ℝ {(A, B) : H × H | IsStrictlyPositive A ∧ 0 ≤ B}
-      (fun (A, B) => re ⟪x, PowerMean α β A B x⟫_ℂ) := by
-  refine ⟨(PowerMean_jointly_convex hα hβ).1,
-        fun ⟨A₁, B₁⟩ h₁ ⟨A₂, B₂⟩ h₂ a b ha hb hab => ?_⟩
-  calc re ⟪x, PowerMean α β (a • A₁ + b • A₂) (a • B₁ + b • B₂) x⟫_ℂ
-      ≤ re ⟪x, (a • PowerMean α β A₁ B₁ + b • PowerMean α β A₂ B₂) x⟫_ℂ :=
-          reApplyInnerSelf_mono_right ((PowerMean_jointly_convex hα hβ).2 h₁ h₂ ha hb hab) x
-    _ = a * re ⟪x, PowerMean α β A₁ B₁ x⟫_ℂ
-      + b * re ⟪x, PowerMean α β A₂ B₂ x⟫_ℂ := by
-          simp only [ContinuousLinearMap.add_apply, ContinuousLinearMap.smul_apply,
-                     inner_add_right, map_add]
-          congr 1 <;>
-          · rw [← Complex.coe_smul, inner_smul_right]
-            simp
-
-/-- With the explicit formula:
-`(A, B) ↦ re ⟪x, A ^ (β * (1 - α)) * x * B ^ α⟫` is jointly convex
-for `1 ≤ α ≤ 2`, `0 < β ≤ 1`, `A` strictly positive and `B` nonneg -/
-theorem AndoConvexity_general {α β : ℝ} (hα : 1 ≤ α ∧ α ≤ 2) (hβ : 0 < β ∧ β ≤ 1) (x : H) :
-    ConvexOn ℝ {(A, B) : H × H | IsStrictlyPositive A ∧ 0 ≤ B}
-      (fun (A, B) => re ⟪x, A ^ (β * (1 - α)) * x * B ^ α⟫_ℂ) := by
-  refine (AndoConvexity_general' hα hβ x).congr fun ⟨A, B⟩ ⟨hA, hB⟩ => ?_
-  simp only [PowerMean_apply hA hB (by linarith [hα.1] : (0 : ℝ) ≤ α) hβ.1.ne']
 
 -- Arithmetic for Ando's parameter correspondence:
 private lemma ando_param_aux {q r : ℝ} (hq : 1 ≤ q ∧ q ≤ 2) (hr : 0 < r)

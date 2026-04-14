@@ -33,11 +33,7 @@ variable {R S A : Type*} {p : A → Prop}
   [ContinuousFunctionalCalculus R A p] [ContinuousMap.UniqueHom R A]
 
 include S in
-/-- Conjugation by a unitary commutes with the continuous functional calculus.
-
-Mirrors `StarAlgHom.map_cfc`: the `StarAlgEquiv` `Unitary.conjStarAlgAut S A u`
-(which maps `x ↦ u * x * star u`) commutes with `cfc f`. Continuity of the conjugation
-map is an explicit hypothesis. -/
+/-- Conjugation by a unitary commutes with the continuous functional calculus. -/
 theorem conjStarAlgAut_map_cfc (u : unitary A) (f : R → R) (a : A)
     (hf : ContinuousOn f (spectrum R a) := by cfc_cont_tac)
     (hφ : Continuous (Unitary.conjStarAlgAut S A u))

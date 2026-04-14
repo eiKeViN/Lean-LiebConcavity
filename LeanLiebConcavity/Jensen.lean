@@ -2,9 +2,33 @@ module
 
 public import LeanLiebConcavity.Defs
 public import LeanLiebConcavity.ConjugateWeightedSum
-public import LeanLiebConcavity.DiagonalStarAlgHom
+public import LeanLiebConcavity.ForMathlib.StarAlgHom.Diagonal
 public import Mathlib.RingTheory.RootsOfUnity.Complex
-public import LeanLiebConcavity.UnitaryConjCFC
+public import LeanLiebConcavity.ForMathlib.StarAlgHom.Unitary
+
+/-!
+# Jensen's operator inequality
+
+Jensen's inequality for operator convex functions, following the proof strategy of
+Li–Wu (2014) via unitary conjugation in block matrices.
+
+## Main results
+
+- `JensenOperator_convex_general`: if `f` is operator convex on `I` (with suitable
+  continuity/boundary conditions), then for `b : Fin n → A` with `∑ star (b i) * b i = 1`
+  and each `a i` self-adjoint with `spectrum ℝ (a i) ⊆ I`,
+  `f (∑ star (b i) * a i * b i) ≤ ∑ star (b i) * f (a i) * b i`.
+- `JensenOperator_convex` / `JensenOperator_concave`: the standard single-element forms.
+- `JensenOperator_convex_nonneg` / `JensenOperator_concave_nonneg`: versions for
+  operator convex/concave functions on `[0, ∞)`.
+
+## References
+
+- P. Li, L. Wu, *A simple proof of the operator Jensen inequality*,
+  J. Math. Anal. Appl. 420 (2014) 1034–1037
+- F. Hansen, G. K. Pedersen, *Jensen's operator inequality*,
+  B. London Math. Soc. 35 (2003) 553–564
+-/
 
 @[expose] public section
 

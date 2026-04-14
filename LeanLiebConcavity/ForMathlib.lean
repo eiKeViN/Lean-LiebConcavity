@@ -7,6 +7,9 @@ import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus.Commute
 import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus.Order
 import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus.Rpow
 import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus.Convex
+import LeanLiebConcavity.ForMathlib.StarAlgHom.Diagonal
+import LeanLiebConcavity.ForMathlib.StarAlgHom.OpStar
+import LeanLiebConcavity.ForMathlib.StarAlgHom.Unitary
 
 /-!
 # Lemmas missing from Mathlib

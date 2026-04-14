@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Analysis.SpecialFunctions.ContinuousFunctionalCalculus.Rpow.Basic
+public import LeanLiebConcavity.ForMathlib.Continuity
 
 /-!
 # The star-conjugation map `a ↦ op(star a)` as a `StarAlgEquiv R A Aᵐᵒᵖ`
@@ -21,8 +22,6 @@ in order to interact with continuous functional calculus.
 -/
 
 @[expose] public section
-
-set_option linter.unusedSectionVars true
 
 open MulOpposite
 
@@ -53,9 +52,9 @@ abbrev opStar [Star A] (a : A) : Aᵐᵒᵖ := op (star a)
     opStar (a * b) = opStar a * opStar b := by
   simp [star_mul]
 
-section StarAlgEquiv
+/-! ## opStar as star-algebra equivalence -/
 
-/-! ## The star-algebra equivalence -/
+section StarAlgEquiv
 
 variable (R : Type*) [CommSemiring R] [StarRing R] [TrivialStar R]
 variable [Ring A] [StarRing A] [Algebra R A] [StarModule R A]
@@ -71,7 +70,6 @@ def starAlgEquiv : A ≃⋆ₐ[R] Aᵐᵒᵖ :=
 @[simp] theorem opStar_eq_starAlgEquiv (a : A) : opStar a = starAlgEquiv R a := rfl
 
 end StarAlgEquiv
-
 
 /-! ## Self-adjointness and nonnegativity -/
 
@@ -133,9 +131,6 @@ theorem opStar_map_cfc (f : R → R) (a : A)
 end CFC
 
 /-! ## rpow commutativity -/
-
-private theorem rpow_continuousOn_pos {r : ℝ} : ContinuousOn (fun (x : ℝ) ↦ x ^ r) (Set.Ioi 0) :=
-  continuousOn_id.rpow_const (by grind only [= Set.mem_Ioi, = id.eq_1])
 
 section Rpow
 

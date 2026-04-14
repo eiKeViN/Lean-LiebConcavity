@@ -2,6 +2,23 @@ module
 
 public import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus
 
+/-!
+# Core definitions
+
+## Main definitions
+
+- `OperatorConvexOn I f` / `OperatorConcaveOn I f`: `f : ℝ → ℝ` is operator convex/concave
+  on `I : Set ℝ` if `cfc f` is convex/concave on the appropriate set of self-adjoint elements
+  in every unital C⋆-algebra with compatible partial order.
+- `GenPerspective A f g`: the generalized perspective function `(f △ g)(L, R)`,
+  defined as `g(R)^{½} · f(g(R)^{-½} · L · g(R)^{-½}) · g(R)^{½}`.
+
+## References
+
+- A. Ebadian, I. Nikoufar, M. Eshaghi Gordji, *Perspectives of matrix convex functions*,
+  PNAS 108 (2011) 7313–7314
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -25,7 +42,6 @@ def OperatorConcaveOn (I : Set ℝ) (f : ℝ → ℝ) : Prop :=
     ConcaveOn ℝ {a : B | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f)
 
 
- /-some useful(less) api -/
 
 variable {A : Type u} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
 variable {f : ℝ → ℝ} {I J : Set ℝ}
