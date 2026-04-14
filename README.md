@@ -2,7 +2,7 @@
 
 This is a **Lean 4** formalization of **Lieb's concavity theorem**, a key result in
 quantum information theory, together with its relatives Lieb's extension theorem and Ando's convexity
-theorem. The formalization follows the paper [Simplest proof of Lieb Concavity Theorem](https://www.sciencedirect.com/science/article/pii/S0001870813003010). This paper depends a couple of results in the topic of [perspective functions](https://www.pnas.org/doi/10.1073/pnas.1102518108), which in turn depends on [operator Jensen's inequality](https://link.springer.com/article/10.1007/BF01450679), but we follow [this](https://link.springer.com/article/10.1007/s10114-013-2065-8) that generalizes Jensen to any unital C\*-algebra. 
+theorem. The formalization follows the paper [Simplest proof of Lieb Concavity Theorem](https://www.sciencedirect.com/science/article/pii/S0001870813003010). This paper depends a couple of results in the topic of [perspective functions](https://www.pnas.org/doi/10.1073/pnas.1102518108), which in turn depends on [operator Jensen's inequality](https://link.springer.com/article/10.1007/BF01450679), but we follow [this](https://link.springer.com/article/10.1007/s10114-013-2065-8) that generalizes Jensen to any unital C\*-algebra.
 
 Modulo two sorries, all main theorems are now formalized. We also managed to prove Lieb in the generality of [H\*-algebra](https://www.jstor.org/stable/1990182) — a Hilbert space equipped with a compatible star operation and is a normed ring. This generalizes the space of n by n complex matrices with Frobenius inner product and conjugate-transpose star. As matrices in Mathlib don't come equipped with canonical inner product/norm, we provided independent packaging of the necessary ad hoc typeclass instantiations (and we did this too in the proof of Jensen, in which we need CStarAlgebra instance on matrix types).
 
@@ -27,35 +27,31 @@ Modulo two sorries, all main theorems are now formalized. We also managed to pro
 
 ### Core
 
-| File | Contents |
-|------|----------|
-| `LeanLiebConcavity/Defs.lean` | `OperatorConvexOn` / `OperatorConcaveOn`; `PerspectiveFunction`; `GenPerspectiveFunction`; `OperatorPowerMean`; `GenPerspective_of_commute` ✓; `GenPerspective_of_rpow_commute` ✓ |
-| `LeanLiebConcavity/HStarAlgebra.lean` | H\*-algebra typeclass; `Lmul` / `Rmul` as star-algebra homs ✓; CFC commutativity `L_{f(a)} = f(L_a)` and `R_{f(a)} = f(R_a)` ✓; `Rmul_rpow_strictlyPositive` variants ✓ |
-| `LeanLiebConcavity/Jensen.lean` | **Jensen's operator inequality** (Li–Wu 2012): `JensenOperator_convex_general` ✓; `JensenOperator_convex_general_sub` ✓; n=2 specializations and concave/nonneg variants ✓ |
-| `LeanLiebConcavity/Main.lean` | `PerspectiveJointConvex` / `PerspectiveJointConcave` ✓; `PowerMeanJointlyConcave` / `PowerMeanJointlyConvex` ✓; `PowerOperatorConvex` / `PowerOperatorConcave` |
-| `LeanLiebConcavity/Lieb.lean` | `LiebConcavity` [Thm 1.2(a)] ✓; `LiebExtension` [Thm 1.2(b)] ✓; `AndoConvexity` [Thm 1.4] ✓; matrix specializations with explicit trace formula ✓ |
+- **`Defs.lean`** — Core definitions: operator convexity/concavity, the generalized perspective function, and the operator power mean.
+- **`HStarAlgebra.lean`** — The H\*-algebra typeclass defined. Bundled left/right multiplication as star-algebra homomorphisms into the CLM, thus proved they commute with CFC, and specialized to taking rpow.
+- **`ConjugateWeightedSum.lean`** — Supports Jensen. It also has the potential to be further developed as non-commutative analogue of convex combination.
+- **`Jensen.lean`** — Jensen's operator inequality for operator convex functions on any unital C\*-algebra, following Li–Wu via a block-matrix unitary argument. Includes sub-unital and concave variants.
+- **`Main.lean`** — Joint convexity/concavity of the generalized perspective function and the operator power mean. Also records the sorried Löwner-theorem statements that `x ↦ x ^ r` is operator convex for `1 ≤ r ≤ 2` and operator concave for `0 < r ≤ 1`.
+- **`Lieb.lean`** — `LiebConcavity`, `LiebExtension`, and `AndoConvexity` in the abstract H\*-algebra setting, plus matrix specializations.
 
 ### Mathlib candidates (`ForMathlib/`)
 
-Lemmas missing from Mathlib, organized by topic. `ForMathlib.lean` is a flat aggregator
-importing all of these.
+Lemmas missing from Mathlib, organized by topic.
 
-| File | Contents |
-|------|----------|
-| `Continuity.lean` | `rpow_continuousOn_pos` |
-| `SelfAdjoint.lean` | `IsSelfAdjoint.star_mul_eq`; `isSelfAdjoint_linear_comb` |
-| `CStarMatrix.lean` | Auxiliary `ofMatrix` lemmas for `CStarMatrix` |
-| `InnerProductSpace/Positive.lean` | `reApplyInnerSelf_mono_right/left` |
-| `Frobenius/Inner.lean` | Frobenius inner product `⟪A, B⟫_𝕜 = (B * Aᴴ).trace` and its properties |
-| `Frobenius/Matrix.lean` | `NormedAddCommGroup`, `InnerProductSpace`, `NormedRing`, `HStarAlgebra`, `ContinuousFunctionalCalculus`, `PartialOrder`, `StarOrderedRing`, `NonnegSpectrumClass` instances for `Matrix n n 𝕜` with Frobenius norm |
-| `ContinuousFunctionalCalculus/Unital.lean` | `nonneg_iff_sa_spectrum_nonneg` and variant |
-| `ContinuousFunctionalCalculus/Order.lean` | `isUnit_of_le_general`; `isStrictlyPositive_of_le`; `isStrictlyPositive_add_nonneg` |
-| `ContinuousFunctionalCalculus/Commute.lean` | `Commute.cfc_cfc`; `IsSelfAdjoint.cfc_cfc`; `Commute.cfc_cfc_real` |
-| `ContinuousFunctionalCalculus/Rpow.lean` | `mul_rpow_of_commute` (ADMITTED); `Commute.rpow_right/left/rpow_rpow`; `cfc_isStrictlyPositive_of_pos/nonneg`; rpow–mul identities |
-| `ContinuousFunctionalCalculus/Convex.lean` | `isStrictlyPositive_convex_comb`; `spectrum_subset_convex_comb`; convexity lemmas for self-adjoint elements |
-| `StarAlgHom/Diagonal.lean` | `diagonalStarAlgHom` as a `StarAlgHom`; `cfc_diagonal`; spectrum and order facts for diagonal matrices |
-| `StarAlgHom/Unitary.lean` | `CStarAlgebra.cfc_unitary_conj'` — CFC commutes with unitary conjugation |
-| `StarAlgHom/OpStar.lean` | `starAlgEquiv : A ≃⋆ₐ[R] Aᵐᵒᵖ`; `opStar_map_cfc`; CFC and rpow commutativity across `MulOpposite` |
+- **`Continuity.lean`** — Continuity of `rpow` on the positive reals.
+- **`SelfAdjoint.lean`** — Missing self-adjointness lemmas.
+- **`CStarMatrix.lean`** — Auxiliary `ofMatrix` lemmas for `CStarMatrix`.
+- **`InnerProductSpace/Positive.lean`** —  Missing monotonicity lemmas for inner product.
+- **`Frobenius/Inner.lean`** — Frobenius inner product `⟪X, Y⟫ = (Y * Xᴴ).trace` on `Matrix n n 𝕜` and its basic properties.
+- **`Frobenius/Matrix.lean`** — All typeclass instances needed by `HStarAlgebra 𝕜` on `Matrix n n 𝕜` with Frobenius norm and Loewner order, scoped under the `FrobeniusMat` namespace.
+- **`ContinuousFunctionalCalculus/Unital.lean`** — Characterization of nonnegativity via spectrum for self-adjoint elements.
+- **`ContinuousFunctionalCalculus/Order.lean`** — Strict positivity lemmas (`isUnit_of_le`, `isStrictlyPositive_of_le`) not requiring `CStarAlgebra`, only CFC and `NonnegSpectrumClass`.
+- **`ContinuousFunctionalCalculus/Commute.lean`** — CFC applied to commuting elements: `cfc f a` commutes with `cfc g a`.
+- **`ContinuousFunctionalCalculus/Rpow.lean`** — Missing rpow identities and commutativity lemmas.
+- **`ContinuousFunctionalCalculus/Convex.lean`** — Convexity of the set of strictly positive elements; spectrum of convex combinations of self-adjoint elements.
+- **`StarAlgHom/Diagonal.lean`** — `Matrix.diagonal` upgraded to a `StarAlgHom`; CFC on diagonal matrices; C\*-algebra instances on `Matrix n n A` scoped under `MatCStar`.
+- **`StarAlgHom/Unitary.lean`** — CFC commutes with unitary conjugation, at both general and C\*-algebra levels.
+- **`StarAlgHom/OpStar.lean`** — Bundled the map `a ↦ op(star a)` as a star-algebra equivalence `A ≃⋆ₐ[R] Aᵐᵒᵖ`; CFC and rpow commutativity across `MulOpposite`.
 
 ## Sorries
 
