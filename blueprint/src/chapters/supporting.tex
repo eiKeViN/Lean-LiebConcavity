@@ -1,0 +1,55 @@
+% Chapter 2: Supporting Results
+\chapter{Supporting Results}
+
+This chapter collects two auxiliary results that are used in later chapters but do not
+fit naturally into the main proof chain.  The first is a spectral containment lemma for
+conjugate-weighted sums, which is fully proved in Lean.  The second is a commutativity
+identity for real powers in a C$^*$-algebra, which is currently admitted pending
+upstream Mathlib infrastructure.
+
+\section{Conjugate-Weighted Sums}
+
+\begin{lemma}[Spectrum of a conjugate-weighted sum]
+  \label{lem:conj_sum_spectrum}
+  \lean{spectrum_sum_conj_subset}
+  \leanok
+  Let $\mathcal{B}$ be an ordered unital C$^*$-algebra, let $I \subseteq \mathbb{R}$
+  be a convex subset, and let $n \in \mathbb{N}$.  Suppose
+  $a_1, \dots, a_n \in \mathcal{B}$ are self-adjoint with $\sigma(a_i) \subseteq I$
+  for each $i$, and let $b_1, \dots, b_n \in \mathcal{B}$ satisfy
+  $\sum_i b_i^* b_i = 1$.  Then
+  \[
+    \sigma\!\left(\sum_i b_i^*\, a_i\, b_i\right) \subseteq I.
+  \]
+  \begin{proof}
+    Set $\alpha = \inf_i \inf \sigma(a_i)$ and $\beta = \sup_i \sup \sigma(a_i)$;
+    then $[\alpha, \beta] \subseteq I$ by convexity and ord-connectedness.
+    The unit constraint $\sum_i b_i^* b_i = 1$ gives
+    $\alpha \cdot 1 \leq \sum_i b_i^* a_i b_i \leq \beta \cdot 1$
+    in the order on $\mathcal{B}$, since each summand satisfies
+    $\alpha \cdot b_i^* b_i \leq b_i^* a_i b_i \leq \beta \cdot b_i^* b_i$.
+    The order bounds imply the spectrum is contained in $[\alpha, \beta]$,
+    and hence in $I$.
+  \end{proof}
+\end{lemma}
+
+\section{Real Powers in C\texorpdfstring{$^*$}{*}-Algebras}
+
+\begin{lemma}[Power of a product of commuting positives]
+  \label{lem:mul_rpow_commute}
+  \lean{CFC.mul_rpow_of_commute}
+  Let $\mathcal{B}$ be an ordered unital C$^*$-algebra, let $a, b \in \mathcal{B}$
+  with $0 \leq a$, $0 \leq b$, and $ab = ba$.  Then for all $r \in \mathbb{R}$,
+  \[
+    (ab)^r = a^r\, b^r,
+  \]
+  where the powers are taken via the continuous functional calculus.
+  \begin{proof}
+    \emph{Admitted.}  This identity would follow from the fact that the continuous
+    functional calculus distributes over multiplication for commuting elements.
+    Specifically, one would need that $\mathrm{cfc}(f, ab) = \mathrm{cfc}(f, a)\,
+    \mathrm{cfc}(f, b)$ whenever $a$ and $b$ commute and $f$ is the function
+    $t \mapsto t^r$.  This CFC multiplicativity for commuting pairs is not yet
+    available in Mathlib, so the lemma is currently admitted as an axiom.
+  \end{proof}
+\end{lemma}

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Definitions</title>
+<link rel="next" href="sect0002.html" title="Supporting Results" />
+<link rel="prev" href="index.html" title="LiebConcavity" />
+<link rel="up" href="index.html" title="LiebConcavity" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">LiebConcavity</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class=" active current">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Definitions</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sect0001.html#a0000000009"><span class="toc_ref">1.1</span> <span class="toc_entry">Operator Convexity and Concavity</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000011"><span class="toc_ref">1.2</span> <span class="toc_entry">Generalized Perspective Function</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000013"><span class="toc_ref">1.3</span> <span class="toc_entry">H\(^*\)-Algebra</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">Supporting Results</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0002.html#a0000000017"><span class="toc_ref">2.1</span> <span class="toc_entry">Conjugate-Weighted Sums</span></a>
+ </li>
+<li class="">
+  <a href="sect0002.html#a0000000018"><span class="toc_ref">2.2</span> <span class="toc_entry">Real Powers in C\(^*\)-Algebras</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">Jensen’s Operator Inequality</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0003.html#a0000000019"><span class="toc_ref">3.1</span> <span class="toc_entry">Main Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000020"><span class="toc_ref">3.2</span> <span class="toc_entry">Sub-Unital Variant</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">Löwner’s Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">Generalized Perspective Functions</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0005.html#a0000000021"><span class="toc_ref">5.1</span> <span class="toc_entry">Joint Convexity</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html#a0000000022"><span class="toc_ref">5.2</span> <span class="toc_entry">Joint Concavity</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html#a0000000023"><span class="toc_ref">5.3</span> <span class="toc_entry">Power Mean Monotonicity</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">Lieb’s Concavity and Ando’s Convexity</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html#a0000000024"><span class="toc_ref">6.1</span> <span class="toc_entry">General H\(^*\)-Algebra Versions</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000025"><span class="toc_ref">6.2</span> <span class="toc_entry">Lieb’s Extension Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000026"><span class="toc_ref">6.3</span> <span class="toc_entry">Lieb’s Concavity Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000027"><span class="toc_ref">6.4</span> <span class="toc_entry">Ando’s Convexity Theorem</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">Matrix Specializations</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000002">1 Definitions</h1>
+<h1 id="a0000000009">1.1 Operator Convexity and Concavity</h1>
+<p>Throughout, \(\mathcal{B}\) denotes a unital C\(^*\)-algebra equipped with a compatible partial order (i.e. a <em>ordered</em> C\(^*\)-algebra), and \(I \subseteq \mathbb {R}\) denotes a subset of the real line. For a continuous function \(f : \mathbb {R} \to \mathbb {R}\), we write \(f(a)\) for the element of \(\mathcal{B}\) obtained by applying the continuous functional calculus to a self-adjoint element \(a \in \mathcal{B}\). </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:operator_convex">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">1</span>
+    <span class="definition_thmtitle">Operator convex function</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0001.html#def:operator_convex">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/OperatorConvexOn" class="lean_decl">OperatorConvexOn</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   A function \(f : \mathbb {R} \to \mathbb {R}\) is <em>operator convex</em> on \(I\) if, for every ordered unital C\(^*\)-algebra \(\mathcal{B}\), the map \(a \mapsto f(a)\) is convex on the set </p>
+<div class="displaymath" id="a0000000010">
+  \[  \{  a \in \mathcal{B} \mid a \text{ is self-adjoint},\  \sigma (a) \subseteq I \} ,  \]
+</div>
+<p> where \(\sigma (a)\) denotes the spectrum of \(a\) over \(\mathbb {R}\). </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:operator_concave">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2</span>
+    <span class="definition_thmtitle">Operator concave function</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0001.html#def:operator_concave">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/OperatorConcaveOn" class="lean_decl">OperatorConcaveOn</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   A function \(f : \mathbb {R} \to \mathbb {R}\) is <em>operator concave</em> on \(I\) if \(-f\) is operator convex on \(I\), equivalently if \(a \mapsto f(a)\) is concave on the set of self-adjoint elements of every ordered unital C\(^*\)-algebra with spectrum contained in \(I\). </p>
+
+  </div>
+</div>
+<h1 id="a0000000011">1.2 Generalized Perspective Function</h1>
+<div class="definition_thmwrapper theorem-style-definition" id="def:gen_perspective">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">3</span>
+    <span class="definition_thmtitle">Generalized perspective function</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0001.html#def:gen_perspective">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/GenPerspective" class="lean_decl">GenPerspective</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   Let \(\mathcal{B}\) be an ordered unital C\(^*\)-algebra and let \(f, g : \mathbb {R} \to \mathbb {R}\). The <em>generalized perspective function</em> \((f \triangle g) : \mathcal{B} \times \mathcal{B} \to \mathcal{B}\) is defined by </p>
+<div class="displaymath" id="a0000000012">
+  \[  (f \triangle g)(L, R) \; :=\;  g(R)^{1/2}\,  f\! \left(g(R)^{-1/2}\,  L\,  g(R)^{-1/2}\right) g(R)^{1/2}.  \]
+</div>
+
+  </div>
+</div>
+<h1 id="a0000000013">1.3 H\(^*\)-Algebra</h1>
+<div class="definition_thmwrapper theorem-style-definition" id="def:hstar_algebra">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">4</span>
+    <span class="definition_thmtitle">H\(^*\)-algebra</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0001.html#def:hstar_algebra">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/HStarAlgebra" class="lean_decl">HStarAlgebra</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   An <em>H\(^*\)-algebra</em> over \(\mathbb {k} \in \{ \mathbb {R}, \mathbb {C}\} \) is a Hilbert space \(H\) over \(\mathbb {k}\) equipped with the structure of a normed \(\mathbb {k}\)-algebra with involution \(\star \), satisfying the compatibility axioms: </p>
+<div class="displaymath" id="a0000000014">
+  \[  \langle a x,\,  y \rangle = \langle x,\,  a^* y \rangle \qquad \text{and} \qquad \langle x a,\,  y \rangle = \langle x,\,  y a^* \rangle \qquad \forall \,  a, x, y \in H.  \]
+</div>
+<p> This notion was introduced by Ambrose&#160;<span class="cite">
+	[
+	<a href="sect0007.html#Ambrose1945" >1</a>
+	]
+</span>. </p>
+
+  </div>
+</div>
+<p>The canonical example is \(H = M_n(\mathbb {C})\) with the Frobenius inner product \(\langle A, B \rangle = \operatorname {tr}(A^* B)\). </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:lmul">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">5</span>
+    <span class="definition_thmtitle">Left and right multiplication operators</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0001.html#def:lmul">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/Rmul" class="lean_decl">Rmul</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   For an H\(^*\)-algebra \(H\) and an element \(a \in H\), the <em>left multiplication operator</em> \(L_a : H \to H\) is the bounded linear map \(x \mapsto a x\). </p>
+<p> The <em>right multiplication operator</em> \(R_a : H \to H\) is the bounded linear map \(x \mapsto x a\). </p>
+<p>Both \(a \mapsto L_a\) and \(a \mapsto R_a\) are continuous as maps \(H \to (H \to _L H)\). Moreover \(L_a\) and \(R_b\) commute for all \(a, b \in H\): \(L_a \circ R_b = R_b \circ L_a\). </p>
+
+  </div>
+</div>
+<p>The maps \(a \mapsto L_a\) and \(a \mapsto R_a\) extend to star algebra homomorphisms: \(a \mapsto L_a\) is a \(*\)-homomorphism \(H \to (H \to _L H)\), and \(a \mapsto R_a\) is a \(*\)-homomorphism \(H \to (H \to _L H)^{\mathrm{op}}\) (an anti-homomorphism on \(H\), since \(R_{ab} = R_b \circ R_a\)). </p>
+<div class="proposition_thmwrapper theorem-style-plain" id="prop:lmul_map_cfc">
+  <div class="proposition_thmheading">
+    <span class="proposition_thmcaption">
+    Proposition
+    </span>
+    <span class="proposition_thmlabel">6</span>
+    <span class="proposition_thmtitle">CFC commutativity of \(L\) and \(R\)</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0001.html#prop:lmul_map_cfc">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0001.html#def:lmul">Definition 5</a></li>
+          
+          <li><a href="sect0001.html#def:hstar_algebra">Definition 4</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/Lmul_map_cfc" class="lean_decl">Lmul_map_cfc</a></li>
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/Rmul_map_cfc" class="lean_decl">Rmul_map_cfc</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="proposition_thmcontent">
+  <p>    Let \(H\) be an H\(^*\)-algebra, \(a \in H\) self-adjoint, and \(f : \mathbb {R} \to \mathbb {R}\) continuous on \(\sigma (a)\). Then: </p>
+<div class="displaymath" id="a0000000015">
+  \[  L_{f(a)} = f(L_a), \qquad R_{f(a)} = f(R_a),  \]
+</div>
+<p> where \(f(L_a)\) and \(f(R_a)\) denote the continuous functional calculus applied to the operators \(L_a, R_a \in (H \to _L H)\). </p>
+<p>As a consequence, for any \(r \in \mathbb {R}\): </p>
+<div class="displaymath" id="a0000000016">
+  \[  (L_a)^r\,  x = a^r x, \qquad (R_a)^r\,  x = x\,  a^r,  \]
+</div>
+<p> whenever \(a \geq 0\) (for \(r \geq 0\)) or \(a\) is strictly positive (for all \(r\)). </p>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="index.html" title="LiebConcavity"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="LiebConcavity"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0002.html" title="Supporting Results"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+% Chapter 3: Jensen's Operator Inequality
+\chapter{Jensen's Operator Inequality}
+
+Jensen's operator inequality is the central engine of this formalization.
+It generalizes the scalar Jensen inequality to the noncommutative setting: given an
+operator convex function $f$ and a family of self-adjoint elements $a_i$ in an ordered
+C$^*$-algebra, it asserts that $f$ of any ``weighted combination'' of the $a_i$ is
+dominated by the corresponding weighted combination of the $f(a_i)$.
+In this project the inequality is applied in Chapter~5 to deduce joint convexity and
+concavity of the generalized perspective function, which in turn yields Lieb's concavity
+theorem in Chapter~6.
+We follow the unitary-averaging proof of Li and Wu~\cite{LiWu2012}.
+
+\section{Main Theorem}
+
+\begin{theorem}[Jensen's operator inequality]
+  \label{thm:jensen}
+  \lean{JensenOperator_convex_general}
+  \leanok
+  \uses{def:operator_convex}
+  Let $\mathcal{B}$ be an ordered unital C$^*$-algebra, $I \subseteq \mathbb{R}$ an
+  interval, and $f : \mathbb{R} \to \mathbb{R}$ a continuous operator convex function on
+  $I$.
+  Let $a_0, \ldots, a_n \in \mathcal{B}$ be self-adjoint elements with
+  $\sigma(a_i) \subseteq I$ for each $i$, and let $b_0, \ldots, b_n \in \mathcal{B}$
+  satisfy the unital condition
+  \[
+    \sum_{i=0}^{n} b_i^* b_i = 1.
+  \]
+  Then
+  \[
+    f\!\left(\sum_{i=0}^{n} b_i^* a_i\, b_i\right)
+    \;\leq\;
+    \sum_{i=0}^{n} b_i^*\, f(a_i)\, b_i.
+  \]
+
+  \begin{proof}
+    \uses{lem:conj_sum_spectrum}
+    We follow the unitary-averaging argument of Li and Wu.
+    Write $m = n + 2$ and form the diagonal block element
+    $D = \operatorname{diag}(a_0, \ldots, a_n, a_n) \in M_m(\mathcal{B})$
+    (the last slot is a duplicate of $a_n$, introduced to make the matrix square).
+    Because each $a_i$ has spectrum in $I$, the element $D$ is self-adjoint with
+    spectrum in $I$ by \ref{lem:conj_sum_spectrum}.
+    Next, using the $b_i$ and the constraint $\sum b_i^* b_i = 1$, one constructs a
+    unitary $U \in M_m(\mathcal{B})$ whose last column is $(b_0, \ldots, b_n, 0)^T$;
+    the remaining columns are filled in by a Gram--Schmidt procedure on the rows of
+    $\mathcal{B}^m$.
+    A direct computation shows that the bottom-right corner of $U^* D U$ equals
+    $\sum_i b_i^* a_i b_i$.
+
+    Now fix $\omega = e^{2\pi i / m}$, a primitive $m$-th root of unity, and let
+    $V_k = \operatorname{diag}(1, \omega^k, \omega^{2k}, \ldots, \omega^{(m-1)k})$ for
+    $k = 0, \ldots, m-1$.
+    Each $V_k$ is a unitary diagonal matrix in $M_m(\mathcal{B})$, and the Fourier
+    average
+    \[
+      \frac{1}{m} \sum_{k=0}^{m-1} V_k^*\,(U^* D U)\,V_k
+    \]
+    equals the ``diagonal part'' of $U^* D U$, i.e.\ the block-diagonal matrix whose
+    $j$-th diagonal entry is the $(j,j)$-entry of $U^* D U$.
+    In particular its bottom-right corner is $\sum_i b_i^* a_i b_i$.
+
+    Applying operator convexity of $f$ to the averaged expression --- which is a convex
+    combination of unitarily conjugated copies of $D$, each with spectrum in $I$ ---
+    and then extracting the bottom-right $(1,1)$-corner (a positive linear map that
+    preserves the order) yields
+    \[
+      f\!\left(\sum_i b_i^* a_i b_i\right)
+      \;\leq\;
+      \frac{1}{m}\sum_{k=0}^{m-1} V_k^*\,(U^* f(D) U)\,V_k\bigg|_{\mathrm{br}}
+      \;=\;
+      \sum_i b_i^*\, f(a_i)\, b_i,
+    \]
+    where the last equality uses the fact that
+    $f(D) = \operatorname{diag}(f(a_0),\ldots,f(a_n),f(a_n))$
+    (the continuous functional calculus commutes with block-diagonal structure) and
+    the same Fourier averaging extracts the diagonal.
+  \end{proof}
+\end{theorem}
+
+\section{Sub-Unital Variant}
+
+In applications it is often the case that the operators $b_i$ satisfy only a
+sub-unital condition $\sum_i b_i^* b_i \leq 1$ rather than equality.
+The following corollary handles this by padding the family with one extra element.
+
+\begin{theorem}[Jensen's operator inequality, sub-unital case]
+  \label{thm:jensen_sub}
+  \lean{JensenOperator_convex_general_sub}
+  \leanok
+  \uses{def:operator_convex}
+  Let $\mathcal{B}$, $I$, $f$, $a_i$, and $b_i$ be as in Theorem~\ref{thm:jensen},
+  except that the $b_i$ now satisfy only
+  \[
+    \sum_{i=0}^{n} b_i^* b_i \leq 1.
+  \]
+  Assume in addition that $0 \in I$ and $f(0) \leq 0$.
+  Then
+  \[
+    f\!\left(\sum_{i=0}^{n} b_i^* a_i\, b_i\right)
+    \;\leq\;
+    \sum_{i=0}^{n} b_i^*\, f(a_i)\, b_i.
+  \]
+
+  \begin{proof}
+    \uses{thm:jensen}
+    Set $b_{n+1} = \bigl(1 - \sum_{i=0}^{n} b_i^* b_i\bigr)^{1/2}$ and $a_{n+1} = 0$.
+    The extended family satisfies $\sum_{i=0}^{n+1} b_i^* b_i = 1$ and
+    $\sigma(a_{n+1}) = \{0\} \subseteq I$, so Theorem~\ref{thm:jensen} applies to give
+    \[
+      f\!\left(\sum_{i=0}^{n+1} b_i^* a_i\, b_i\right)
+      \;\leq\;
+      \sum_{i=0}^{n+1} b_i^*\, f(a_i)\, b_i.
+    \]
+    The left-hand side equals $f\!\bigl(\sum_{i=0}^{n} b_i^* a_i b_i\bigr)$ since
+    $a_{n+1} = 0$.
+    The last term on the right is $b_{n+1}^* f(0)\, b_{n+1} \leq 0$ by the assumption
+    $f(0) \leq 0$, so dropping it only strengthens the inequality, yielding the
+    claimed bound.
+  \end{proof}
+\end{theorem}

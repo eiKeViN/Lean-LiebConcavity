@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jensen’s Operator Inequality</title>
+<link rel="next" href="sect0004.html" title="Löwner’s Theorem" />
+<link rel="prev" href="sect0002.html" title="Supporting Results" />
+<link rel="up" href="index.html" title="LiebConcavity" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">LiebConcavity</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Definitions</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000009"><span class="toc_ref">1.1</span> <span class="toc_entry">Operator Convexity and Concavity</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000011"><span class="toc_ref">1.2</span> <span class="toc_entry">Generalized Perspective Function</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000013"><span class="toc_ref">1.3</span> <span class="toc_entry">H\(^*\)-Algebra</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">Supporting Results</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0002.html#a0000000017"><span class="toc_ref">2.1</span> <span class="toc_entry">Conjugate-Weighted Sums</span></a>
+ </li>
+<li class="">
+  <a href="sect0002.html#a0000000018"><span class="toc_ref">2.2</span> <span class="toc_entry">Real Powers in C\(^*\)-Algebras</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">Jensen’s Operator Inequality</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sect0003.html#a0000000019"><span class="toc_ref">3.1</span> <span class="toc_entry">Main Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000020"><span class="toc_ref">3.2</span> <span class="toc_entry">Sub-Unital Variant</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">Löwner’s Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">Generalized Perspective Functions</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0005.html#a0000000021"><span class="toc_ref">5.1</span> <span class="toc_entry">Joint Convexity</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html#a0000000022"><span class="toc_ref">5.2</span> <span class="toc_entry">Joint Concavity</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html#a0000000023"><span class="toc_ref">5.3</span> <span class="toc_entry">Power Mean Monotonicity</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">Lieb’s Concavity and Ando’s Convexity</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html#a0000000024"><span class="toc_ref">6.1</span> <span class="toc_entry">General H\(^*\)-Algebra Versions</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000025"><span class="toc_ref">6.2</span> <span class="toc_entry">Lieb’s Extension Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000026"><span class="toc_ref">6.3</span> <span class="toc_entry">Lieb’s Concavity Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000027"><span class="toc_ref">6.4</span> <span class="toc_entry">Ando’s Convexity Theorem</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">Matrix Specializations</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000004">3 Jensen’s Operator Inequality</h1>
+<p>Jensen’s operator inequality is the central engine of this formalization. It generalizes the scalar Jensen inequality to the noncommutative setting: given an operator convex function \(f\) and a family of self-adjoint elements \(a_i\) in an ordered C\(^*\)-algebra, it asserts that \(f\) of any “weighted combination” of the \(a_i\) is dominated by the corresponding weighted combination of the \(f(a_i)\). In this project the inequality is applied in Chapter&#160;5 to deduce joint convexity and concavity of the generalized perspective function, which in turn yields Lieb’s concavity theorem in Chapter&#160;6. We follow the unitary-averaging proof of Li and Wu&#160;<span class="cite">
+	[
+	<a href="sect0007.html#LiWu2012" >3</a>
+	]
+</span>. </p>
+<h1 id="a0000000019">3.1 Main Theorem</h1>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:jensen">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">9</span>
+    <span class="theorem_thmtitle">Jensen’s operator inequality</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#thm:jensen">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0001.html#def:operator_convex">Definition 1</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/JensenOperator_convex_general" class="lean_decl">JensenOperator_convex_general</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    Let \(\mathcal{B}\) be an ordered unital C\(^*\)-algebra, \(I \subseteq \mathbb {R}\) an interval, and \(f : \mathbb {R} \to \mathbb {R}\) a continuous operator convex function on \(I\). Let \(a_0, \ldots , a_n \in \mathcal{B}\) be self-adjoint elements with \(\sigma (a_i) \subseteq I\) for each \(i\), and let \(b_0, \ldots , b_n \in \mathcal{B}\) satisfy the unital condition </p>
+<div class="displaymath" id="a0000000032">
+  \[  \sum _{i=0}^{n} b_i^* b_i = 1.  \]
+</div>
+<p> Then </p>
+<div class="displaymath" id="a0000000033">
+  \[  f\! \left(\sum _{i=0}^{n} b_i^* a_i\,  b_i\right) \; \leq \;  \sum _{i=0}^{n} b_i^*\,  f(a_i)\,  b_i.  \]
+</div>
+<div class="proof_wrapper" id="a0000000034">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> We follow the unitary-averaging argument of Li and Wu. Write \(m = n + 2\) and form the diagonal block element \(D = \operatorname {diag}(a_0, \ldots , a_n, a_n) \in M_m(\mathcal{B})\) (the last slot is a duplicate of \(a_n\), introduced to make the matrix square). Because each \(a_i\) has spectrum in \(I\), the element \(D\) is self-adjoint with spectrum in \(I\) by <a href="sect0002.html#lem:conj_sum_spectrum">7</a>. Next, using the \(b_i\) and the constraint \(\sum b_i^* b_i = 1\), one constructs a unitary \(U \in M_m(\mathcal{B})\) whose last column is \((b_0, \ldots , b_n, 0)^T\); the remaining columns are filled in by a Gram–Schmidt procedure on the rows of \(\mathcal{B}^m\). A direct computation shows that the bottom-right corner of \(U^* D U\) equals \(\sum _i b_i^* a_i b_i\). </p>
+<p>Now fix \(\omega = e^{2\pi i / m}\), a primitive \(m\)-th root of unity, and let \(V_k = \operatorname {diag}(1, \omega ^k, \omega ^{2k}, \ldots , \omega ^{(m-1)k})\) for \(k = 0, \ldots , m-1\). Each \(V_k\) is a unitary diagonal matrix in \(M_m(\mathcal{B})\), and the Fourier average </p>
+<div class="displaymath" id="a0000000035">
+  \[  \frac{1}{m} \sum _{k=0}^{m-1} V_k^*\, (U^* D U)\, V_k  \]
+</div>
+<p> equals the “diagonal part” of \(U^* D U\), i.e. the block-diagonal matrix whose \(j\)-th diagonal entry is the \((j,j)\)-entry of \(U^* D U\). In particular its bottom-right corner is \(\sum _i b_i^* a_i b_i\). </p>
+<p>Applying operator convexity of \(f\) to the averaged expression — which is a convex combination of unitarily conjugated copies of \(D\), each with spectrum in \(I\) — and then extracting the bottom-right \((1,1)\)-corner (a positive linear map that preserves the order) yields </p>
+<div class="displaymath" id="a0000000036">
+  \[  f\! \left(\sum _i b_i^* a_i b_i\right) \; \leq \;  \frac{1}{m}\sum _{k=0}^{m-1} V_k^*\, (U^* f(D) U)\, V_k\bigg|_{\mathrm{br}} \; =\;  \sum _i b_i^*\,  f(a_i)\,  b_i,  \]
+</div>
+<p> where the last equality uses the fact that \(f(D) = \operatorname {diag}(f(a_0),\ldots ,f(a_n),f(a_n))\) (the continuous functional calculus commutes with block-diagonal structure) and the same Fourier averaging extracts the diagonal. </p>
+
+  </div>
+</div>
+
+  </div>
+</div>
+<h1 id="a0000000020">3.2 Sub-Unital Variant</h1>
+<p>In applications it is often the case that the operators \(b_i\) satisfy only a sub-unital condition \(\sum _i b_i^* b_i \leq 1\) rather than equality. The following corollary handles this by padding the family with one extra element. </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:jensen_sub">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">10</span>
+    <span class="theorem_thmtitle">Jensen’s operator inequality, sub-unital case</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#thm:jensen_sub">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0001.html#def:operator_convex">Definition 1</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/JensenOperator_convex_general_sub" class="lean_decl">JensenOperator_convex_general_sub</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    Let \(\mathcal{B}\), \(I\), \(f\), \(a_i\), and \(b_i\) be as in Theorem&#160;<a href="sect0003.html#thm:jensen">9</a>, except that the \(b_i\) now satisfy only </p>
+<div class="displaymath" id="a0000000037">
+  \[  \sum _{i=0}^{n} b_i^* b_i \leq 1.  \]
+</div>
+<p> Assume in addition that \(0 \in I\) and \(f(0) \leq 0\). Then </p>
+<div class="displaymath" id="a0000000038">
+  \[  f\! \left(\sum _{i=0}^{n} b_i^* a_i\,  b_i\right) \; \leq \;  \sum _{i=0}^{n} b_i^*\,  f(a_i)\,  b_i.  \]
+</div>
+<div class="proof_wrapper" id="a0000000039">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Set \(b_{n+1} = \bigl(1 - \sum _{i=0}^{n} b_i^* b_i\bigr)^{1/2}\) and \(a_{n+1} = 0\). The extended family satisfies \(\sum _{i=0}^{n+1} b_i^* b_i = 1\) and \(\sigma (a_{n+1}) = \{ 0\}  \subseteq I\), so Theorem&#160;<a href="sect0003.html#thm:jensen">9</a> applies to give </p>
+<div class="displaymath" id="a0000000040">
+  \[  f\! \left(\sum _{i=0}^{n+1} b_i^* a_i\,  b_i\right) \; \leq \;  \sum _{i=0}^{n+1} b_i^*\,  f(a_i)\,  b_i.  \]
+</div>
+<p> The left-hand side equals \(f\! \bigl(\sum _{i=0}^{n} b_i^* a_i b_i\bigr)\) since \(a_{n+1} = 0\). The last term on the right is \(b_{n+1}^* f(0)\,  b_{n+1} \leq 0\) by the assumption \(f(0) \leq 0\), so dropping it only strengthens the inequality, yielding the claimed bound. </p>
+
+  </div>
+</div>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sect0002.html" title="Supporting Results"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="LiebConcavity"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0004.html" title="Löwner’s Theorem"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+% Chapter 7: Matrix Specializations
+\chapter{Matrix Specializations}
+
+The algebra $M_n(\mathbb{C})$ of $n \times n$ complex matrices, equipped with the
+Frobenius inner product $\langle A, B \rangle = \operatorname{tr}(A^* B)$, is the
+canonical example of an H$^*$-algebra (Definition~\ref{def:hstar_algebra}).
+Under this identification, the inner product functional $K \mapsto \operatorname{re}\langle K, T(K) \rangle$
+appearing in the abstract results equals $\operatorname{re}\operatorname{tr}(T(K) \cdot K^*)$,
+which for the operators arising in Lieb's and Ando's theorems takes the explicit
+trace form recorded below.
+This chapter collects the classical matrix-theoretic statements of Lieb's concavity
+theorem, its extension, and Ando's convexity theorem as corollaries of the abstract
+H$^*$-algebra results from the preceding chapter.
+
+Throughout this chapter, $n$ is a positive integer, $A, B \in M_n(\mathbb{C})$,
+$K \in M_n(\mathbb{C})$ is arbitrary, $A^q$ denotes the matrix power via the
+continuous functional calculus, $\operatorname{PosDef}(A)$ means $A$ is positive
+definite, and $\operatorname{PosSemidef}(B)$ means $B$ is positive semidefinite.
+
+\begin{corollary}[Lieb extension theorem --- matrix form]
+  \label{cor:lieb_extension_matrix}
+  \lean{LiebExtension_matrix}
+  \uses{def:hstar_algebra}
+  Let $p, q > 0$ with $p + q \leq 1$, and let $K \in M_n(\mathbb{C})$.
+  The map
+  \[
+    (A,\, B)
+    \;\longmapsto\;
+    \operatorname{re}\operatorname{tr}\!\bigl(A^q\, K\, B^p\, K^*\bigr)
+  \]
+  is jointly concave on
+  $\bigl\{(A, B) \in M_n(\mathbb{C}) \times M_n(\mathbb{C}) \mid
+  \operatorname{PosDef}(A),\; \operatorname{PosSemidef}(B)\bigr\}$.
+  \begin{proof}
+    \uses{thm:lieb_extension}
+    Instantiate the abstract Lieb extension theorem (Theorem~\ref{thm:lieb_extension})
+    at the H$^*$-algebra $M_n(\mathbb{C})$ with the Frobenius inner product, and use
+    the identification $\operatorname{re}\langle K,\, A^q K B^p \rangle =
+    \operatorname{re}\operatorname{tr}(A^q K B^p K^*)$ together with
+    $\operatorname{IsStrictlyPositive}(A) \leftrightarrow \operatorname{PosDef}(A)$
+    and $0 \leq B \leftrightarrow \operatorname{PosSemidef}(B)$.
+  \end{proof}
+\end{corollary}
+
+\begin{corollary}[Lieb's concavity theorem --- matrix form]
+  \label{cor:lieb_matrix}
+  \lean{LiebConcavity_matrix}
+  \uses{def:hstar_algebra}
+  Let $0 < s < 1$, and let $K \in M_n(\mathbb{C})$.
+  The map
+  \[
+    (A,\, B)
+    \;\longmapsto\;
+    \operatorname{re}\operatorname{tr}\!\bigl(A^s\, K\, B^{1-s}\, K^*\bigr)
+  \]
+  is jointly concave on
+  $\bigl\{(A, B) \in M_n(\mathbb{C}) \times M_n(\mathbb{C}) \mid
+  \operatorname{PosDef}(A),\; \operatorname{PosSemidef}(B)\bigr\}$.
+  \begin{proof}
+    \uses{thm:lieb}
+    Instantiate the abstract Lieb concavity theorem (Theorem~\ref{thm:lieb})
+    at the H$^*$-algebra $M_n(\mathbb{C})$ with the Frobenius inner product, and use
+    the identification $\operatorname{re}\langle K,\, A^s K B^{1-s} \rangle =
+    \operatorname{re}\operatorname{tr}(A^s K B^{1-s} K^*)$ together with
+    $\operatorname{IsStrictlyPositive}(A) \leftrightarrow \operatorname{PosDef}(A)$
+    and $0 \leq B \leftrightarrow \operatorname{PosSemidef}(B)$.
+  \end{proof}
+\end{corollary}
+
+\begin{corollary}[Ando's convexity theorem --- matrix form]
+  \label{cor:ando_matrix}
+  \lean{AndoConvexity_matrix}
+  \uses{def:hstar_algebra}
+  Let $q, r \in \mathbb{R}$ with $1 \leq q \leq 2$, $r > 0$, and $q - r > 1$,
+  and let $K \in M_n(\mathbb{C})$.
+  The map
+  \[
+    (A,\, B)
+    \;\longmapsto\;
+    \operatorname{re}\operatorname{tr}\!\bigl(A^{-r}\, K\, B^q\, K^*\bigr)
+  \]
+  is jointly convex on
+  $\bigl\{(A, B) \in M_n(\mathbb{C}) \times M_n(\mathbb{C}) \mid
+  \operatorname{PosDef}(A),\; \operatorname{PosSemidef}(B)\bigr\}$.
+  \begin{proof}
+    \uses{thm:ando}
+    Instantiate the abstract Ando convexity theorem (Theorem~\ref{thm:ando})
+    at the H$^*$-algebra $M_n(\mathbb{C})$ with the Frobenius inner product, and use
+    the identification $\operatorname{re}\langle K,\, A^{-r} K B^q \rangle =
+    \operatorname{re}\operatorname{tr}(A^{-r} K B^q K^*)$ together with
+    $\operatorname{IsStrictlyPositive}(A) \leftrightarrow \operatorname{PosDef}(A)$
+    and $0 \leq B \leftrightarrow \operatorname{PosSemidef}(B)$.
+  \end{proof}
+\end{corollary}

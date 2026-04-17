@@ -1,0 +1,64 @@
+% Chapter 4: Löwner's Theorem
+\chapter{L\"{o}wner's Theorem}
+
+This chapter contains the two key \emph{sorry nodes} of the formalization: the operator
+convexity and operator concavity of the power function $t \mapsto t^r$ on $[0, \infty)$.
+These results are classical, going back to L\"{o}wner~\cite{Loewner1934} and developed
+further by Hansen--Pedersen~\cite{HansenPedersen1982}.  They underpin every subsequent
+result in Chapters 5--7: the joint convexity/concavity of the generalized perspective
+function, the power mean, and ultimately Lieb's concavity theorem and Ando's convexity
+theorem.
+
+Both theorems are currently admitted with \texttt{sorry} bodies in the Lean source.
+Their formalization depends on CFC infrastructure for real powers that is ongoing work
+in Mathlib (primarily by Fr\'{e}d\'{e}ric Dupuis), and will be filled in once the
+required Mathlib lemmas are available.
+
+\begin{theorem}[Operator convexity of the power function]
+  \label{thm:loewner_convex}
+  \lean{PowerOperatorConvex}
+  \uses{def:operator_convex}
+  For $1 \leq r \leq 2$, the function $t \mapsto t^r$ is operator convex on
+  $[0, \infty)$.  That is, for every ordered unital C$^*$-algebra $\mathcal{B}$ and
+  every pair of self-adjoint elements $a, b \in \mathcal{B}$ with
+  $\sigma(a), \sigma(b) \subseteq [0, \infty)$ and every $\lambda \in [0, 1]$,
+  \[
+    \bigl(\lambda a + (1 - \lambda) b\bigr)^r
+    \;\leq\;
+    \lambda\, a^r + (1 - \lambda)\, b^r.
+  \]
+\end{theorem}
+
+\begin{remark}
+  This is a classical result.  L\"{o}wner~\cite{Loewner1934} characterized operator
+  monotone functions on $[0, \infty)$; operator convexity of $t^r$ for $1 \leq r \leq 2$
+  follows from the integral representation of operator convex functions and is treated in
+  detail by Hansen--Pedersen~\cite{HansenPedersen1982}.  The Lean formalization is
+  currently a \texttt{sorry} stub; it depends on Mathlib CFC infrastructure for real
+  powers ($\mathtt{NNReal.rpow}$ and the associated ordered CFC lemmas) that is actively
+  being developed.
+\end{remark}
+
+\begin{theorem}[Operator concavity of the power function]
+  \label{thm:loewner_concave}
+  \lean{PowerOperatorConcave}
+  \uses{def:operator_concave}
+  For $0 < r \leq 1$, the function $t \mapsto t^r$ is operator concave on
+  $[0, \infty)$.  That is, for every ordered unital C$^*$-algebra $\mathcal{B}$ and
+  every pair of self-adjoint elements $a, b \in \mathcal{B}$ with
+  $\sigma(a), \sigma(b) \subseteq [0, \infty)$ and every $\lambda \in [0, 1]$,
+  \[
+    \lambda\, a^r + (1 - \lambda)\, b^r
+    \;\leq\;
+    \bigl(\lambda a + (1 - \lambda) b\bigr)^r.
+  \]
+\end{theorem}
+
+\begin{remark}
+  Operator monotonicity of $t \mapsto t^r$ for $0 < r \leq 1$ on $[0,\infty)$ is the
+  central result of L\"{o}wner~\cite{Loewner1934}.  Operator concavity for the same
+  range of exponents is a direct consequence; see Hansen--Pedersen~\cite{HansenPedersen1982}
+  for the precise connection between operator monotonicity and operator concavity.  As
+  with \autoref{thm:loewner_convex}, the Lean proof is deferred pending the requisite
+  Mathlib CFC infrastructure for real powers.
+\end{remark}

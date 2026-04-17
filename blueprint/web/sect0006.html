@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Lieb’s Concavity and Ando’s Convexity</title>
+<link rel="next" href="sect0007.html" title="Matrix Specializations" />
+<link rel="prev" href="sect0005.html" title="Generalized Perspective Functions" />
+<link rel="up" href="index.html" title="LiebConcavity" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">LiebConcavity</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Definitions</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000009"><span class="toc_ref">1.1</span> <span class="toc_entry">Operator Convexity and Concavity</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000011"><span class="toc_ref">1.2</span> <span class="toc_entry">Generalized Perspective Function</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000013"><span class="toc_ref">1.3</span> <span class="toc_entry">H\(^*\)-Algebra</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">Supporting Results</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0002.html#a0000000017"><span class="toc_ref">2.1</span> <span class="toc_entry">Conjugate-Weighted Sums</span></a>
+ </li>
+<li class="">
+  <a href="sect0002.html#a0000000018"><span class="toc_ref">2.2</span> <span class="toc_entry">Real Powers in C\(^*\)-Algebras</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">Jensen’s Operator Inequality</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0003.html#a0000000019"><span class="toc_ref">3.1</span> <span class="toc_entry">Main Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000020"><span class="toc_ref">3.2</span> <span class="toc_entry">Sub-Unital Variant</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">Löwner’s Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">Generalized Perspective Functions</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0005.html#a0000000021"><span class="toc_ref">5.1</span> <span class="toc_entry">Joint Convexity</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html#a0000000022"><span class="toc_ref">5.2</span> <span class="toc_entry">Joint Concavity</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html#a0000000023"><span class="toc_ref">5.3</span> <span class="toc_entry">Power Mean Monotonicity</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">Lieb’s Concavity and Ando’s Convexity</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sect0006.html#a0000000024"><span class="toc_ref">6.1</span> <span class="toc_entry">General H\(^*\)-Algebra Versions</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000025"><span class="toc_ref">6.2</span> <span class="toc_entry">Lieb’s Extension Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000026"><span class="toc_ref">6.3</span> <span class="toc_entry">Lieb’s Concavity Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000027"><span class="toc_ref">6.4</span> <span class="toc_entry">Ando’s Convexity Theorem</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">Matrix Specializations</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000007">6 Lieb’s Concavity and Ando’s Convexity</h1>
+<p>This chapter contains the main results of the project. Working in an abstract H\(^*\)-algebra \(H\), we derive Lieb’s concavity theorem and Ando’s convexity theorem by instantiating the operator power mean from Chapter&#160;5 at the pair of bounded operators \((R_B, L_A)\) acting on \(H\), and then reading off the resulting joint concavity or convexity of the real-part inner product functional \(x \mapsto \operatorname {re}\langle x,\,  (\cdot )\,  x\rangle \). </p>
+<h1 id="a0000000024">6.1 General H\(^*\)-Algebra Versions</h1>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:lieb_general">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">19</span>
+    <span class="theorem_thmtitle">Lieb concavity — general form</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:lieb_general">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0001.html#def:hstar_algebra">Definition 4</a></li>
+          
+          <li><a href="sect0001.html#def:lmul">Definition 5</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebConcavity_general" class="lean_decl">LiebConcavity_general</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    Let \(H\) be an H\(^*\)-algebra, \(\alpha , \beta \in (0,1]\), and \(x \in H\). Then the map </p>
+<div class="displaymath" id="a0000000054">
+  \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{\beta (1-\alpha )}\,  x\,  B^{\alpha } \bigr\rangle  \]
+</div>
+<p> is jointly concave on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
+<div class="proof_wrapper" id="a0000000055">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Consider the operator power mean \(\Pi _{\alpha ,\beta }(L_A, R_B)\) acting on \(H \to _L H\), which by definition is the generalized perspective of the \(\alpha \)-power mean at the pair \((L_A, R_B)\). By the CFC commutativity of left and right multiplication (Proposition&#160;<a href="sect0001.html#prop:lmul_map_cfc">6</a>), we have \(L_{A^{\beta (1-\alpha )}} = (L_A)^{\beta (1-\alpha )}\) and \(R_{B^\alpha } = (R_B)^\alpha \), so the power mean evaluated at \(x\) equals \(A^{\beta (1-\alpha )}\,  x\,  B^\alpha \). Joint concavity of \((A, B) \mapsto \Pi _{\alpha ,\beta }(L_A, R_B)\) in the operator order on \(H \to _L H\) then follows from Theorem&#160;<a href="sect0005.html#thm:power_mean_concave">17</a>. Finally, the map \(T \mapsto \operatorname {re}\langle x, T x\rangle \) is linear and hence preserves concavity, yielding the stated result. </p>
+
+  </div>
+</div>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:ando_general">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">20</span>
+    <span class="theorem_thmtitle">Ando convexity — general form</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:ando_general">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0001.html#def:hstar_algebra">Definition 4</a></li>
+          
+          <li><a href="sect0001.html#def:lmul">Definition 5</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/AndoConvexity_general" class="lean_decl">AndoConvexity_general</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    Let \(H\) be an H\(^*\)-algebra, \(\alpha \in [1,2]\), \(\beta \in (0,1]\), and \(x \in H\). Then the map </p>
+<div class="displaymath" id="a0000000056">
+  \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{\beta (1-\alpha )}\,  x\,  B^{\alpha } \bigr\rangle  \]
+</div>
+<p> is jointly convex on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
+<div class="proof_wrapper" id="a0000000057">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> The argument is analogous to Theorem&#160;<a href="sect0006.html#thm:lieb_general">19</a>. The same CFC commutativity identities (Proposition&#160;<a href="sect0001.html#prop:lmul_map_cfc">6</a>) identify the power mean evaluated at \(x\) with \(A^{\beta (1-\alpha )}\,  x\,  B^\alpha \). Since \(\alpha \in [1,2]\), the power mean is jointly convex in operator order by Theorem&#160;<a href="sect0005.html#thm:power_mean_convex">18</a>, and linearity of \(T \mapsto \operatorname {re}\langle x, T x\rangle \) propagates convexity to the scalar functional. </p>
+
+  </div>
+</div>
+
+  </div>
+</div>
+<h1 id="a0000000025">6.2 Lieb’s Extension Theorem</h1>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:lieb_extension">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">21</span>
+    <span class="theorem_thmtitle">Lieb’s Extension Theorem</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:lieb_extension">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0001.html#def:hstar_algebra">Definition 4</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebExtension" class="lean_decl">LiebExtension</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    Let \(H\) be an H\(^*\)-algebra, \(p, q {\gt} 0\) with \(p + q \leq 1\), and \(x \in H\). Then the map </p>
+<div class="displaymath" id="a0000000058">
+  \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{q}\,  x\,  B^{p} \bigr\rangle  \]
+</div>
+<p> is jointly concave on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
+<div class="proof_wrapper" id="a0000000059">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Set \(\alpha := p\) and \(\beta := q / (1 - p)\). The hypothesis \(p + q \leq 1\) with \(p, q {\gt} 0\) ensures \(\beta \leq 1\), so \((\alpha , \beta ) \in (0,1] \times (0,1]\), and one computes \(\beta (1-\alpha ) = q\). The result therefore follows from Theorem&#160;<a href="sect0006.html#thm:lieb_general">19</a> with these parameter choices. </p>
+
+  </div>
+</div>
+
+  </div>
+</div>
+<h1 id="a0000000026">6.3 Lieb’s Concavity Theorem</h1>
+<div class="corollary_thmwrapper theorem-style-plain" id="thm:lieb">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    Corollary
+    </span>
+    <span class="corollary_thmlabel">22</span>
+    <span class="corollary_thmtitle">Lieb’s Concavity Theorem</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:lieb">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0001.html#def:hstar_algebra">Definition 4</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebConcavity" class="lean_decl">LiebConcavity</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="corollary_thmcontent">
+  <p>    Let \(H\) be an H\(^*\)-algebra, \(s \in (0,1)\), and \(x \in H\). Then the map </p>
+<div class="displaymath" id="a0000000060">
+  \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{s}\,  x\,  B^{1-s} \bigr\rangle  \]
+</div>
+<p> is jointly concave on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
+<div class="proof_wrapper" id="a0000000061">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Apply Theorem&#160;<a href="sect0006.html#thm:lieb_extension">21</a> with \(q := s\) and \(p := 1 - s\), noting that \(p, q {\gt} 0\) and \(p + q = 1 \leq 1\). </p>
+
+  </div>
+</div>
+
+  </div>
+</div>
+<h1 id="a0000000027">6.4 Ando’s Convexity Theorem</h1>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:ando">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">23</span>
+    <span class="theorem_thmtitle">Ando’s Convexity Theorem</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:ando">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0001.html#def:hstar_algebra">Definition 4</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/AndoConvexity" class="lean_decl">AndoConvexity</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    Let \(H\) be an H\(^*\)-algebra, \(q \in [1,2]\), \(r {\gt} 0\) with \(q - r {\gt} 1\), and \(x \in H\). Then the map </p>
+<div class="displaymath" id="a0000000062">
+  \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{-r}\,  x\,  B^{q} \bigr\rangle  \]
+</div>
+<p> is jointly convex on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
+<div class="proof_wrapper" id="a0000000063">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Set \(\alpha := q\) and \(\beta := r / (q - 1)\). The hypothesis \(q - r {\gt} 1\) with \(r {\gt} 0\) and \(q \in [1,2]\) ensures \(\beta \in (0,1]\), and one computes \(\beta (1-\alpha ) = -r\). The result follows from Theorem&#160;<a href="sect0006.html#thm:ando_general">20</a> with these parameter choices. </p>
+
+  </div>
+</div>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sect0005.html" title="Generalized Perspective Functions"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="LiebConcavity"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0007.html" title="Matrix Specializations"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

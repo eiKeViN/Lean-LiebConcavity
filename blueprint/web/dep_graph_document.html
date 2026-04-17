@@ -1,0 +1,1172 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dependency graph</title>
+  <meta name="generator" content="plasTeX" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles/theme-white.css" />
+  <link rel="stylesheet" href="styles/dep_graph.css" />
+  
+  <script type="text/x-mathjax-config">
+  
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  
+  </script>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">  </script>
+
+
+<link rel="stylesheet" href="styles/extra_styles.css" />
+
+</head>
+
+<body>
+<header>
+  <a class="toc" href="index.html">Home</a>
+  <h1 id="doc_title">Dependencies</h1>
+</header>
+<div class="wrapper">
+<div class="content">
+  <div id="Legend">
+    <span id="legend_title" class="title">Legend
+    <div class="btn">
+       <div class="bar"></div>
+       <div class="bar"></div>
+       <div class="bar"></div>
+    </div></span> 
+    <dl class="legend">
+      
+      <dt>Boxes</dt><dd>definitions</dd>
+      
+      <dt>Ellipses</dt><dd>theorems and lemmas</dd>
+      
+      <dt>Blue border</dt><dd>the <em>statement</em> of this result is ready to be formalized; all prerequisites are done</dd>
+      
+      <dt>Orange border</dt><dd>the <em>statement</em> of this result is not ready to be formalized; the blueprint needs more work</dd>
+      
+      <dt>Blue background</dt><dd>the <em>proof</em> of this result is ready to be formalized; all prerequisites are done</dd>
+      
+      <dt>Green border</dt><dd>the <em>statement</em> of this result is formalized</dd>
+      
+      <dt>Green background</dt><dd>the <em>proof</em> of this result is formalized</dd>
+      
+      <dt>Dark green background</dt><dd>the <em>proof</em> of this result and all its ancestors are formalized</dd>
+      
+      <dt>Dark green border</dt><dd>this is in Mathlib</dd>
+      
+    </dl>
+  </div>
+    <div id="graph"></div>
+<div id="statements">
+
+    
+    <div class="dep-modal-container" id="cor:ando_matrix_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="cor:ando_matrix" style="display: none">
+    <div class="thm_thmheading">
+      <span class="corollary_thmcaption">
+      Corollary
+      </span>
+      <span class="corollary_thmlabel">26</span><span class="corollary_thmtitle">Ando’s convexity theorem — matrix form</span></div>
+    <div class="thm_thmcontent"><p>    Let \(q, r \in \mathbb {R}\) with \(1 \leq q \leq 2\), \(r {\gt} 0\), and \(q - r {\gt} 1\), and let \(K \in M_n(\mathbb {C})\). The map </p>
+<div class="displaymath" id="a0000000068">
+  \[  (A,\,  B) \; \longmapsto \;  \operatorname {re}\operatorname {tr}\! \bigl(A^{-r}\,  K\,  B^q\,  K^*\bigr)  \]
+</div>
+<p> is jointly convex on \(\bigl\{ (A, B) \in M_n(\mathbb {C}) \times M_n(\mathbb {C}) \mid \operatorname {PosDef}(A),\;  \operatorname {PosSemidef}(B)\bigr\} \). </p>
+<div class="proof_wrapper" id="a0000000069">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Instantiate the abstract Ando convexity theorem (Theorem&#160;<a href="sect0006.html#thm:ando">23</a>) at the H\(^*\)-algebra \(M_n(\mathbb {C})\) with the Frobenius inner product, and use the identification \(\operatorname {re}\langle K,\,  A^{-r} K B^q \rangle = \operatorname {re}\operatorname {tr}(A^{-r} K B^q K^*)\) together with \(\operatorname {IsStrictlyPositive}(A) \leftrightarrow \operatorname {PosDef}(A)\) and \(0 \leq B \leftrightarrow \operatorname {PosSemidef}(B)\). </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0007.html#cor:ando_matrix">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/AndoConvexity_matrix">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="cor:lieb_extension_matrix_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="cor:lieb_extension_matrix" style="display: none">
+    <div class="thm_thmheading">
+      <span class="corollary_thmcaption">
+      Corollary
+      </span>
+      <span class="corollary_thmlabel">24</span><span class="corollary_thmtitle">Lieb extension theorem — matrix form</span></div>
+    <div class="thm_thmcontent"><p>    Let \(p, q {\gt} 0\) with \(p + q \leq 1\), and let \(K \in M_n(\mathbb {C})\). The map </p>
+<div class="displaymath" id="a0000000064">
+  \[  (A,\,  B) \; \longmapsto \;  \operatorname {re}\operatorname {tr}\! \bigl(A^q\,  K\,  B^p\,  K^*\bigr)  \]
+</div>
+<p> is jointly concave on \(\bigl\{ (A, B) \in M_n(\mathbb {C}) \times M_n(\mathbb {C}) \mid \operatorname {PosDef}(A),\;  \operatorname {PosSemidef}(B)\bigr\} \). </p>
+<div class="proof_wrapper" id="a0000000065">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Instantiate the abstract Lieb extension theorem (Theorem&#160;<a href="sect0006.html#thm:lieb_extension">21</a>) at the H\(^*\)-algebra \(M_n(\mathbb {C})\) with the Frobenius inner product, and use the identification \(\operatorname {re}\langle K,\,  A^q K B^p \rangle = \operatorname {re}\operatorname {tr}(A^q K B^p K^*)\) together with \(\operatorname {IsStrictlyPositive}(A) \leftrightarrow \operatorname {PosDef}(A)\) and \(0 \leq B \leftrightarrow \operatorname {PosSemidef}(B)\). </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0007.html#cor:lieb_extension_matrix">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebExtension_matrix">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="cor:lieb_matrix_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="cor:lieb_matrix" style="display: none">
+    <div class="thm_thmheading">
+      <span class="corollary_thmcaption">
+      Corollary
+      </span>
+      <span class="corollary_thmlabel">25</span><span class="corollary_thmtitle">Lieb’s concavity theorem — matrix form</span></div>
+    <div class="thm_thmcontent"><p>    Let \(0 {\lt} s {\lt} 1\), and let \(K \in M_n(\mathbb {C})\). The map </p>
+<div class="displaymath" id="a0000000066">
+  \[  (A,\,  B) \; \longmapsto \;  \operatorname {re}\operatorname {tr}\! \bigl(A^s\,  K\,  B^{1-s}\,  K^*\bigr)  \]
+</div>
+<p> is jointly concave on \(\bigl\{ (A, B) \in M_n(\mathbb {C}) \times M_n(\mathbb {C}) \mid \operatorname {PosDef}(A),\;  \operatorname {PosSemidef}(B)\bigr\} \). </p>
+<div class="proof_wrapper" id="a0000000067">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Instantiate the abstract Lieb concavity theorem (Theorem&#160;<a href="sect0006.html#thm:lieb">22</a>) at the H\(^*\)-algebra \(M_n(\mathbb {C})\) with the Frobenius inner product, and use the identification \(\operatorname {re}\langle K,\,  A^s K B^{1-s} \rangle = \operatorname {re}\operatorname {tr}(A^s K B^{1-s} K^*)\) together with \(\operatorname {IsStrictlyPositive}(A) \leftrightarrow \operatorname {PosDef}(A)\) and \(0 \leq B \leftrightarrow \operatorname {PosSemidef}(B)\). </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0007.html#cor:lieb_matrix">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebConcavity_matrix">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:gen_perspective_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:gen_perspective" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">3</span><span class="definition_thmtitle">Generalized perspective function</span></div>
+    <div class="thm_thmcontent"><p>   Let \(\mathcal{B}\) be an ordered unital C\(^*\)-algebra and let \(f, g : \mathbb {R} \to \mathbb {R}\). The <em>generalized perspective function</em> \((f \triangle g) : \mathcal{B} \times \mathcal{B} \to \mathcal{B}\) is defined by </p>
+<div class="displaymath" id="a0000000012">
+  \[  (f \triangle g)(L, R) \; :=\;  g(R)^{1/2}\,  f\! \left(g(R)^{-1/2}\,  L\,  g(R)^{-1/2}\right) g(R)^{1/2}.  \]
+</div>
+</div>
+
+    <a class="latex_link" href="sect0001.html#def:gen_perspective">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/GenPerspective">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:hstar_algebra_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:hstar_algebra" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">4</span><span class="definition_thmtitle">H\(^*\)-algebra</span></div>
+    <div class="thm_thmcontent"><p>   An <em>H\(^*\)-algebra</em> over \(\mathbb {k} \in \{ \mathbb {R}, \mathbb {C}\} \) is a Hilbert space \(H\) over \(\mathbb {k}\) equipped with the structure of a normed \(\mathbb {k}\)-algebra with involution \(\star \), satisfying the compatibility axioms: </p>
+<div class="displaymath" id="a0000000014">
+  \[  \langle a x,\,  y \rangle = \langle x,\,  a^* y \rangle \qquad \text{and} \qquad \langle x a,\,  y \rangle = \langle x,\,  y a^* \rangle \qquad \forall \,  a, x, y \in H.  \]
+</div>
+<p> This notion was introduced by Ambrose&#160;<span class="cite">
+	[
+	<a href="sect0007.html#Ambrose1945" >1</a>
+	]
+</span>. </p>
+</div>
+
+    <a class="latex_link" href="sect0001.html#def:hstar_algebra">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/HStarAlgebra">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:lmul_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:lmul" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">5</span><span class="definition_thmtitle">Left and right multiplication operators</span></div>
+    <div class="thm_thmcontent"><p>   For an H\(^*\)-algebra \(H\) and an element \(a \in H\), the <em>left multiplication operator</em> \(L_a : H \to H\) is the bounded linear map \(x \mapsto a x\). </p>
+<p> The <em>right multiplication operator</em> \(R_a : H \to H\) is the bounded linear map \(x \mapsto x a\). </p>
+<p>Both \(a \mapsto L_a\) and \(a \mapsto R_a\) are continuous as maps \(H \to (H \to _L H)\). Moreover \(L_a\) and \(R_b\) commute for all \(a, b \in H\): \(L_a \circ R_b = R_b \circ L_a\). </p>
+</div>
+
+    <a class="latex_link" href="sect0001.html#def:lmul">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/Rmul">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:operator_concave_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:operator_concave" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2</span><span class="definition_thmtitle">Operator concave function</span></div>
+    <div class="thm_thmcontent"><p>   A function \(f : \mathbb {R} \to \mathbb {R}\) is <em>operator concave</em> on \(I\) if \(-f\) is operator convex on \(I\), equivalently if \(a \mapsto f(a)\) is concave on the set of self-adjoint elements of every ordered unital C\(^*\)-algebra with spectrum contained in \(I\). </p>
+</div>
+
+    <a class="latex_link" href="sect0001.html#def:operator_concave">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/OperatorConcaveOn">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:operator_convex_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:operator_convex" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">1</span><span class="definition_thmtitle">Operator convex function</span></div>
+    <div class="thm_thmcontent"><p>   A function \(f : \mathbb {R} \to \mathbb {R}\) is <em>operator convex</em> on \(I\) if, for every ordered unital C\(^*\)-algebra \(\mathcal{B}\), the map \(a \mapsto f(a)\) is convex on the set </p>
+<div class="displaymath" id="a0000000010">
+  \[  \{  a \in \mathcal{B} \mid a \text{ is self-adjoint},\  \sigma (a) \subseteq I \} ,  \]
+</div>
+<p> where \(\sigma (a)\) denotes the spectrum of \(a\) over \(\mathbb {R}\). </p>
+</div>
+
+    <a class="latex_link" href="sect0001.html#def:operator_convex">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/OperatorConvexOn">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:conj_sum_spectrum_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:conj_sum_spectrum" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">7</span><span class="lemma_thmtitle">Spectrum of a conjugate-weighted sum</span></div>
+    <div class="thm_thmcontent"><p>   Let \(\mathcal{B}\) be an ordered unital C\(^*\)-algebra, let \(I \subseteq \mathbb {R}\) be a convex subset, and let \(n \in \mathbb {N}\). Suppose \(a_1, \dots , a_n \in \mathcal{B}\) are self-adjoint with \(\sigma (a_i) \subseteq I\) for each \(i\), and let \(b_1, \dots , b_n \in \mathcal{B}\) satisfy \(\sum _i b_i^* b_i = 1\). Then </p>
+<div class="displaymath" id="a0000000028">
+  \[  \sigma \! \left(\sum _i b_i^*\,  a_i\,  b_i\right) \subseteq I.  \]
+</div>
+<div class="proof_wrapper" id="a0000000029">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>Set \(\alpha = \inf _i \inf \sigma (a_i)\) and \(\beta = \sup _i \sup \sigma (a_i)\); then \([\alpha , \beta ] \subseteq I\) by convexity and ord-connectedness. The unit constraint \(\sum _i b_i^* b_i = 1\) gives \(\alpha \cdot 1 \leq \sum _i b_i^* a_i b_i \leq \beta \cdot 1\) in the order on \(\mathcal{B}\), since each summand satisfies \(\alpha \cdot b_i^* b_i \leq b_i^* a_i b_i \leq \beta \cdot b_i^* b_i\). The order bounds imply the spectrum is contained in \([\alpha , \beta ]\), and hence in \(I\). </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0002.html#lem:conj_sum_spectrum">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/spectrum_sum_conj_subset">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:mul_rpow_commute_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:mul_rpow_commute" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">8</span><span class="lemma_thmtitle">Power of a product of commuting positives</span></div>
+    <div class="thm_thmcontent"><p>   Let \(\mathcal{B}\) be an ordered unital C\(^*\)-algebra, let \(a, b \in \mathcal{B}\) with \(0 \leq a\), \(0 \leq b\), and \(ab = ba\). Then for all \(r \in \mathbb {R}\), </p>
+<div class="displaymath" id="a0000000030">
+  \[  (ab)^r = a^r\,  b^r,  \]
+</div>
+<p> where the powers are taken via the continuous functional calculus. </p>
+<div class="proof_wrapper" id="a0000000031">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p><em>Admitted.</em> This identity would follow from the fact that the continuous functional calculus distributes over multiplication for commuting elements. Specifically, one would need that \(\mathrm{cfc}(f, ab) = \mathrm{cfc}(f, a)\,  \mathrm{cfc}(f, b)\) whenever \(a\) and \(b\) commute and \(f\) is the function \(t \mapsto t^r\). This CFC multiplicativity for commuting pairs is not yet available in Mathlib, so the lemma is currently admitted as an axiom. </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0002.html#lem:mul_rpow_commute">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/CFC.mul_rpow_of_commute">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="prop:lmul_map_cfc_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="prop:lmul_map_cfc" style="display: none">
+    <div class="thm_thmheading">
+      <span class="proposition_thmcaption">
+      Proposition
+      </span>
+      <span class="proposition_thmlabel">6</span><span class="proposition_thmtitle">CFC commutativity of \(L\) and \(R\)</span></div>
+    <div class="thm_thmcontent"><p>    Let \(H\) be an H\(^*\)-algebra, \(a \in H\) self-adjoint, and \(f : \mathbb {R} \to \mathbb {R}\) continuous on \(\sigma (a)\). Then: </p>
+<div class="displaymath" id="a0000000015">
+  \[  L_{f(a)} = f(L_a), \qquad R_{f(a)} = f(R_a),  \]
+</div>
+<p> where \(f(L_a)\) and \(f(R_a)\) denote the continuous functional calculus applied to the operators \(L_a, R_a \in (H \to _L H)\). </p>
+<p>As a consequence, for any \(r \in \mathbb {R}\): </p>
+<div class="displaymath" id="a0000000016">
+  \[  (L_a)^r\,  x = a^r x, \qquad (R_a)^r\,  x = x\,  a^r,  \]
+</div>
+<p> whenever \(a \geq 0\) (for \(r \geq 0\)) or \(a\) is strictly positive (for all \(r\)). </p>
+</div>
+
+    <a class="latex_link" href="sect0001.html#prop:lmul_map_cfc">LaTeX</a>
+    
+    
+  <div class="tooltip">
+      <span class="lean_link">Lean</span>
+      <ul class="tooltip_list">
+        
+           <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/Lmul_map_cfc" class="lean_decl">Lmul_map_cfc</a></li>
+        
+           <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/Rmul_map_cfc" class="lean_decl">Rmul_map_cfc</a></li>
+        
+      </ul>
+  </div>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:ando_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:ando" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">23</span><span class="theorem_thmtitle">Ando’s Convexity Theorem</span></div>
+    <div class="thm_thmcontent"><p>    Let \(H\) be an H\(^*\)-algebra, \(q \in [1,2]\), \(r {\gt} 0\) with \(q - r {\gt} 1\), and \(x \in H\). Then the map </p>
+<div class="displaymath" id="a0000000062">
+  \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{-r}\,  x\,  B^{q} \bigr\rangle  \]
+</div>
+<p> is jointly convex on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
+<div class="proof_wrapper" id="a0000000063">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Set \(\alpha := q\) and \(\beta := r / (q - 1)\). The hypothesis \(q - r {\gt} 1\) with \(r {\gt} 0\) and \(q \in [1,2]\) ensures \(\beta \in (0,1]\), and one computes \(\beta (1-\alpha ) = -r\). The result follows from Theorem&#160;<a href="sect0006.html#thm:ando_general">20</a> with these parameter choices. </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0006.html#thm:ando">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/AndoConvexity">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:ando_general_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:ando_general" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">20</span><span class="theorem_thmtitle">Ando convexity — general form</span></div>
+    <div class="thm_thmcontent"><p>    Let \(H\) be an H\(^*\)-algebra, \(\alpha \in [1,2]\), \(\beta \in (0,1]\), and \(x \in H\). Then the map </p>
+<div class="displaymath" id="a0000000056">
+  \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{\beta (1-\alpha )}\,  x\,  B^{\alpha } \bigr\rangle  \]
+</div>
+<p> is jointly convex on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
+<div class="proof_wrapper" id="a0000000057">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> The argument is analogous to Theorem&#160;<a href="sect0006.html#thm:lieb_general">19</a>. The same CFC commutativity identities (Proposition&#160;<a href="sect0001.html#prop:lmul_map_cfc">6</a>) identify the power mean evaluated at \(x\) with \(A^{\beta (1-\alpha )}\,  x\,  B^\alpha \). Since \(\alpha \in [1,2]\), the power mean is jointly convex in operator order by Theorem&#160;<a href="sect0005.html#thm:power_mean_convex">18</a>, and linearity of \(T \mapsto \operatorname {re}\langle x, T x\rangle \) propagates convexity to the scalar functional. </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0006.html#thm:ando_general">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/AndoConvexity_general">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:jensen_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:jensen" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">9</span><span class="theorem_thmtitle">Jensen’s operator inequality</span></div>
+    <div class="thm_thmcontent"><p>    Let \(\mathcal{B}\) be an ordered unital C\(^*\)-algebra, \(I \subseteq \mathbb {R}\) an interval, and \(f : \mathbb {R} \to \mathbb {R}\) a continuous operator convex function on \(I\). Let \(a_0, \ldots , a_n \in \mathcal{B}\) be self-adjoint elements with \(\sigma (a_i) \subseteq I\) for each \(i\), and let \(b_0, \ldots , b_n \in \mathcal{B}\) satisfy the unital condition </p>
+<div class="displaymath" id="a0000000032">
+  \[  \sum _{i=0}^{n} b_i^* b_i = 1.  \]
+</div>
+<p> Then </p>
+<div class="displaymath" id="a0000000033">
+  \[  f\! \left(\sum _{i=0}^{n} b_i^* a_i\,  b_i\right) \; \leq \;  \sum _{i=0}^{n} b_i^*\,  f(a_i)\,  b_i.  \]
+</div>
+<div class="proof_wrapper" id="a0000000034">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> We follow the unitary-averaging argument of Li and Wu. Write \(m = n + 2\) and form the diagonal block element \(D = \operatorname {diag}(a_0, \ldots , a_n, a_n) \in M_m(\mathcal{B})\) (the last slot is a duplicate of \(a_n\), introduced to make the matrix square). Because each \(a_i\) has spectrum in \(I\), the element \(D\) is self-adjoint with spectrum in \(I\) by <a href="sect0002.html#lem:conj_sum_spectrum">7</a>. Next, using the \(b_i\) and the constraint \(\sum b_i^* b_i = 1\), one constructs a unitary \(U \in M_m(\mathcal{B})\) whose last column is \((b_0, \ldots , b_n, 0)^T\); the remaining columns are filled in by a Gram–Schmidt procedure on the rows of \(\mathcal{B}^m\). A direct computation shows that the bottom-right corner of \(U^* D U\) equals \(\sum _i b_i^* a_i b_i\). </p>
+<p>Now fix \(\omega = e^{2\pi i / m}\), a primitive \(m\)-th root of unity, and let \(V_k = \operatorname {diag}(1, \omega ^k, \omega ^{2k}, \ldots , \omega ^{(m-1)k})\) for \(k = 0, \ldots , m-1\). Each \(V_k\) is a unitary diagonal matrix in \(M_m(\mathcal{B})\), and the Fourier average </p>
+<div class="displaymath" id="a0000000035">
+  \[  \frac{1}{m} \sum _{k=0}^{m-1} V_k^*\, (U^* D U)\, V_k  \]
+</div>
+<p> equals the “diagonal part” of \(U^* D U\), i.e. the block-diagonal matrix whose \(j\)-th diagonal entry is the \((j,j)\)-entry of \(U^* D U\). In particular its bottom-right corner is \(\sum _i b_i^* a_i b_i\). </p>
+<p>Applying operator convexity of \(f\) to the averaged expression — which is a convex combination of unitarily conjugated copies of \(D\), each with spectrum in \(I\) — and then extracting the bottom-right \((1,1)\)-corner (a positive linear map that preserves the order) yields </p>
+<div class="displaymath" id="a0000000036">
+  \[  f\! \left(\sum _i b_i^* a_i b_i\right) \; \leq \;  \frac{1}{m}\sum _{k=0}^{m-1} V_k^*\, (U^* f(D) U)\, V_k\bigg|_{\mathrm{br}} \; =\;  \sum _i b_i^*\,  f(a_i)\,  b_i,  \]
+</div>
+<p> where the last equality uses the fact that \(f(D) = \operatorname {diag}(f(a_0),\ldots ,f(a_n),f(a_n))\) (the continuous functional calculus commutes with block-diagonal structure) and the same Fourier averaging extracts the diagonal. </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0003.html#thm:jensen">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/JensenOperator_convex_general">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:jensen_sub_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:jensen_sub" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">10</span><span class="theorem_thmtitle">Jensen’s operator inequality, sub-unital case</span></div>
+    <div class="thm_thmcontent"><p>    Let \(\mathcal{B}\), \(I\), \(f\), \(a_i\), and \(b_i\) be as in Theorem&#160;<a href="sect0003.html#thm:jensen">9</a>, except that the \(b_i\) now satisfy only </p>
+<div class="displaymath" id="a0000000037">
+  \[  \sum _{i=0}^{n} b_i^* b_i \leq 1.  \]
+</div>
+<p> Assume in addition that \(0 \in I\) and \(f(0) \leq 0\). Then </p>
+<div class="displaymath" id="a0000000038">
+  \[  f\! \left(\sum _{i=0}^{n} b_i^* a_i\,  b_i\right) \; \leq \;  \sum _{i=0}^{n} b_i^*\,  f(a_i)\,  b_i.  \]
+</div>
+<div class="proof_wrapper" id="a0000000039">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Set \(b_{n+1} = \bigl(1 - \sum _{i=0}^{n} b_i^* b_i\bigr)^{1/2}\) and \(a_{n+1} = 0\). The extended family satisfies \(\sum _{i=0}^{n+1} b_i^* b_i = 1\) and \(\sigma (a_{n+1}) = \{ 0\}  \subseteq I\), so Theorem&#160;<a href="sect0003.html#thm:jensen">9</a> applies to give </p>
+<div class="displaymath" id="a0000000040">
+  \[  f\! \left(\sum _{i=0}^{n+1} b_i^* a_i\,  b_i\right) \; \leq \;  \sum _{i=0}^{n+1} b_i^*\,  f(a_i)\,  b_i.  \]
+</div>
+<p> The left-hand side equals \(f\! \bigl(\sum _{i=0}^{n} b_i^* a_i b_i\bigr)\) since \(a_{n+1} = 0\). The last term on the right is \(b_{n+1}^* f(0)\,  b_{n+1} \leq 0\) by the assumption \(f(0) \leq 0\), so dropping it only strengthens the inequality, yielding the claimed bound. </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0003.html#thm:jensen_sub">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/JensenOperator_convex_general_sub">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:lieb_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:lieb" style="display: none">
+    <div class="thm_thmheading">
+      <span class="corollary_thmcaption">
+      Corollary
+      </span>
+      <span class="corollary_thmlabel">22</span><span class="corollary_thmtitle">Lieb’s Concavity Theorem</span></div>
+    <div class="thm_thmcontent"><p>    Let \(H\) be an H\(^*\)-algebra, \(s \in (0,1)\), and \(x \in H\). Then the map </p>
+<div class="displaymath" id="a0000000060">
+  \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{s}\,  x\,  B^{1-s} \bigr\rangle  \]
+</div>
+<p> is jointly concave on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
+<div class="proof_wrapper" id="a0000000061">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Apply Theorem&#160;<a href="sect0006.html#thm:lieb_extension">21</a> with \(q := s\) and \(p := 1 - s\), noting that \(p, q {\gt} 0\) and \(p + q = 1 \leq 1\). </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0006.html#thm:lieb">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebConcavity">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:lieb_extension_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:lieb_extension" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">21</span><span class="theorem_thmtitle">Lieb’s Extension Theorem</span></div>
+    <div class="thm_thmcontent"><p>    Let \(H\) be an H\(^*\)-algebra, \(p, q {\gt} 0\) with \(p + q \leq 1\), and \(x \in H\). Then the map </p>
+<div class="displaymath" id="a0000000058">
+  \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{q}\,  x\,  B^{p} \bigr\rangle  \]
+</div>
+<p> is jointly concave on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
+<div class="proof_wrapper" id="a0000000059">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Set \(\alpha := p\) and \(\beta := q / (1 - p)\). The hypothesis \(p + q \leq 1\) with \(p, q {\gt} 0\) ensures \(\beta \leq 1\), so \((\alpha , \beta ) \in (0,1] \times (0,1]\), and one computes \(\beta (1-\alpha ) = q\). The result therefore follows from Theorem&#160;<a href="sect0006.html#thm:lieb_general">19</a> with these parameter choices. </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0006.html#thm:lieb_extension">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebExtension">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:lieb_general_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:lieb_general" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">19</span><span class="theorem_thmtitle">Lieb concavity — general form</span></div>
+    <div class="thm_thmcontent"><p>    Let \(H\) be an H\(^*\)-algebra, \(\alpha , \beta \in (0,1]\), and \(x \in H\). Then the map </p>
+<div class="displaymath" id="a0000000054">
+  \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{\beta (1-\alpha )}\,  x\,  B^{\alpha } \bigr\rangle  \]
+</div>
+<p> is jointly concave on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
+<div class="proof_wrapper" id="a0000000055">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Consider the operator power mean \(\Pi _{\alpha ,\beta }(L_A, R_B)\) acting on \(H \to _L H\), which by definition is the generalized perspective of the \(\alpha \)-power mean at the pair \((L_A, R_B)\). By the CFC commutativity of left and right multiplication (Proposition&#160;<a href="sect0001.html#prop:lmul_map_cfc">6</a>), we have \(L_{A^{\beta (1-\alpha )}} = (L_A)^{\beta (1-\alpha )}\) and \(R_{B^\alpha } = (R_B)^\alpha \), so the power mean evaluated at \(x\) equals \(A^{\beta (1-\alpha )}\,  x\,  B^\alpha \). Joint concavity of \((A, B) \mapsto \Pi _{\alpha ,\beta }(L_A, R_B)\) in the operator order on \(H \to _L H\) then follows from Theorem&#160;<a href="sect0005.html#thm:power_mean_concave">17</a>. Finally, the map \(T \mapsto \operatorname {re}\langle x, T x\rangle \) is linear and hence preserves concavity, yielding the stated result. </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0006.html#thm:lieb_general">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebConcavity_general">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:loewner_concave_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:loewner_concave" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">13</span><span class="theorem_thmtitle">Operator concavity of the power function</span></div>
+    <div class="thm_thmcontent"><p>    For \(0 {\lt} r \leq 1\), the function \(t \mapsto t^r\) is operator concave on \([0, \infty )\). That is, for every ordered unital C\(^*\)-algebra \(\mathcal{B}\) and every pair of self-adjoint elements \(a, b \in \mathcal{B}\) with \(\sigma (a), \sigma (b) \subseteq [0, \infty )\) and every \(\lambda \in [0, 1]\), </p>
+<div class="displaymath" id="a0000000043">
+  \[  \lambda \,  a^r + (1 - \lambda )\,  b^r \; \leq \;  \bigl(\lambda a + (1 - \lambda ) b\bigr)^r.  \]
+</div>
+</div>
+
+    <a class="latex_link" href="sect0004.html#thm:loewner_concave">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/PowerOperatorConcave">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:loewner_convex_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:loewner_convex" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">11</span><span class="theorem_thmtitle">Operator convexity of the power function</span></div>
+    <div class="thm_thmcontent"><p>    For \(1 \leq r \leq 2\), the function \(t \mapsto t^r\) is operator convex on \([0, \infty )\). That is, for every ordered unital C\(^*\)-algebra \(\mathcal{B}\) and every pair of self-adjoint elements \(a, b \in \mathcal{B}\) with \(\sigma (a), \sigma (b) \subseteq [0, \infty )\) and every \(\lambda \in [0, 1]\), </p>
+<div class="displaymath" id="a0000000041">
+  \[  \bigl(\lambda a + (1 - \lambda ) b\bigr)^r \; \leq \;  \lambda \,  a^r + (1 - \lambda )\,  b^r.  \]
+</div>
+</div>
+
+    <a class="latex_link" href="sect0004.html#thm:loewner_convex">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/PowerOperatorConvex">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:perspective_joint_concave_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:perspective_joint_concave" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">16</span><span class="theorem_thmtitle">Joint concavity of the generalized perspective function</span></div>
+    <div class="thm_thmcontent"><p>    Let \(\mathcal{B}\) be an ordered unital C\(^*\)-algebra, and let \(f, g : \mathbb {R} \to \mathbb {R}\) be continuous on \([0,\infty )\). Assume: </p>
+<ul class="itemize">
+  <li><p>\(f\) is operator concave on \([0,\infty )\) with \(f(0) \geq 0\), </p>
+</li>
+  <li><p>\(g\) is operator concave on \([0,\infty )\) with \(g(x) {\gt} 0\) for all \(x {\gt} 0\). </p>
+</li>
+</ul>
+<p> Then the map \((L, R) \mapsto (f \triangle g)(L, R)\) is jointly concave on the set </p>
+<div class="displaymath" id="a0000000050">
+  \[  \{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} .  \]
+</div>
+<div class="proof_wrapper" id="a0000000051">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Observe that \((-f) \triangle g = -(f \triangle g)\) and that \(-f\) is operator convex with \((-f)(0) \leq 0\); apply Theorem&#160;<a href="sect0005.html#thm:perspective_joint_convex">15</a> to \(-f\) and negate to obtain joint concavity of \(f \triangle g\). </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0005.html#thm:perspective_joint_concave">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/PerspectiveJointConcave">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:perspective_joint_convex_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:perspective_joint_convex" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">15</span><span class="theorem_thmtitle">Joint convexity of the generalized perspective function</span></div>
+    <div class="thm_thmcontent"><p>    Let \(\mathcal{B}\) be an ordered unital C\(^*\)-algebra, and let \(f, g : \mathbb {R} \to \mathbb {R}\) be continuous on \([0,\infty )\). Assume: </p>
+<ul class="itemize">
+  <li><p>\(f\) is operator convex on \([0,\infty )\) with \(f(0) \leq 0\), </p>
+</li>
+  <li><p>\(g\) is operator concave on \([0,\infty )\) with \(g(x) {\gt} 0\) for all \(x {\gt} 0\). </p>
+</li>
+</ul>
+<p> Then the map \((L, R) \mapsto (f \triangle g)(L, R)\) is jointly convex on the set </p>
+<div class="displaymath" id="a0000000045">
+  \[  \{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} .  \]
+</div>
+<div class="proof_wrapper" id="a0000000046">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Fix pairs \((L_1, R_1)\) and \((L_2, R_2)\) in the domain and weights \(a, b \geq 0\) with \(a + b = 1\). Let \(R := a R_1 + b R_2\) and write \(G := \operatorname {cfc}(g)\) for the operator \(g\) applied via the continuous functional calculus. Define bounded operators </p>
+<div class="displaymath" id="a0000000047">
+  \[  T_1 := \bigl(a\,  G(R_1)\bigr)^{1/2} G(R)^{-1/2}, \qquad T_2 := \bigl(b\,  G(R_2)\bigr)^{1/2} G(R)^{-1/2}.  \]
+</div>
+<p> Because \(g\) is operator concave, the operator concavity inequality gives \(a\,  G(R_1) + b\,  G(R_2) \leq G(R)\), and therefore </p>
+<div class="displaymath" id="a0000000048">
+  \[  T_1^* T_1 + T_2^* T_2 = G(R)^{-1/2}(a\,  G(R_1) + b\,  G(R_2))G(R)^{-1/2} \leq \mathrm{id}.  \]
+</div>
+<p> That is, the pair \((T_1, T_2)\) is <em>sub-unital</em> in the sense required by the sub-unital Jensen inequality (Theorem&#160;<a href="sect0003.html#thm:jensen_sub">10</a>). Applying Theorem&#160;<a href="sect0003.html#thm:jensen_sub">10</a> to the operator-convex function \(f\) with arguments \(G(R)^{-1/2} L_i\,  G(R)^{-1/2}\) and operators \(T_i\), then conjugating by \(G(R)^{1/2}\) and collecting terms, yields </p>
+<div class="displaymath" id="a0000000049">
+  \[  a\, (f \triangle g)(L_1, R_1) + b\, (f \triangle g)(L_2, R_2) \; \geq \;  (f \triangle g)(aL_1 + bL_2,\,  R).  \]
+</div>
+<p> (The condition \(f(0) \leq 0\) absorbs the sub-unital defect term in Jensen’s inequality.) This is precisely the joint convexity inequality. </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0005.html#thm:perspective_joint_convex">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/PerspectiveJointConvex">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:power_mean_concave_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:power_mean_concave" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">17</span><span class="theorem_thmtitle">Joint concavity of the operator power mean</span></div>
+    <div class="thm_thmcontent"><p>    For \(0 {\lt} \alpha \leq 1\) and \(0 {\lt} \beta \leq 1\), the map \((L, R) \mapsto ((\cdot )^\alpha \triangle (\cdot )^\beta )(L, R)\) is jointly concave on \(\{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} \). </p>
+<div class="proof_wrapper" id="a0000000052">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Both \(t \mapsto t^\alpha \) and \(t \mapsto t^\beta \) are operator concave on \([0,\infty )\) when the exponents lie in \((0,1]\) by Löwner’s theorem (Theorem&#160;<a href="sect0004.html#thm:loewner_concave">13</a>); apply Theorem&#160;<a href="sect0005.html#thm:perspective_joint_concave">16</a>. </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0005.html#thm:power_mean_concave">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/PowerMeanJointlyConcave">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:power_mean_convex_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:power_mean_convex" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">18</span><span class="theorem_thmtitle">Joint convexity of the operator power mean</span></div>
+    <div class="thm_thmcontent"><p>    For \(1 \leq \alpha \leq 2\) and \(0 {\lt} \beta \leq 1\), the map \((L, R) \mapsto ((\cdot )^\alpha \triangle (\cdot )^\beta )(L, R)\) is jointly convex on \(\{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} \). </p>
+<div class="proof_wrapper" id="a0000000053">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> For \(\alpha \in [1,2]\) the function \(t \mapsto t^\alpha \) is operator convex on \([0,\infty )\) with \(0^\alpha = 0 \leq 0\) (Theorem&#160;<a href="sect0004.html#thm:loewner_convex">11</a>), and for \(\beta \in (0,1]\) the function \(t \mapsto t^\beta \) is operator concave (Theorem&#160;<a href="sect0004.html#thm:loewner_concave">13</a>); apply Theorem&#160;<a href="sect0005.html#thm:perspective_joint_convex">15</a>. </p>
+
+  </div>
+</div>
+</div>
+
+    <a class="latex_link" href="sect0005.html#thm:power_mean_convex">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/PowerMeanJointlyConvex">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+</div>
+</div> <!-- content -->
+</div> <!-- wrapper -->
+<script src="js/jquery.min.js" type="text/javascript"></script>
+
+<script src="js/d3.min.js"></script>
+<script src="js/hpcc.min.js"></script>
+<script src="js/d3-graphviz.js"></script>
+
+<script type="text/javascript">
+const graphContainer = d3.select("#graph");
+const width = graphContainer.node().clientWidth;
+const height = graphContainer.node().clientHeight;
+
+
+graphContainer.graphviz({useWorker: true})
+    .width(width)
+    .height(height)
+    .fit(true)
+    .renderDot(`strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	"def:operator_convex"	[color=green,		fillcolor="#B0ECA3",		label=operator_convex,		shape=box,		style=filled];	"thm:loewner_convex"	[color=blue,		label=loewner_convex,		shape=ellipse];	"def:operator_convex" -> "thm:loewner_convex"	[style=dashed];	"thm:jensen"	[color=green,		label=jensen,		shape=ellipse];	"def:operator_convex" -> "thm:jensen"	[style=dashed];	"thm:perspective_joint_convex"	[color=blue,		label=perspective_joint_convex,		shape=ellipse];	"def:operator_convex" -> "thm:perspective_joint_convex"	[style=dashed];	"thm:jensen_sub"	[color=green,		label=jensen_sub,		shape=ellipse];	"def:operator_convex" -> "thm:jensen_sub"	[style=dashed];	"def:hstar_algebra"	[color=green,		fillcolor="#B0ECA3",		label=hstar_algebra,		shape=box,		style=filled];	"thm:lieb"	[color=blue,		label=lieb,		shape=ellipse];	"def:hstar_algebra" -> "thm:lieb"	[style=dashed];	"thm:lieb_general"	[color=blue,		label=lieb_general,		shape=ellipse];	"def:hstar_algebra" -> "thm:lieb_general"	[style=dashed];	"cor:lieb_extension_matrix"	[color=blue,		label=lieb_extension_matrix,		shape=ellipse];	"def:hstar_algebra" -> "cor:lieb_extension_matrix"	[style=dashed];	"prop:lmul_map_cfc"	[color=green,		label=lmul_map_cfc,		shape=ellipse];	"def:hstar_algebra" -> "prop:lmul_map_cfc"	[style=dashed];	"thm:lieb_extension"	[color=blue,		label=lieb_extension,		shape=ellipse];	"def:hstar_algebra" -> "thm:lieb_extension"	[style=dashed];	"thm:ando"	[color=blue,		label=ando,		shape=ellipse];	"def:hstar_algebra" -> "thm:ando"	[style=dashed];	"cor:lieb_matrix"	[color=blue,		label=lieb_matrix,		shape=ellipse];	"def:hstar_algebra" -> "cor:lieb_matrix"	[style=dashed];	"cor:ando_matrix"	[color=blue,		label=ando_matrix,		shape=ellipse];	"def:hstar_algebra" -> "cor:ando_matrix"	[style=dashed];	"thm:ando_general"	[color=blue,		label=ando_general,		shape=ellipse];	"def:hstar_algebra" -> "thm:ando_general"	[style=dashed];	"lem:mul_rpow_commute"	[color=blue,		label=mul_rpow_commute,		shape=ellipse];	"def:operator_concave"	[color=green,		fillcolor="#B0ECA3",		label=operator_concave,		shape=box,		style=filled];	"def:operator_concave" -> "thm:perspective_joint_convex"	[style=dashed];	"thm:loewner_concave"	[color=blue,		label=loewner_concave,		shape=ellipse];	"def:operator_concave" -> "thm:loewner_concave"	[style=dashed];	"thm:perspective_joint_concave"	[color=blue,		label=perspective_joint_concave,		shape=ellipse];	"def:operator_concave" -> "thm:perspective_joint_concave"	[style=dashed];	"def:gen_perspective"	[color=green,		fillcolor="#B0ECA3",		label=gen_perspective,		shape=box,		style=filled];	"def:gen_perspective" -> "thm:perspective_joint_convex"	[style=dashed];	"def:gen_perspective" -> "thm:perspective_joint_concave"	[style=dashed];	"thm:power_mean_convex"	[color=blue,		label=power_mean_convex,		shape=ellipse];	"def:gen_perspective" -> "thm:power_mean_convex"	[style=dashed];	"thm:power_mean_concave"	[color=blue,		label=power_mean_concave,		shape=ellipse];	"def:gen_perspective" -> "thm:power_mean_concave"	[style=dashed];	"def:lmul"	[color=green,		fillcolor="#B0ECA3",		label=lmul,		shape=box,		style=filled];	"def:lmul" -> "thm:lieb_general"	[style=dashed];	"def:lmul" -> "prop:lmul_map_cfc"	[style=dashed];	"def:lmul" -> "thm:ando_general"	[style=dashed];	"lem:conj_sum_spectrum"	[color=green,		label=conj_sum_spectrum,		shape=ellipse];}`)
+    .on("end", interactive);
+
+latexLabelEscaper = function(label) {
+  return label.replace(/\./g, '\\.').replace(/:/g, '\\:')
+}
+
+clickNode = function() {
+  $("#statements div").hide()
+  var node_id = $('text', this).text();
+  $('.thm').hide();
+  $('#'+latexLabelEscaper(node_id)).show().children().show();
+}
+function interactive() {
+    $("span#legend_title").on("click", function () {
+           $(this).siblings('dl').toggle();
+        })
+
+    d3.selectAll('.node')
+        .attr('pointer-events', 'fill')
+        .on('click', function () {
+           var title = d3.select(this).selectAll('title').text().trim();
+           $('#statements > div').hide()
+           $('.thm').hide();
+           $('#'+latexLabelEscaper(title)+'_modal').show().children().show().children().show();
+           $('#statements').show()
+        });
+
+    d3.selectAll('.dep-closebtn').on('click', function() {
+        var modal =
+            d3.select(this).node().parentNode.parentNode.parentNode ;
+        d3.select(modal).style('display', 'none');
+    });
+}
+
+</script>
+
+</body>
+</html>

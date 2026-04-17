@@ -1,0 +1,137 @@
+% Chapter 6: Lieb's Concavity and Ando's Convexity
+\chapter{Lieb's Concavity and Ando's Convexity}
+
+This chapter contains the main results of the project.
+Working in an abstract H$^*$-algebra $H$, we derive Lieb's concavity theorem and
+Ando's convexity theorem by instantiating the operator power mean from
+Chapter~5 at the pair of bounded operators $(R_B, L_A)$ acting on $H$,
+and then reading off the resulting joint concavity or convexity of the
+real-part inner product functional $x \mapsto \operatorname{re}\langle x,\, (\cdot)\, x\rangle$.
+
+\section{General H\texorpdfstring{$^*$}{*}-Algebra Versions}
+
+\begin{theorem}[Lieb concavity --- general form]
+  \label{thm:lieb_general}
+  \lean{LiebConcavity_general}
+  \uses{def:hstar_algebra, def:lmul}
+  Let $H$ be an H$^*$-algebra, $\alpha, \beta \in (0,1]$, and $x \in H$.
+  Then the map
+  \[
+    (A, B) \;\longmapsto\; \operatorname{re}\bigl\langle x,\;
+      A^{\beta(1-\alpha)}\, x\, B^{\alpha} \bigr\rangle
+  \]
+  is jointly concave on
+  $\{(A, B) \in H \times H \mid A \text{ strictly positive},\, B \geq 0\}$.
+  \begin{proof}
+    \uses{thm:power_mean_concave, prop:lmul_map_cfc}
+    Consider the operator power mean $\Pi_{\alpha,\beta}(L_A, R_B)$ acting on
+    $H \to_L H$, which by definition is the generalized perspective of the
+    $\alpha$-power mean at the pair $(L_A, R_B)$.
+    By the CFC commutativity of left and right multiplication
+    (Proposition~\ref{prop:lmul_map_cfc}), we have
+    $L_{A^{\beta(1-\alpha)}} = (L_A)^{\beta(1-\alpha)}$ and
+    $R_{B^\alpha} = (R_B)^\alpha$, so the power mean evaluated at $x$ equals
+    $A^{\beta(1-\alpha)}\, x\, B^\alpha$.
+    Joint concavity of $(A, B) \mapsto \Pi_{\alpha,\beta}(L_A, R_B)$ in the
+    operator order on $H \to_L H$ then follows from
+    Theorem~\ref{thm:power_mean_concave}.
+    Finally, the map $T \mapsto \operatorname{re}\langle x, T x\rangle$ is linear
+    and hence preserves concavity, yielding the stated result.
+  \end{proof}
+\end{theorem}
+
+\begin{theorem}[Ando convexity --- general form]
+  \label{thm:ando_general}
+  \lean{AndoConvexity_general}
+  \uses{def:hstar_algebra, def:lmul}
+  Let $H$ be an H$^*$-algebra, $\alpha \in [1,2]$, $\beta \in (0,1]$, and $x \in H$.
+  Then the map
+  \[
+    (A, B) \;\longmapsto\; \operatorname{re}\bigl\langle x,\;
+      A^{\beta(1-\alpha)}\, x\, B^{\alpha} \bigr\rangle
+  \]
+  is jointly convex on
+  $\{(A, B) \in H \times H \mid A \text{ strictly positive},\, B \geq 0\}$.
+  \begin{proof}
+    \uses{thm:power_mean_convex, prop:lmul_map_cfc}
+    The argument is analogous to Theorem~\ref{thm:lieb_general}.
+    The same CFC commutativity identities (Proposition~\ref{prop:lmul_map_cfc})
+    identify the power mean evaluated at $x$ with
+    $A^{\beta(1-\alpha)}\, x\, B^\alpha$.
+    Since $\alpha \in [1,2]$, the power mean is jointly convex in operator order
+    by Theorem~\ref{thm:power_mean_convex}, and linearity of
+    $T \mapsto \operatorname{re}\langle x, T x\rangle$ propagates convexity
+    to the scalar functional.
+  \end{proof}
+\end{theorem}
+
+\section{Lieb's Extension Theorem}
+
+\begin{theorem}[Lieb's Extension Theorem]
+  \label{thm:lieb_extension}
+  \lean{LiebExtension}
+  \uses{def:hstar_algebra}
+  Let $H$ be an H$^*$-algebra, $p, q > 0$ with $p + q \leq 1$, and $x \in H$.
+  Then the map
+  \[
+    (A, B) \;\longmapsto\; \operatorname{re}\bigl\langle x,\;
+      A^{q}\, x\, B^{p} \bigr\rangle
+  \]
+  is jointly concave on
+  $\{(A, B) \in H \times H \mid A \text{ strictly positive},\, B \geq 0\}$.
+  \begin{proof}
+    \uses{thm:lieb_general}
+    Set $\alpha := p$ and $\beta := q / (1 - p)$.
+    The hypothesis $p + q \leq 1$ with $p, q > 0$ ensures $\beta \leq 1$,
+    so $(\alpha, \beta) \in (0,1] \times (0,1]$, and one computes
+    $\beta(1-\alpha) = q$.
+    The result therefore follows from Theorem~\ref{thm:lieb_general} with these
+    parameter choices.
+  \end{proof}
+\end{theorem}
+
+\section{Lieb's Concavity Theorem}
+
+\begin{corollary}[Lieb's Concavity Theorem]
+  \label{thm:lieb}
+  \lean{LiebConcavity}
+  \uses{def:hstar_algebra}
+  Let $H$ be an H$^*$-algebra, $s \in (0,1)$, and $x \in H$.
+  Then the map
+  \[
+    (A, B) \;\longmapsto\; \operatorname{re}\bigl\langle x,\;
+      A^{s}\, x\, B^{1-s} \bigr\rangle
+  \]
+  is jointly concave on
+  $\{(A, B) \in H \times H \mid A \text{ strictly positive},\, B \geq 0\}$.
+  \begin{proof}
+    \uses{thm:lieb_extension}
+    Apply Theorem~\ref{thm:lieb_extension} with $q := s$ and $p := 1 - s$,
+    noting that $p, q > 0$ and $p + q = 1 \leq 1$.
+  \end{proof}
+\end{corollary}
+
+\section{Ando's Convexity Theorem}
+
+\begin{theorem}[Ando's Convexity Theorem]
+  \label{thm:ando}
+  \lean{AndoConvexity}
+  \uses{def:hstar_algebra}
+  Let $H$ be an H$^*$-algebra, $q \in [1,2]$, $r > 0$ with $q - r > 1$,
+  and $x \in H$.
+  Then the map
+  \[
+    (A, B) \;\longmapsto\; \operatorname{re}\bigl\langle x,\;
+      A^{-r}\, x\, B^{q} \bigr\rangle
+  \]
+  is jointly convex on
+  $\{(A, B) \in H \times H \mid A \text{ strictly positive},\, B \geq 0\}$.
+  \begin{proof}
+    \uses{thm:ando_general}
+    Set $\alpha := q$ and $\beta := r / (q - 1)$.
+    The hypothesis $q - r > 1$ with $r > 0$ and $q \in [1,2]$ ensures
+    $\beta \in (0,1]$, and one computes $\beta(1-\alpha) = -r$.
+    The result follows from Theorem~\ref{thm:ando_general} with these
+    parameter choices.
+  \end{proof}
+\end{theorem}
