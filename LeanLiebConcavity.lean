@@ -6,7 +6,6 @@ Authors: Keyu Zhao
 import LeanLiebConcavity.Defs
 import LeanLiebConcavity.ForMathlib
 import LeanLiebConcavity.ConjugateWeightedSum
-import LeanLiebConcavity.ForMathlib.StarAlgHom.Unitary
 import LeanLiebConcavity.Jensen
 import LeanLiebConcavity.Main
 import LeanLiebConcavity.Lieb
