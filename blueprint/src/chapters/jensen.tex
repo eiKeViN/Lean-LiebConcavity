@@ -35,6 +35,8 @@ We follow the unitary-averaging proof of Li and Wu~\cite{LiWu2012}.
   \]
 
   \begin{proof}
+    \proves{thm:jensen}
+    \leanok
     \uses{lem:conj_sum_spectrum}
     We follow the unitary-averaging argument of Li and Wu.
     Write $m = n + 2$ and form the diagonal block element
@@ -104,6 +106,8 @@ The following corollary handles this by padding the family with one extra elemen
   \]
 
   \begin{proof}
+    \proves{thm:jensen_sub}
+    \leanok
     \uses{thm:jensen}
     Set $b_{n+1} = \bigl(1 - \sum_{i=0}^{n} b_i^* b_i\bigr)^{1/2}$ and $a_{n+1} = 0$.
     The extended family satisfies $\sum_{i=0}^{n+1} b_i^* b_i = 1$ and

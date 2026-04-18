@@ -15,6 +15,7 @@ Chapter~6.
 \begin{theorem}[Joint convexity of the generalized perspective function]
   \label{thm:perspective_joint_convex}
   \lean{PerspectiveJointConvex}
+  \leanok
   \uses{def:operator_convex, def:operator_concave, def:gen_perspective}
   Let $\mathcal{B}$ be an ordered unital C$^*$-algebra, and let
   $f, g : \mathbb{R} \to \mathbb{R}$ be continuous on $[0,\infty)$.
@@ -28,7 +29,9 @@ Chapter~6.
     \{ (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\ R \text{ strictly positive} \}.
   \]
   \begin{proof}
-    \uses{thm:jensen_sub, thm:loewner_concave}
+    \proves{thm:perspective_joint_convex}
+    \leanok
+    \uses{thm:jensen_sub, thm:loewner_concave, lem:mul_rpow_commute}
     Fix pairs $(L_1, R_1)$ and $(L_2, R_2)$ in the domain and weights $a, b \geq 0$
     with $a + b = 1$.
     Let $R := a R_1 + b R_2$ and write $G := \operatorname{cfc}(g)$ for the operator
@@ -67,6 +70,7 @@ Chapter~6.
 \begin{theorem}[Joint concavity of the generalized perspective function]
   \label{thm:perspective_joint_concave}
   \lean{PerspectiveJointConcave}
+  \leanok
   \uses{def:operator_concave, def:gen_perspective}
   Let $\mathcal{B}$ be an ordered unital C$^*$-algebra, and let
   $f, g : \mathbb{R} \to \mathbb{R}$ be continuous on $[0,\infty)$.
@@ -80,6 +84,8 @@ Chapter~6.
     \{ (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\ R \text{ strictly positive} \}.
   \]
   \begin{proof}
+    \proves{thm:perspective_joint_concave}
+    \leanok
     \uses{thm:perspective_joint_convex}
     Observe that $(-f) \triangle g = -(f \triangle g)$ and that $-f$ is operator
     convex with $(-f)(0) \leq 0$; apply Theorem~\ref{thm:perspective_joint_convex}
@@ -98,12 +104,15 @@ follow at once.
 \begin{theorem}[Joint concavity of the operator power mean]
   \label{thm:power_mean_concave}
   \lean{PowerMeanJointlyConcave}
+  \leanok
   \uses{def:gen_perspective}
   For $0 < \alpha \leq 1$ and $0 < \beta \leq 1$, the map
   $(L, R) \mapsto ((\cdot)^\alpha \triangle (\cdot)^\beta)(L, R)$
   is jointly concave on
   $\{ (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\ R \text{ strictly positive} \}$.
   \begin{proof}
+    \proves{thm:power_mean_concave}
+    \leanok
     \uses{thm:perspective_joint_concave, thm:loewner_concave}
     Both $t \mapsto t^\alpha$ and $t \mapsto t^\beta$ are operator concave on
     $[0,\infty)$ when the exponents lie in $(0,1]$ by L\"{o}wner's theorem
@@ -114,12 +123,15 @@ follow at once.
 \begin{theorem}[Joint convexity of the operator power mean]
   \label{thm:power_mean_convex}
   \lean{PowerMeanJointlyConvex}
+  \leanok
   \uses{def:gen_perspective}
   For $1 \leq \alpha \leq 2$ and $0 < \beta \leq 1$, the map
   $(L, R) \mapsto ((\cdot)^\alpha \triangle (\cdot)^\beta)(L, R)$
   is jointly convex on
   $\{ (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\ R \text{ strictly positive} \}$.
   \begin{proof}
+    \proves{thm:power_mean_convex}
+    \leanok
     \uses{thm:perspective_joint_convex, thm:loewner_convex, thm:loewner_concave}
     For $\alpha \in [1,2]$ the function $t \mapsto t^\alpha$ is operator convex on
     $[0,\infty)$ with $0^\alpha = 0 \leq 0$ (Theorem~\ref{thm:loewner_convex}),

@@ -258,6 +258,46 @@ private theorem StarU_Diag_U_last {n : ℕ} (a b : Fin (n + 1) → A) :
     (star (U b) * Diag a * U b).diag (Sum.inr ()) =
       ∑ i, star (b i) * a i * b i := StarU_Diag_U_BR a
 
+section CFC
+
+variable [PartialOrder A] [StarOrderedRing A]
+
+/-- CFC acts entry-wise on the Li–Wu diagonal lift. -/
+private theorem Diag_cfc {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ}
+    (hf : ContinuousOn f (⋃ i, spectrum ℝ (a i)))
+    (hsa : ∀ i, IsSelfAdjoint (a i)) :
+    cfc f (Diag a) = Diag (fun i => cfc f (a i)) := by
+  dsimp only [Diag]
+  let d : Fin (n + 1) ⊕ Unit → A := Sum.elim (fun i => a i) (fun _ => a (Fin.last n))
+  have spectrum_eq : (⋃ i : Fin (n + 1) ⊕ Unit, spectrum ℝ (d i)) = ⋃ i, spectrum ℝ (a i) := by
+    ext; simp only [Set.mem_iUnion, d]
+    constructor
+    · intro ⟨i, hi⟩
+      rcases i with j | ⟨⟩
+      · exact ⟨j, hi⟩
+      · exact ⟨Fin.last n, hi⟩
+    · exact fun ⟨i, hi⟩ => ⟨Sum.inl i, hi⟩
+  have hf' : ContinuousOn f (⋃ i, spectrum ℝ (d i)) := spectrum_eq ▸ hf
+  have hd : ∀ i, IsSelfAdjoint (d i) := fun i =>
+    match i with
+    | Sum.inl j => hsa j
+    | Sum.inr () => hsa (Fin.last n)
+  rw [cfc_diagonal hf' hd]
+  ext i; match i with
+  | Sum.inl j => rfl
+  | Sum.inr () => rfl
+
+/-- Specialization of `Diag_cfc` to the `ContinuousOn I` assumption -/
+private theorem Diag_cfc_contI {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ} {I : Set ℝ}
+    (hf : ContinuousOn f I)
+    (hsa : ∀ i, IsSelfAdjoint (a i)) (ha_spec : ∀ i, spectrum ℝ (a i) ⊆ I) :
+    cfc f (Diag a) = Diag (fun i => cfc f (a i)) := by
+  apply Diag_cfc
+  · exact hf.mono (Set.iUnion_subset ha_spec)
+  · exact hsa
+
+end CFC
+
 /-! ## Sub-goal 3 (Fourier averaging) -/
 
 open Complex
@@ -487,47 +527,11 @@ private theorem V_avg_diag {n : ℕ}
     rw [smul_smul, one_div, inv_mul_cancel₀ (by positivity), one_smul]
   · simp
 
-variable [PartialOrder A] [StarOrderedRing A]
-
-/-- CFC acts entry-wise on the Li–Wu diagonal lift. -/
-private theorem Diag_cfc {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ}
-    (hf : ContinuousOn f (⋃ i, spectrum ℝ (a i)))
-    (hsa : ∀ i, IsSelfAdjoint (a i)) :
-    cfc f (Diag a) = Diag (fun i => cfc f (a i)) := by
-  dsimp only [Diag]
-  let d : Fin (n + 1) ⊕ Unit → A := Sum.elim (fun i => a i) (fun _ => a (Fin.last n))
-  have spectrum_eq : (⋃ i : Fin (n + 1) ⊕ Unit, spectrum ℝ (d i)) = ⋃ i, spectrum ℝ (a i) := by
-    ext; simp only [Set.mem_iUnion, d]
-    constructor
-    · intro ⟨i, hi⟩
-      rcases i with j | ⟨⟩
-      · exact ⟨j, hi⟩
-      · exact ⟨Fin.last n, hi⟩
-    · exact fun ⟨i, hi⟩ => ⟨Sum.inl i, hi⟩
-  have hf' : ContinuousOn f (⋃ i, spectrum ℝ (d i)) := spectrum_eq ▸ hf
-  have hd : ∀ i, IsSelfAdjoint (d i) := fun i =>
-    match i with
-    | Sum.inl j => hsa j
-    | Sum.inr () => hsa (Fin.last n)
-  rw [cfc_diagonal hf' hd]
-  ext i; match i with
-  | Sum.inl j => rfl
-  | Sum.inr () => rfl
-
-/-- Specialization of `Diag_cfc` to the `ContinuousOn I` assumption -/
-private theorem Diag_cfc_contI {n : ℕ} {a : Fin (n + 1) → A} {f : ℝ → ℝ} {I : Set ℝ}
-    (hf : ContinuousOn f I)
-    (hsa : ∀ i, IsSelfAdjoint (a i)) (ha_spec : ∀ i, spectrum ℝ (a i) ⊆ I) :
-    cfc f (Diag a) = Diag (fun i => cfc f (a i)) := by
-  apply Diag_cfc
-  · exact hf.mono (Set.iUnion_subset ha_spec)
-  · exact hsa
-
-
 @[expose] public section
 
 /-! ## General (arbitrary n) Jensen's Operator Inequality -/
 
+variable [PartialOrder A] [StarOrderedRing A]
 variable {f : ℝ → ℝ} {I : Set ℝ}
 
 /-- **Jensen's Operator Inequality** (Li–Wu 2012, Theorem 2.2, general n):

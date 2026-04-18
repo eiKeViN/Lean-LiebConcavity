@@ -20,7 +20,8 @@ definite, and $\operatorname{PosSemidef}(B)$ means $B$ is positive semidefinite.
 \begin{corollary}[Lieb extension theorem --- matrix form]
   \label{cor:lieb_extension_matrix}
   \lean{LiebExtension_matrix}
-  \uses{def:hstar_algebra}
+  \leanok
+  \uses{def:hstar_algebra, def:lmul}
   Let $p, q > 0$ with $p + q \leq 1$, and let $K \in M_n(\mathbb{C})$.
   The map
   \[
@@ -32,6 +33,8 @@ definite, and $\operatorname{PosSemidef}(B)$ means $B$ is positive semidefinite.
   $\bigl\{(A, B) \in M_n(\mathbb{C}) \times M_n(\mathbb{C}) \mid
   \operatorname{PosDef}(A),\; \operatorname{PosSemidef}(B)\bigr\}$.
   \begin{proof}
+    \proves{cor:lieb_extension_matrix}
+    \leanok
     \uses{thm:lieb_extension}
     Instantiate the abstract Lieb extension theorem (Theorem~\ref{thm:lieb_extension})
     at the H$^*$-algebra $M_n(\mathbb{C})$ with the Frobenius inner product, and use
@@ -45,7 +48,8 @@ definite, and $\operatorname{PosSemidef}(B)$ means $B$ is positive semidefinite.
 \begin{corollary}[Lieb's concavity theorem --- matrix form]
   \label{cor:lieb_matrix}
   \lean{LiebConcavity_matrix}
-  \uses{def:hstar_algebra}
+  \leanok
+  \uses{def:hstar_algebra, def:lmul}
   Let $0 < s < 1$, and let $K \in M_n(\mathbb{C})$.
   The map
   \[
@@ -57,6 +61,8 @@ definite, and $\operatorname{PosSemidef}(B)$ means $B$ is positive semidefinite.
   $\bigl\{(A, B) \in M_n(\mathbb{C}) \times M_n(\mathbb{C}) \mid
   \operatorname{PosDef}(A),\; \operatorname{PosSemidef}(B)\bigr\}$.
   \begin{proof}
+    \proves{cor:lieb_matrix}
+    \leanok
     \uses{thm:lieb}
     Instantiate the abstract Lieb concavity theorem (Theorem~\ref{thm:lieb})
     at the H$^*$-algebra $M_n(\mathbb{C})$ with the Frobenius inner product, and use
@@ -70,7 +76,8 @@ definite, and $\operatorname{PosSemidef}(B)$ means $B$ is positive semidefinite.
 \begin{corollary}[Ando's convexity theorem --- matrix form]
   \label{cor:ando_matrix}
   \lean{AndoConvexity_matrix}
-  \uses{def:hstar_algebra}
+  \leanok
+  \uses{def:hstar_algebra, def:lmul}
   Let $q, r \in \mathbb{R}$ with $1 \leq q \leq 2$, $r > 0$, and $q - r > 1$,
   and let $K \in M_n(\mathbb{C})$.
   The map
@@ -83,6 +90,8 @@ definite, and $\operatorname{PosSemidef}(B)$ means $B$ is positive semidefinite.
   $\bigl\{(A, B) \in M_n(\mathbb{C}) \times M_n(\mathbb{C}) \mid
   \operatorname{PosDef}(A),\; \operatorname{PosSemidef}(B)\bigr\}$.
   \begin{proof}
+    \proves{cor:ando_matrix}
+    \leanok
     \uses{thm:ando}
     Instantiate the abstract Ando convexity theorem (Theorem~\ref{thm:ando})
     at the H$^*$-algebra $M_n(\mathbb{C})$ with the Frobenius inner product, and use

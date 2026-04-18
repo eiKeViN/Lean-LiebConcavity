@@ -22,6 +22,8 @@ upstream Mathlib infrastructure.
     \sigma\!\left(\sum_i b_i^*\, a_i\, b_i\right) \subseteq I.
   \]
   \begin{proof}
+    \proves{lem:conj_sum_spectrum}
+    \leanok
     Set $\alpha = \inf_i \inf \sigma(a_i)$ and $\beta = \sup_i \sup \sigma(a_i)$;
     then $[\alpha, \beta] \subseteq I$ by convexity and ord-connectedness.
     The unit constraint $\sum_i b_i^* b_i = 1$ gives
@@ -38,6 +40,7 @@ upstream Mathlib infrastructure.
 \begin{lemma}[Power of a product of commuting positives]
   \label{lem:mul_rpow_commute}
   \lean{CFC.mul_rpow_of_commute}
+  \leanok
   Let $\mathcal{B}$ be an ordered unital C$^*$-algebra, let $a, b \in \mathcal{B}$
   with $0 \leq a$, $0 \leq b$, and $ab = ba$.  Then for all $r \in \mathbb{R}$,
   \[
@@ -45,6 +48,7 @@ upstream Mathlib infrastructure.
   \]
   where the powers are taken via the continuous functional calculus.
   \begin{proof}
+    \proves{lem:mul_rpow_commute}
     \emph{Admitted.}  This identity would follow from the fact that the continuous
     functional calculus distributes over multiplication for commuting elements.
     Specifically, one would need that $\mathrm{cfc}(f, ab) = \mathrm{cfc}(f, a)\,

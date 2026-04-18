@@ -17,6 +17,7 @@ required Mathlib lemmas are available.
 \begin{theorem}[Operator convexity of the power function]
   \label{thm:loewner_convex}
   \lean{PowerOperatorConvex}
+  \leanok
   \uses{def:operator_convex}
   For $1 \leq r \leq 2$, the function $t \mapsto t^r$ is operator convex on
   $[0, \infty)$.  That is, for every ordered unital C$^*$-algebra $\mathcal{B}$ and
@@ -27,6 +28,10 @@ required Mathlib lemmas are available.
     \;\leq\;
     \lambda\, a^r + (1 - \lambda)\, b^r.
   \]
+  \begin{proof}
+    \proves{thm:loewner_convex}
+    \emph{Admitted (sorry).}
+  \end{proof}
 \end{theorem}
 
 \begin{remark}
@@ -42,6 +47,7 @@ required Mathlib lemmas are available.
 \begin{theorem}[Operator concavity of the power function]
   \label{thm:loewner_concave}
   \lean{PowerOperatorConcave}
+  \leanok
   \uses{def:operator_concave}
   For $0 < r \leq 1$, the function $t \mapsto t^r$ is operator concave on
   $[0, \infty)$.  That is, for every ordered unital C$^*$-algebra $\mathcal{B}$ and
@@ -52,6 +58,10 @@ required Mathlib lemmas are available.
     \;\leq\;
     \bigl(\lambda a + (1 - \lambda) b\bigr)^r.
   \]
+  \begin{proof}
+    \proves{thm:loewner_concave}
+    \emph{Admitted (sorry).}
+  \end{proof}
 \end{theorem}
 
 \begin{remark}

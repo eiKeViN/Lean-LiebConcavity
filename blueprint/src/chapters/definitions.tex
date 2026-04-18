@@ -109,4 +109,12 @@ $a \mapsto R_a$ is a $*$-homomorphism $H \to (H \to_L H)^{\mathrm{op}}$
     (L_a)^r\, x = a^r x, \qquad (R_a)^r\, x = x\, a^r,
   \]
   whenever $a \geq 0$ (for $r \geq 0$) or $a$ is strictly positive (for all $r$).
+  \begin{proof}
+    \proves{prop:lmul_map_cfc}
+    \leanok
+    The maps $a \mapsto L_a$ and $a \mapsto R_a$ are star algebra homomorphisms into
+    $(H \to_L H)$ and $(H \to_L H)^{\mathrm{op}}$ respectively, so the CFC
+    intertwining property of star algebra homomorphisms gives $L_{f(a)} = f(L_a)$
+    and $R_{f(a)} = f(R_a)$ directly.
+  \end{proof}
 \end{proposition}
