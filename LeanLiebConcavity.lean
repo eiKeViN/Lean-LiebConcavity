@@ -1,11 +1,21 @@
-/-
-Copyright (c) 2026 Keyu Zhao. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Keyu Zhao
--/
+import LeanLiebConcavity.ConjugateWeightedSum
 import LeanLiebConcavity.Defs
 import LeanLiebConcavity.ForMathlib
-import LeanLiebConcavity.ConjugateWeightedSum
+import LeanLiebConcavity.ForMathlib.Continuity
+import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus
+import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus.Commute
+import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus.Convex
+import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus.Order
+import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus.Rpow
+import LeanLiebConcavity.ForMathlib.ContinuousFunctionalCalculus.Unital
+import LeanLiebConcavity.ForMathlib.Frobenius.Inner
+import LeanLiebConcavity.ForMathlib.Frobenius.Matrix
+import LeanLiebConcavity.ForMathlib.InnerProductSpace.Positive
+import LeanLiebConcavity.ForMathlib.SelfAdjoint
+import LeanLiebConcavity.ForMathlib.StarAlgHom.Diagonal
+import LeanLiebConcavity.ForMathlib.StarAlgHom.OpStar
+import LeanLiebConcavity.ForMathlib.StarAlgHom.Unitary
+import LeanLiebConcavity.HStarAlgebra
 import LeanLiebConcavity.Jensen
-import LeanLiebConcavity.Main
 import LeanLiebConcavity.Lieb
+import LeanLiebConcavity.Main
