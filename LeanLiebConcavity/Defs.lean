@@ -121,14 +121,17 @@ local notation "½" => (1/2 : ℝ)
 -- [def:gen_perspective] Ebadian–Nikoufar–Eshaghi Gordji 2011, generalized perspective function
 -- (f △ g)(L, R) ≔ g(R)^{1/2} f(g(R)^{-1/2} L g(R)^{-1/2}) g(R)^{1/2}
 /-- The *generalized perspective function* associated to `f h : ℝ → ℝ` -/
-def GenPerspective (A : Type*) [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
-    (f g : ℝ → ℝ) : A × A → A :=
+def GenPerspective (A : Type*) [Ring A] [StarRing A] [TopologicalSpace A] [PartialOrder A]
+    [StarOrderedRing A] [Algebra ℝ A] [ContinuousFunctionalCalculus ℝ A IsSelfAdjoint]
+    [NonnegSpectrumClass ℝ A] (f g : ℝ → ℝ) : A × A → A :=
   fun (L, R) ↦
     cfc g R ^ ½ * cfc f (cfc g R ^ (-½) * L * cfc g R ^ (-½)) * cfc g R ^ ½
 
 
 variable (f g : ℝ → ℝ)
-variable {A : Type*} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+variable {A : Type*} [Ring A] [StarRing A] [TopologicalSpace A] [PartialOrder A]
+  [StarOrderedRing A] [Algebra ℝ A] [ContinuousFunctionalCalculus ℝ A IsSelfAdjoint]
+  [NonnegSpectrumClass ℝ A]
 
 /-- Negating `f` negates the generalized perspective:
     `((-f) △ g)(L, R) = -(f △ g)(L, R)`. -/
@@ -162,6 +165,8 @@ theorem GenPerspective_of_commute {L R : A} (hLR : Commute L R)
     _ = S ^ ½ * cfc f (L * S ^ (-½ + -½)) * S ^ ½ := by simp_rw [mul_assoc, rpow_add hR.isUnit]
     _ = S ^ ½ * cfc f (L * Si) * S ^ ½ := by dsimp only [Si]; norm_num
     _ = cfc f (L * Si) * S := by rw [← hfS_half.eq, mul_assoc, mul_self_rpow_half hR]
+
+variable [PosSMulMono ℝ A]
 
 theorem GenPerspective_of_rpow_commute {L R : A} {α β : ℝ} (hLR : Commute L R)
     (hL : 0 ≤ L) (hR : IsStrictlyPositive R) (hβ : β ≠ 0) :

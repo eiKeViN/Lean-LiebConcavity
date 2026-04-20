@@ -34,6 +34,7 @@ attribute [local instance] Matrix.frobeniusInner
 attribute [local instance] Matrix.frobeniusSeminormedAddCommGroup
 attribute [local instance] Matrix.frobeniusNormedSpace
 
+@[simp]
 theorem frobenius_inner_def (A B : Matrix n n 𝕜) :
     ⟪A, B⟫_𝕜 = (B * Aᴴ).trace :=
   rfl
@@ -58,21 +59,19 @@ activate via `open scoped Matrix.Norms.FrobeniusInner`. -/
 def frobeniusInnerProductSpace : InnerProductSpace 𝕜 (Matrix n n 𝕜) where
   norm_sq_eq_re_inner := frobenius_norm_sq_eq_re_inner
   conj_inner_symm := by
-    simp [frobenius_inner_def, starRingEnd_apply,
-              ← trace_conjTranspose, conjTranspose_mul]
-  add_left := by
-    simp [frobenius_inner_def, mul_add]
-  smul_left := by
-    simp_rw [frobenius_inner_def, starRingEnd_apply]; simp
+    simp [starRingEnd_apply, ← trace_conjTranspose, conjTranspose_mul]
+  add_left := by simp [mul_add]
+  smul_left := by simp_rw [starRingEnd_apply]; simp
 
 end -- noncomputable
 
-/-! ### Scoped activation
+/-! ### Additional instances for Matrix.Norms.Frobenius
 
-`open scoped Matrix.Norms.FrobeniusInner` activates both the inner product and the
-Frobenius-norm-compatible `InnerProductSpace` instance simultaneously. -/
+`open scoped Matrix.Norms.Frobenius` now also activates the
+Frobenius-norm-compatible `InnerProductSpace` instance. -/
 
 namespace Norms.Frobenius
+
 attribute [scoped instance]
   Matrix.frobeniusInner
   Matrix.frobeniusInnerProductSpace
