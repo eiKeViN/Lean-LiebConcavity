@@ -1,4 +1,5 @@
 import LeanLiebConcavity.ConjugateWeightedSum
+import LeanLiebConcavity.FourierAveraging
 import LeanLiebConcavity.Defs
 import LeanLiebConcavity.ForMathlib
 import LeanLiebConcavity.ForMathlib.Continuity
