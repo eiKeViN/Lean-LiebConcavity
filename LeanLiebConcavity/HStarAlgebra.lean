@@ -90,10 +90,10 @@ def LmulAlgHom : H →ₐ[𝕜] (H →L[𝕜] H) where
     { toLinearMap := LinearMap.mulLeft 𝕜 a
       cont     := continuous_const_mul a }
   map_one' := by ext; simp
-  map_mul' := fun a b => by ext; simp
+  map_mul' := fun _ _ => by ext; simp
   map_zero' := by ext; simp
-  map_add' := fun a b => by ext; simp [add_mul]
-  commutes' := fun c => by ext; simp [Algebra.algebraMap_eq_smul_one]
+  map_add' := fun _ _ => by ext; simp [add_mul]
+  commutes' := fun _ => by ext; simp [Algebra.algebraMap_eq_smul_one]
 
 /-- Left multiplication by `a`, as a continuous linear map `H →L[𝕜] H`. -/
 def Lmul (a : H) : H →L[𝕜] H := LmulAlgHom 𝕜 a

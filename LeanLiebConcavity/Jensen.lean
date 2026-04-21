@@ -10,6 +10,8 @@ public import LeanLiebConcavity.Defs
 public import LeanLiebConcavity.ConjugateWeightedSum
 public import LeanLiebConcavity.ForMathlib.StarAlgHom.Diagonal
 public import LeanLiebConcavity.ForMathlib.StarAlgHom.Unitary
+public import LeanLiebConcavity.ForMathlib.StarAlgHom.Reindex
+public import LeanLiebConcavity.FourierAveraging
 
 /-!
 # Jensen's operator inequality
@@ -40,10 +42,11 @@ noncomputable section
 universe u
 variable {A : Type u} [CStarAlgebra A]
 
-open scoped Matrix
-open MatCStar
-
 /-! ## Sub-goal 2: The unitary `u` -/
+
+section Unitary
+
+open scoped Matrix
 
 /-- The Li–Wu unitary matrix in `CStarMatrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A`.
 Constructed from `b : Fin n → A` with `∑ star (b i) * b i = 1`. -/
@@ -86,33 +89,32 @@ private lemma U_star {n : ℕ} (b : Fin n → A) :
       simp only [W, Matrix.conjTranspose_apply, Matrix.of_apply, star_zero]
     simpa only [hX, hZ, hY, hW] using Matrix.fromBlocks_conjTranspose X Y Z W
 
+private lemma U_tl_entry {n : ℕ} {b : Fin n → A} (i j k : Fin n) :
+    (if i = k then 1 - b i * star (b k) else -(b i * star (b k)))
+    * (if k = j then 1 - b k * star (b j) else -(b k * star (b j)))
+    = (if i = k then if k = j then 1 else 0 else 0)
+      - (if i = k then b k * star (b j) else 0)
+      - (if k = j then b i * star (b k) else 0)
+      + b i * (star (b k) * b k) * star (b j) := by
+  split_ifs with _ _ <;> simp only [sub_mul, mul_sub, one_mul, mul_one, mul_assoc]
+  · abel
+  · simp only [mul_neg]; abel
+  · simp only [neg_mul, mul_assoc]; abel
+  · simp only [neg_mul, mul_assoc]; noncomm_ring
+
 /-- `star u * u = 1` when `∑ star (b i) * b i = 1`. -/
 private lemma U_star_mul_self' {n : ℕ} {b : Fin n → A}
     (hb : ∑ i, star (b i) * b i = 1) :
     star (U b) * U b = 1 := by
   rw [U_star, U, Matrix.fromBlocks_multiply,
       ← Matrix.fromBlocks_one, Matrix.fromBlocks_inj]
-  -- After fromBlocks_multiply, goal is: fromBlocks TL TR BL BR = fromBlocks 1 0 0 1
   refine ⟨?_tl, ?_tr, ?_bl, ?_br⟩
   · -- Top-left: (δ - P) * (δ - P) + P = δ,  where P_{ij} = b i * star (b j)
     ext i j
     simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply,
       neg_mul, mul_neg, neg_neg, Matrix.one_apply]
-    have : ∀ k : Fin n,
-        (if i = k then 1 - b i * star (b k) else -(b i * star (b k)))
-        * (if k = j then 1 - b k * star (b j) else -(b k * star (b j)))
-        = (if i = k then if k = j then 1 else 0 else 0)
-          - (if i = k then b k * star (b j) else 0)
-          - (if k = j then b i * star (b k) else 0)
-          + b i * (star (b k) * b k) * star (b j) := by
-      intro _
-      split_ifs with _ _ <;> simp only [sub_mul, mul_sub, one_mul, mul_one, mul_assoc]
-      · abel
-      · simp only [mul_neg]; abel
-      · simp only [neg_mul, mul_assoc]; abel
-      · simp only [neg_mul, mul_assoc]; noncomm_ring
     open Finset in
-    simp only [this, sum_add_distrib, sum_sub_distrib, ← sum_mul, ← mul_sum, hb,
+    simp only [U_tl_entry i j, sum_add_distrib, sum_sub_distrib, ← sum_mul, ← mul_sum, hb,
               sum_ite_eq, sum_ite_eq', mem_univ, univ_unique, sum_const, card_singleton,
               if_true, sub_add_cancel, one_smul, mul_one]
   · -- Top-right: (δ - P) * Y + (-Y_col) * 0 = 0
@@ -158,21 +160,8 @@ private lemma U_mul_star_self' {n : ℕ} {b : Fin n → A}
   · -- Top-left: X * X + Y * (-Z') = δ
     ext i j
     simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply]
-    have : ∀ k : Fin n,
-        (if i = k then 1 - b i * star (b k) else -(b i * star (b k)))
-        * (if k = j then 1 - b k * star (b j) else -(b k * star (b j)))
-        = (if i = k then if k = j then 1 else 0 else 0)
-          - (if i = k then b k * star (b j) else 0)
-          - (if k = j then b i * star (b k) else 0)
-          + b i * (star (b k) * b k) * star (b j) := by
-      intro _
-      split_ifs with _ _ <;> simp only [sub_mul, mul_sub, one_mul, mul_one, mul_assoc]
-      · abel
-      · simp only [mul_neg]; abel
-      · simp only [neg_mul, mul_assoc]; abel
-      · simp only [neg_mul, mul_assoc]; noncomm_ring
     open Finset in
-    simp only [this, sum_add_distrib, sum_sub_distrib, ← sum_mul, ← mul_sum, hb,
+    simp only [U_tl_entry i j, sum_add_distrib, sum_sub_distrib, ← sum_mul, ← mul_sum, hb,
               sum_ite_eq, sum_ite_eq', mem_univ, univ_unique, sum_const, card_singleton,
               if_true, sub_add_cancel, one_smul, mul_one]
   · -- Top-right: X * (-Y) + Y * 0 = 0
@@ -214,7 +203,13 @@ private theorem U_mem_unitary {n : ℕ} {b : Fin (n + 1) → A}
       unitary (Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A) :=
   Unitary.mem_iff.mpr ⟨U_star_mul_self' hb, U_mul_star_self' hb⟩
 
+end Unitary
+
+open MatCStar
+
 /-! ### The Li–Wu diagonal matrix -/
+
+section Prelim
 
 /-- `diag(a 0, …, a n, a n)`: `a : Fin (n+1) → A` supplies the n+1 values going to the
 `Fin (n + 1)` slot and the last `a (Fin.last n)` goes in the `Unit` slot. -/
@@ -258,6 +253,8 @@ private theorem StarU_Diag_U_last {n : ℕ} (a b : Fin (n + 1) → A) :
     (star (U b) * Diag a * U b).diag (Sum.inr ()) =
       ∑ i, star (b i) * a i * b i := StarU_Diag_U_BR a
 
+end Prelim
+
 section CFC
 
 variable [PartialOrder A] [StarOrderedRing A]
@@ -300,6 +297,8 @@ end CFC
 
 /-! ## Sub-goal 3 (Fourier averaging) -/
 
+section Defs
+
 open Complex
 
 private abbrev Theta (n : ℕ) : ℂ :=
@@ -311,60 +310,6 @@ private lemma Theta_isPrimitiveRoot (n : ℕ) :
     simp only [Nat.cast_add, Nat.cast_one]
   simpa only [this] using isPrimitiveRoot_exp (n + 1) (by omega)
 
-/-- `‖θ^m‖ = 1` for the `(n+1)`-th root of unity `θ`. -/
-private lemma Theta_norm (n : ℕ) : ‖Theta n‖ = 1 := by
-  have : exp (2 * ↑Real.pi * Complex.I / (↑n + 1)) =
-      exp (↑(2 * Real.pi / (↑n + 1)) * Complex.I) := by
-    push_cast; ring_nf
-  simp_rw [this, norm_exp_ofReal_mul_I]
-
-private lemma Theta_norm_pow (n m : ℕ) : ‖Theta n ^ m‖ = 1 := by
-  rw [norm_pow, Theta_norm, one_pow]
-
-/-- `normSq (θ^m) = 1`, since `‖θ‖ = 1`. -/
-private lemma Theta_normSq_pow (n m : ℕ) : normSq (Theta n ^ m) = 1 := by
-  rw [map_pow, normSq_eq_norm_sq, Theta_norm, one_pow, one_pow]
-
-/-- `star(θ^m) * θ^m = 1` in `ℂ`, since `|θ| = 1`. -/
-private lemma Theta_star_mul (n m : ℕ) :
-    star (Theta n ^ m) * Theta n ^ m = 1 := by
-  rw [Complex.star_def, ← normSq_eq_conj_mul_self]
-  exact_mod_cast Theta_normSq_pow n m
-
-/-- `θ^m * star(θ^m) = 1` in `ℂ`, since `|θ| = 1`. -/
-private lemma Theta_mul_star (n m : ℕ) :
-    Theta n ^ m * star (Theta n ^ m) = 1 := by
-  simpa only [mul_comm] using Theta_star_mul n m
-
-/-- `star(θ^m) = θ^{-m}` in `ℂ`: conjugation inverts on the unit circle. -/
-private lemma Theta_star_eq_zpow (n m : ℕ) :
-    starRingEnd ℂ (Theta n ^ m) = Theta n ^ (-(m : ℤ)) := by
-  have hconj : starRingEnd ℂ (Theta n) = (Theta n)⁻¹ := by
-    rw [Complex.inv_def, Complex.normSq_eq_norm_sq, Theta_norm, one_pow, inv_one]
-    push_cast; ring
-  rw [map_pow, hconj, zpow_neg, zpow_natCast, inv_pow]
-
-/-- `Theta n ≠ 0`, since `‖Theta n‖ = 1`. -/
-private lemma Theta_ne_zero (n : ℕ) : Theta n ≠ 0 :=
-  norm_ne_zero_iff.mp (by rw [Theta_norm]; norm_num)
-
-/-- Integer index of a `Fin n ⊕ Unit` element: `inl j ↦ j.val`, `inr () ↦ n`. -/
-private abbrev Indx (n : ℕ) : Fin n ⊕ Unit → ℕ
-  | Sum.inl j => j.val
-  | Sum.inr () => n
-
-/-- Key scalar identity: `star(θ^a • 1) * x * (θ^b • 1) = θ^(b-a) • x` in any C⋆-algebra. -/
-private lemma Theta_smul_conj_mul {n : ℕ} (a b : ℕ) (x : A) :
-    star ((Theta n ^ a : ℂ) • (1 : A)) * x * ((Theta n ^ b : ℂ) • (1 : A)) =
-      (Theta n ^ ((b : ℤ) - (a : ℤ))) • x := by
-  simp only [star_smul, star_one]
-  rw [show star (Theta n ^ a) = starRingEnd ℂ (Theta n ^ a) from rfl,
-      Theta_star_eq_zpow, smul_one_mul, mul_smul_one, smul_smul]
-  congr 1
-  rw [← zpow_natCast (Theta n) b, ← zpow_add₀ (Theta_ne_zero n)]; ring_nf
-
-/-! ### the `v^k` Fourier matrices and their unitarity -/
-
 /-- The `k`-th Fourier diagonal matrix over `Fin n ⊕ Unit`.
 Entry at `inl j` is `θ^(k*j) • 1`, entry at `inr ()` is `θ^(k*n) • 1`. -/
 private abbrev V {n : ℕ} (k : Fin (n + 1)) :
@@ -373,159 +318,79 @@ private abbrev V {n : ℕ} (k : Fin (n + 1)) :
     | Sum.inl j => (Theta n ^ (k.val * j.val) : ℂ) • (1 : A)
     | Sum.inr () => (Theta n ^ (k.val * n) : ℂ) • (1 : A)
 
-/-- Entry formula: conjugating any matrix `M` by the `k`-th Fourier matrix scales entry `(i,j)`
-by `θ^{k·(idx j - idx i)}`. -/
-private lemma V_conj_apply {n : ℕ} (k : Fin (n + 1))
-    (M : Matrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A) (i j : Fin n ⊕ Unit) :
-    (star (V (A := A) k) * M * V (A := A) k) i j =
-      (Theta n ^ ((k.val * Indx n j : ℤ) - (k.val * Indx n i : ℤ))) • M i j := by
-  simp only [Matrix.star_eq_conjTranspose, Matrix.diagonal_conjTranspose,
-    Matrix.diagonal_mul, Matrix.mul_diagonal, Pi.star_def]
-  match i, j with
-  | Sum.inl i, Sum.inl j => exact Theta_smul_conj_mul _ _ _
-  | Sum.inl i, Sum.inr () => exact Theta_smul_conj_mul _ _ _
-  | Sum.inr (), Sum.inl j => exact Theta_smul_conj_mul _ _ _
-  | Sum.inr (), Sum.inr () => exact Theta_smul_conj_mul _ _ _
+end Defs
 
-/-- `V k` is unitary part 1: `star (v k) * v k = 1`. -/
-private lemma V_star_mul_self {n : ℕ} (k : Fin (n + 1)) :
-    star (V (A := A) k) * V k = 1 := by
-  rw [Matrix.star_eq_conjTranspose, Matrix.diagonal_conjTranspose,
-      Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-  congr 1; ext i
-  match i with
-  | Sum.inl i =>
-    simp only [Pi.star_def, star_smul, smul_mul_smul_comm]
-    rw [Theta_star_mul, one_smul, star_one, one_mul]
-  | Sum.inr () =>
-    simp only [Pi.star_def, star_smul, smul_mul_smul_comm]
-    rw [Theta_star_mul, one_smul, star_one, one_mul]
+section Equiv
 
-/-- `V k` is unitary part 2: `v k * star (v k) = 1`. -/
-private lemma V_mul_star_self {n : ℕ} (k : Fin (n + 1)) :
-    V (A := A) k * star (V k) = 1 := by
-  rw [Matrix.star_eq_conjTranspose, Matrix.diagonal_conjTranspose,
-      Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one]
-  congr 1; ext i
-  match i with
-  | Sum.inl i =>
-    simp only [Pi.star_def, star_smul, smul_mul_smul_comm]
-    rw [Theta_mul_star, one_smul, star_one, mul_one]
-  | Sum.inr () =>
-    simp only [Pi.star_def, star_smul, smul_mul_smul_comm]
-    rw [Theta_mul_star, one_smul, star_one, mul_one]
+/-- reindexing Fin (n + 1) ⊕ Unit ≃ Fin (n + 2) -/
+private abbrev SumUnitEquiv (n : ℕ) : Fin n ⊕ Unit ≃ Fin (n + 1) :=
+  (Equiv.sumCongr (Equiv.refl _) finOneEquiv.symm).trans finSumFinEquiv
 
-/-- `V k` is a member of the unitary subgroup. -/
-private lemma V_mem_unitary {n : ℕ} (k : Fin (n + 1)) :
-    V (A := A) k ∈
-      unitary (Matrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A) :=
-  Unitary.mem_iff.mpr ⟨V_star_mul_self k, V_mul_star_self k⟩
+private lemma SumUnitEquiv_symm_castSucc {n : ℕ} (i : Fin n) :
+    (SumUnitEquiv n).symm (Fin.castSucc i) = Sum.inl i := by
+  apply (SumUnitEquiv n).injective
+  simp [Fin.castAdd]
 
-/-! ### Discrete Fourier orthogonality -/
+private lemma SumUnitEquiv_symm_last {n : ℕ} :
+    (SumUnitEquiv n).symm (Fin.last n) = Sum.inr () := by
+  apply (SumUnitEquiv n).injective
+  simp only [Equiv.symm_trans_apply, finSumFinEquiv_symm_last]
+  rfl
 
-/-- Discrete Fourier orthogonality: summing `θ^(k*d)` over `k : Fin (n+1)` gives `n+1` if
-`(n+1) ∣ d`, and `0` otherwise. -/
-private lemma Theta_geom_sum (n : ℕ) (d : ℤ) :
-    ∑ k : Fin (n + 1), Theta n ^ (k.val * d) =
-      if (n + 1 : ℤ) ∣ d then (n + 1 : ℂ) else 0 := by
-  -- Rewrite each term as (θ^d)^k, then convert to a range sum
-  have : ∀ k : Fin (n + 1), Theta n ^ (k.val * d) = (Theta n ^ d) ^ (k.val : ℤ) := by
-    intro k
-    rw [← zpow_mul, mul_comm]
-  simp_rw [this]
-  rw [show (∑ k : Fin (n + 1), (Theta n ^ d) ^ (k.val : ℤ)) =
-      ∑ i ∈ Finset.range (n + 1), (Theta n ^ d) ^ (i : ℤ) from
-    Fin.sum_univ_eq_sum_range (fun i => (Theta n ^ d) ^ (i : ℤ)) (n + 1)]
-  split_ifs with hdvd
-  · -- Case: (n+1) ∣ d, so θ^d = 1
-    have h1 : Theta n ^ d = 1 := by
-      rw [(Theta_isPrimitiveRoot n).zpow_eq_one_iff_dvd]
-      exact_mod_cast hdvd
-    simp [h1]
-  · -- Case: (n+1) ∤ d, so θ^d ≠ 1
-    have hne : Theta n ^ d ≠ 1 :=
-      fun h =>
-        hdvd (Theta_isPrimitiveRoot n |>.zpow_eq_one_iff_dvd d |>.mp h)
-    have hpow1 : (Theta n ^ d) ^ (n + 1) = 1 := by
-      rw [← zpow_natCast (Theta n ^ d), ← zpow_mul, mul_comm,
-          zpow_mul, (Theta_isPrimitiveRoot n).zpow_eq_one, one_zpow]
-    have hrange : ∀ i ∈ Finset.range (n + 1), (Theta n ^ d) ^ (i : ℤ) =
-        (Theta n ^ d) ^ i := fun i _ => zpow_natCast _ _
-    rw [Finset.sum_congr rfl hrange]
-    -- Use ∑ r^i * (r - 1) = r^(n+1) - 1 and cancel (θ^d - 1) ≠ 0
-    apply eq_zero_of_ne_zero_of_mul_right_eq_zero <| sub_ne_zero.mpr hne
-    rw [geom_sum_mul (Theta n ^ d) (n + 1), hpow1, sub_self]
+open Matrix
 
-/-! ### Fourier averaging formula -/
+@[simp]
+theorem reindex_diagonal {n : ℕ}
+    (M : Matrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A) :
+    (reindexStarAlgEquiv ℝ A (SumUnitEquiv n)) (diagonal M.diag) =
+      diagonal ((reindexStarAlgEquiv ℝ A (SumUnitEquiv n) M).diag) := by simp
 
-/-- `Indx` maps into `{0,...,n}`. -/
-private lemma Indx_le {n : ℕ} (x : Fin n ⊕ Unit) : Indx n x ≤ n := by
-  cases x with simp
+/-- FourierMatrix is the reindexed version of V k -/
+private lemma reindex_V_eq_FourierMatrix {n : ℕ} (k : Fin (n + 1)) :
+    (reindexStarAlgEquiv ℝ A (SumUnitEquiv n)) (V (A := A) k) =
+      FourierMatrix (Theta n) A k := by
+  ext i j
+  simp only [reindexStarAlgEquiv_apply, FourierMatrix, submatrix_apply,
+             diagonal_apply]
+  refine Fin.lastCases ?_ (fun _ => ?_) i <;> refine Fin.lastCases ?_ (fun _ => ?_) j
+  all_goals
+    simp only [SumUnitEquiv_symm_castSucc, SumUnitEquiv_symm_last]
+    simp [Fin.ext_iff, Fin.last, Fin.castSucc]
+    try omega
 
-/-- `Indx` is injective. -/
-private lemma Indx_injective {n : ℕ} {x y : Fin n ⊕ Unit}
-    (h : Indx n x = Indx n y) : x = y := by
-  cases x with
-  | inl x => cases y with
-    | inl y => exact congrArg Sum.inl (Fin.ext h)
-    | inr u => cases u; dsimp only [Indx] at h; omega
-  | inr u => cases u; cases y with
-    | inl y => dsimp only [Indx] at h; omega
-    | inr u => cases u; rfl
+end Equiv
 
-/-- `(n+1) ∣ (Indx j - Indx i)` iff `i = j`, since both indices lie in `{0,...,n}`. -/
-private lemma Indx_dvd_iff {n : ℕ} (i j : Fin n ⊕ Unit) :
-    (↑n + 1 : ℤ) ∣ ((Indx n j : ℤ) - Indx n i) ↔ i = j := by
-  constructor
-  · intro hdvd
-    apply Indx_injective
-    have ha' : (Indx n i : ℤ) ≤ n := by exact_mod_cast Indx_le i
-    have hb' : (Indx n j : ℤ) ≤ n := by exact_mod_cast Indx_le j
-    have ha0 : (0 : ℤ) ≤ Indx n i := Int.natCast_nonneg _
-    have hb0 : (0 : ℤ) ≤ Indx n j := Int.natCast_nonneg _
-    have habs_lt : |(Indx n j : ℤ) - Indx n i| < ↑n + 1 := by
-      rw [abs_lt]; constructor <;> linarith
-    have hdiff0 : |(Indx n j : ℤ) - Indx n i| = 0 :=
-      Int.eq_zero_of_dvd_of_nonneg_of_lt (abs_nonneg _) habs_lt ((dvd_abs _ _).mpr hdvd)
-    linarith [abs_eq_zero.mp hdiff0]
-  · rintro rfl; simp
+section FourierAvg
 
-/-- Fourier summing: summing the Fourier conjugates of `M` over all `k : Fin (n+1)` gives
-`(n+1) • M i j` on the diagonal and `0` off it. -/
-private lemma V_sum_apply {n : ℕ}
-    (M : Matrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A) (i j : Fin n ⊕ Unit) :
-    ∑ k : Fin (n + 1), (star (V (A := A) k) * M * V (A := A) k) i j =
-      if i = j then (↑(n + 1) : ℂ) • M i j else 0 := by
-  -- plug in the entry formula
-  simp_rw [show ∀ k : Fin (n + 1),
-      (star (V (A := A) k) * M * V (A := A) k) i j =
-      (Theta n ^ ((↑k.val * ↑(Indx n j) : ℤ) - (↑k.val * ↑(Indx n i) : ℤ))) • M i j
-      from fun k => V_conj_apply k M i j]
-  -- factor M i j out of the sum; rewrite exponents; apply orthogonality
-  rw [← Finset.sum_smul]
-  simp_rw [show ∀ k : Fin (n + 1),
-      Theta n ^ ((↑k.val * ↑(Indx n j) : ℤ) - (↑k.val * ↑(Indx n i) : ℤ)) =
-      Theta n ^ (↑k.val * ((Indx n j : ℤ) - Indx n i))
-      from fun k => by congr 1; ring,
-    Theta_geom_sum, Indx_dvd_iff]
-  split_ifs with hij
-  · push_cast; rfl
-  · simp
+open Matrix
+
+/-- `V k` is a member of the unitary subgroup, deduced from `FourierMatrix_mem_unitary`
+via the `reindexStarAlgEquiv` transfer. -/
+private theorem V_mem_unitary {n : ℕ} (k : Fin (n + 1)) :
+    V (A := A) k ∈ unitary (Matrix (Fin n ⊕ Unit) (Fin n ⊕ Unit) A) := by
+  let φ := reindexStarAlgEquiv ℝ A (SumUnitEquiv n)
+  have hF : FourierMatrix (Theta n) A k ∈ unitary _ :=
+    FourierMatrix_mem_unitary (Theta_isPrimitiveRoot n) (Nat.succ_ne_zero n)
+  have hmem := Unitary.map_mem (StarAlgHomClass.toStarAlgHom φ.symm) hF
+  rw [← reindex_V_eq_FourierMatrix] at hmem
+  have : (StarAlgHomClass.toStarAlgHom φ.symm) (φ (V k)) = V k := φ.symm_apply_apply (V k)
+  rwa [this] at hmem
 
 /-- The Fourier average of `M` equals `diagonal (Matrix.diag M)`. -/
 private theorem V_avg_diag {n : ℕ}
     (M : Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A) :
     ∑ k : Fin (n + 2), (1 / (↑(n + 2) : ℝ)) •
-        (star (V (A := A) k) * M * V (A := A) k) =
-      Matrix.diagonal M.diag := by
-  ext i j
-  simp only [Matrix.sum_apply, Matrix.smul_apply, ← Finset.smul_sum,
-             V_sum_apply, Matrix.diagonal_apply, Matrix.diag]
-  split_ifs with hij
-  · subst hij
-    suffices (1 / (↑(n + 2) : ℝ)) • (↑(n + 2) : ℝ) • M i i = M i i by exact this
-    rw [smul_smul, one_div, inv_mul_cancel₀ (by positivity), one_smul]
-  · simp
+        (star (V (A := A) k) * M * V (A := A) k) = diagonal M.diag := by
+  let φ := reindexStarAlgEquiv ℝ A (SumUnitEquiv (n + 1))
+  apply φ.injective
+  change φ (∑ k : Fin (n + 2), (1 / (↑(n + 2) : ℝ)) • (star (V k) * M * V k)) =
+         φ (diagonal M.diag)
+  simp only [map_sum, map_smul, map_mul, map_star,
+    φ, reindex_V_eq_FourierMatrix, reindex_diagonal]
+  exact FourierAvg_eq_diagonal (Theta_isPrimitiveRoot (n + 1))
+          (Nat.succ_ne_zero (n + 1)) (φ M)
+
+end FourierAvg
 
 @[expose] public section
 

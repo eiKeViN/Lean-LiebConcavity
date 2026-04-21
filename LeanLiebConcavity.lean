@@ -15,6 +15,7 @@ import LeanLiebConcavity.ForMathlib.InnerProductSpace.Positive
 import LeanLiebConcavity.ForMathlib.SelfAdjoint
 import LeanLiebConcavity.ForMathlib.StarAlgHom.Diagonal
 import LeanLiebConcavity.ForMathlib.StarAlgHom.OpStar
+import LeanLiebConcavity.ForMathlib.StarAlgHom.Reindex
 import LeanLiebConcavity.ForMathlib.StarAlgHom.Unitary
 import LeanLiebConcavity.HStarAlgebra
 import LeanLiebConcavity.Jensen
