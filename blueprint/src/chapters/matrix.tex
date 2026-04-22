@@ -12,6 +12,22 @@ This chapter collects the classical matrix-theoretic statements of Lieb's concav
 theorem, its extension, and Ando's convexity theorem as corollaries of the abstract
 H$^*$-algebra results from the preceding chapter.
 
+\begin{proposition}[H$^*$-algebra instance for matrices]
+  \label{inst:hstar_matrix}
+  \lean{FrobeniusMat.instHStarAlgebra}
+  \leanok
+  \uses{def:hstar_algebra}
+  The algebra $M_n(\mathbb{C})$ of $n \times n$ complex matrices, equipped with the
+  Frobenius inner product $\langle A, B \rangle = \operatorname{tr}(A^* B)$, is an
+  H$^*$-algebra.
+  \begin{proof}
+    \proves{inst:hstar_matrix}
+    \leanok
+    Direct verification of the H$^*$-algebra axioms using the standard Frobenius
+    inner product and matrix multiplication.
+  \end{proof}
+\end{proposition}
+
 Throughout this chapter, $n$ is a positive integer, $A, B \in M_n(\mathbb{C})$,
 $K \in M_n(\mathbb{C})$ is arbitrary, $A^q$ denotes the matrix power via the
 continuous functional calculus, $\operatorname{PosDef}(A)$ means $A$ is positive
@@ -21,7 +37,7 @@ definite, and $\operatorname{PosSemidef}(B)$ means $B$ is positive semidefinite.
   \label{cor:lieb_extension_matrix}
   \lean{LiebExtension_matrix}
   \leanok
-  \uses{def:hstar_algebra, def:lmul}
+  \uses{inst:hstar_matrix}
   Let $p, q > 0$ with $p + q \leq 1$, and let $K \in M_n(\mathbb{C})$.
   The map
   \[
@@ -49,7 +65,7 @@ definite, and $\operatorname{PosSemidef}(B)$ means $B$ is positive semidefinite.
   \label{cor:lieb_matrix}
   \lean{LiebConcavity_matrix}
   \leanok
-  \uses{def:hstar_algebra, def:lmul}
+  \uses{inst:hstar_matrix}
   Let $0 < s < 1$, and let $K \in M_n(\mathbb{C})$.
   The map
   \[
@@ -77,7 +93,7 @@ definite, and $\operatorname{PosSemidef}(B)$ means $B$ is positive semidefinite.
   \label{cor:ando_matrix}
   \lean{AndoConvexity_matrix}
   \leanok
-  \uses{def:hstar_algebra, def:lmul}
+  \uses{inst:hstar_matrix}
   Let $q, r \in \mathbb{R}$ with $1 \leq q \leq 2$, $r > 0$, and $q - r > 1$,
   and let $K \in M_n(\mathbb{C})$.
   The map

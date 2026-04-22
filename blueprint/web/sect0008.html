@@ -12,9 +12,8 @@
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Generalized Perspective Functions</title>
-<link rel="next" href="sect0007.html" title="Lieb’s Concavity and Ando’s Convexity" />
-<link rel="prev" href="sect0005.html" title="Löwner’s Theorem" />
+<title>Matrix Specializations</title>
+<link rel="prev" href="sect0007.html" title="Lieb’s Concavity and Ando’s Convexity" />
 <link rel="up" href="index.html" title="LiebConcavity" />
 <link rel="stylesheet" href="styles/theme-white.css" />
 <link rel="stylesheet" href="styles/amsthm.css" />
@@ -102,10 +101,10 @@
 <li class="">
   <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">Löwner’s Theorem</span></a>
  </li>
-<li class=" active current">
+<li class="">
   <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">Generalized Perspective Functions</span></a>
-  <span class="expand-toc">▼</span>
-  <ul class="sub-toc-1 active">
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
      <li class="">
   <a href="sect0006.html#a0000000033"><span class="toc_ref">6.1</span> <span class="toc_entry">Joint Convexity</span></a>
  </li>
@@ -140,7 +139,7 @@
 
   </ul>
  </li>
-<li class="">
+<li class=" active current">
   <a href="sect0008.html"><span class="toc_ref">8</span> <span class="toc_entry">Matrix Specializations</span></a>
  </li>
 <li ><a href="dep_graph_document.html">Dependency graph</a></li>
@@ -152,16 +151,15 @@
 
 
 <div class="main-text">
-<h1 id="a0000000007">6 Generalized Perspective Functions</h1>
-<p>This chapter establishes the joint convexity and joint concavity of the generalized perspective function \((f \triangle g)\) defined in Chapter&#160;1 (see Definition&#160;<a href="sect0002.html#def:gen_perspective">8</a>). The two main theorems — Theorem&#160;<a href="sect0006.html#thm:perspective_joint_convex">26</a> and Theorem&#160;<a href="sect0006.html#thm:perspective_joint_concave">27</a> — are abstract C\(^*\)-algebra results that simultaneously generalize Lieb’s concavity theorem and Ando’s convexity theorem. The power-mean corollaries that close the chapter are the specializations used in Chapter&#160;6. </p>
-<h1 id="a0000000033">6.1 Joint Convexity</h1>
-<div class="theorem_thmwrapper theorem-style-plain" id="thm:perspective_joint_convex">
-  <div class="theorem_thmheading">
-    <span class="theorem_thmcaption">
-    Theorem
+<h1 id="a0000000009">8 Matrix Specializations</h1>
+<p>The algebra \(M_n(\mathbb {C})\) of \(n \times n\) complex matrices, equipped with the Frobenius inner product \(\langle A, B \rangle = \operatorname {tr}(A^* B)\), is the canonical example of an H\(^*\)-algebra (Definition&#160;<a href="sect0002.html#def:hstar_algebra">9</a>). Under this identification, the inner product functional \(K \mapsto \operatorname {re}\langle K, T(K) \rangle \) appearing in the abstract results equals \(\operatorname {re}\operatorname {tr}(T(K) \cdot K^*)\), which for the operators arising in Lieb’s and Ando’s theorems takes the explicit trace form recorded below. This chapter collects the classical matrix-theoretic statements of Lieb’s concavity theorem, its extension, and Ando’s convexity theorem as corollaries of the abstract H\(^*\)-algebra results from the preceding chapter. </p>
+<div class="proposition_thmwrapper theorem-style-plain" id="inst:hstar_matrix">
+  <div class="proposition_thmheading">
+    <span class="proposition_thmcaption">
+    Proposition
     </span>
-    <span class="theorem_thmlabel">26</span>
-    <span class="theorem_thmtitle">Joint convexity of the generalized perspective function</span>
+    <span class="proposition_thmlabel">36</span>
+    <span class="proposition_thmtitle">H\(^*\)-algebra instance for matrices</span>
     <div class="thm_header_extras">
 
     
@@ -169,9 +167,9 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sect0006.html#thm:perspective_joint_convex">#</a>
+    <a class="icon proof" href="sect0008.html#inst:hstar_matrix">#</a>
     
-    <a class="icon proof" href="sect0006.html#a0000000076"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0008.html#a0000000097"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -187,13 +185,7 @@
         
         <ul class="uses">
           
-          <li><a href="sect0002.html#def:operator_convex">Definition 6</a></li>
-          
-          <li><a href="sect0002.html#def:operator_concave">Definition 7</a></li>
-          
-          <li><a href="sect0002.html#def:gen_perspective">Definition 8</a></li>
-          
-          <li><a href="sect0004.html#thm:jensen_sub">Theorem 21</a></li>
+          <li><a href="sect0002.html#def:hstar_algebra">Definition 9</a></li>
           
         </ul>
     
@@ -213,7 +205,7 @@
         
         <ul class="uses">
           
-          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/PerspectiveJointConvex" class="lean_decl">PerspectiveJointConvex</a></li>
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/FrobeniusMat.instHStarAlgebra" class="lean_decl">FrobeniusMat.instHStarAlgebra</a></li>
           
         </ul>
     
@@ -223,19 +215,9 @@
     
         </div>
   </div>
-  <div class="theorem_thmcontent">
-  <p>    Let \(\mathcal{B}\) be an ordered unital C\(^*\)-algebra, and let \(f, g : \mathbb {R} \to \mathbb {R}\) be continuous on \([0,\infty )\). Assume: </p>
-<ul class="itemize">
-  <li><p>\(f\) is operator convex on \([0,\infty )\) with \(f(0) \leq 0\), </p>
-</li>
-  <li><p>\(g\) is operator concave on \([0,\infty )\) with \(g(x) {\gt} 0\) for all \(x {\gt} 0\). </p>
-</li>
-</ul>
-<p> Then the map \((L, R) \mapsto (f \triangle g)(L, R)\) is jointly convex on the set </p>
-<div class="displaymath" id="a0000000077">
-  \[  \{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} .  \]
-</div>
-<div class="proof_wrapper" id="a0000000076">
+  <div class="proposition_thmcontent">
+  <p>    The algebra \(M_n(\mathbb {C})\) of \(n \times n\) complex matrices, equipped with the Frobenius inner product \(\langle A, B \rangle = \operatorname {tr}(A^* B)\), is an H\(^*\)-algebra. </p>
+<div class="proof_wrapper" id="a0000000097">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -243,33 +225,21 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  Fix pairs \((L_1, R_1)\) and \((L_2, R_2)\) in the domain and weights \(a, b \geq 0\) with \(a + b = 1\). Let \(R := a R_1 + b R_2\) and write \(G := \operatorname {cfc}(g)\) for the operator \(g\) applied via the continuous functional calculus. Define bounded operators </p>
-<div class="displaymath" id="a0000000078">
-  \[  T_1 := \bigl(a\,  G(R_1)\bigr)^{1/2} G(R)^{-1/2}, \qquad T_2 := \bigl(b\,  G(R_2)\bigr)^{1/2} G(R)^{-1/2}.  \]
-</div>
-<p> Because \(g\) is operator concave, the operator concavity inequality gives \(a\,  G(R_1) + b\,  G(R_2) \leq G(R)\), and therefore </p>
-<div class="displaymath" id="a0000000079">
-  \[  T_1^* T_1 + T_2^* T_2 = G(R)^{-1/2}(a\,  G(R_1) + b\,  G(R_2))G(R)^{-1/2} \leq \mathrm{id}.  \]
-</div>
-<p> That is, the pair \((T_1, T_2)\) is <em>sub-unital</em> in the sense required by the sub-unital Jensen inequality (Theorem&#160;<a href="sect0004.html#thm:jensen_sub">21</a>). Applying Theorem&#160;<a href="sect0004.html#thm:jensen_sub">21</a> to the operator-convex function \(f\) with arguments \(G(R)^{-1/2} L_i\,  G(R)^{-1/2}\) and operators \(T_i\), then conjugating by \(G(R)^{1/2}\) and collecting terms, yields </p>
-<div class="displaymath" id="a0000000080">
-  \[  a\, (f \triangle g)(L_1, R_1) + b\, (f \triangle g)(L_2, R_2) \; \geq \;  (f \triangle g)(aL_1 + bL_2,\,  R).  \]
-</div>
-<p> (The condition \(f(0) \leq 0\) absorbs the sub-unital defect term in Jensen’s inequality.) This is precisely the joint convexity inequality. </p>
+  <p> Direct verification of the H\(^*\)-algebra axioms using the standard Frobenius inner product and matrix multiplication. </p>
 
   </div>
 </div>
 
   </div>
 </div>
-<h1 id="a0000000034">6.2 Joint Concavity</h1>
-<div class="theorem_thmwrapper theorem-style-plain" id="thm:perspective_joint_concave">
-  <div class="theorem_thmheading">
-    <span class="theorem_thmcaption">
-    Theorem
+<p>Throughout this chapter, \(n\) is a positive integer, \(A, B \in M_n(\mathbb {C})\), \(K \in M_n(\mathbb {C})\) is arbitrary, \(A^q\) denotes the matrix power via the continuous functional calculus, \(\operatorname {PosDef}(A)\) means \(A\) is positive definite, and \(\operatorname {PosSemidef}(B)\) means \(B\) is positive semidefinite. </p>
+<div class="corollary_thmwrapper theorem-style-plain" id="cor:lieb_extension_matrix">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    Corollary
     </span>
-    <span class="theorem_thmlabel">27</span>
-    <span class="theorem_thmtitle">Joint concavity of the generalized perspective function</span>
+    <span class="corollary_thmlabel">37</span>
+    <span class="corollary_thmtitle">Lieb extension theorem — matrix form</span>
     <div class="thm_header_extras">
 
     
@@ -277,9 +247,9 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sect0006.html#thm:perspective_joint_concave">#</a>
+    <a class="icon proof" href="sect0008.html#cor:lieb_extension_matrix">#</a>
     
-    <a class="icon proof" href="sect0006.html#a0000000081"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0008.html#a0000000098"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -295,11 +265,9 @@
         
         <ul class="uses">
           
-          <li><a href="sect0002.html#def:operator_concave">Definition 7</a></li>
+          <li><a href="sect0008.html#inst:hstar_matrix">Proposition 36</a></li>
           
-          <li><a href="sect0002.html#def:gen_perspective">Definition 8</a></li>
-          
-          <li><a href="sect0006.html#thm:perspective_joint_convex">Theorem 26</a></li>
+          <li><a href="sect0007.html#thm:lieb_extension">Theorem 33</a></li>
           
         </ul>
     
@@ -319,7 +287,7 @@
         
         <ul class="uses">
           
-          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/PerspectiveJointConcave" class="lean_decl">PerspectiveJointConcave</a></li>
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebExtension_matrix" class="lean_decl">LiebExtension_matrix</a></li>
           
         </ul>
     
@@ -329,19 +297,13 @@
     
         </div>
   </div>
-  <div class="theorem_thmcontent">
-  <p>    Let \(\mathcal{B}\) be an ordered unital C\(^*\)-algebra, and let \(f, g : \mathbb {R} \to \mathbb {R}\) be continuous on \([0,\infty )\). Assume: </p>
-<ul class="itemize">
-  <li><p>\(f\) is operator concave on \([0,\infty )\) with \(f(0) \geq 0\), </p>
-</li>
-  <li><p>\(g\) is operator concave on \([0,\infty )\) with \(g(x) {\gt} 0\) for all \(x {\gt} 0\). </p>
-</li>
-</ul>
-<p> Then the map \((L, R) \mapsto (f \triangle g)(L, R)\) is jointly concave on the set </p>
-<div class="displaymath" id="a0000000082">
-  \[  \{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} .  \]
+  <div class="corollary_thmcontent">
+  <p>    Let \(p, q {\gt} 0\) with \(p + q \leq 1\), and let \(K \in M_n(\mathbb {C})\). The map </p>
+<div class="displaymath" id="a0000000099">
+  \[  (A,\,  B) \; \longmapsto \;  \operatorname {re}\operatorname {tr}\! \bigl(A^q\,  K\,  B^p\,  K^*\bigr)  \]
 </div>
-<div class="proof_wrapper" id="a0000000081">
+<p> is jointly concave on \(\bigl\{ (A, B) \in M_n(\mathbb {C}) \times M_n(\mathbb {C}) \mid \operatorname {PosDef}(A),\;  \operatorname {PosSemidef}(B)\bigr\} \). </p>
+<div class="proof_wrapper" id="a0000000098">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -349,22 +311,20 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  Observe that \((-f) \triangle g = -(f \triangle g)\) and that \(-f\) is operator convex with \((-f)(0) \leq 0\); apply Theorem&#160;<a href="sect0006.html#thm:perspective_joint_convex">26</a> to \(-f\) and negate to obtain joint concavity of \(f \triangle g\). </p>
+  <p>  Instantiate the abstract Lieb extension theorem (Theorem&#160;<a href="sect0007.html#thm:lieb_extension">33</a>) at the H\(^*\)-algebra \(M_n(\mathbb {C})\) with the Frobenius inner product, and use the identification \(\operatorname {re}\langle K,\,  A^q K B^p \rangle = \operatorname {re}\operatorname {tr}(A^q K B^p K^*)\) together with \(\operatorname {IsStrictlyPositive}(A) \leftrightarrow \operatorname {PosDef}(A)\) and \(0 \leq B \leftrightarrow \operatorname {PosSemidef}(B)\). </p>
 
   </div>
 </div>
 
   </div>
 </div>
-<h1 id="a0000000035">6.3 Power Mean Monotonicity</h1>
-<p>The <em>\((\alpha ,\beta )\)-operator power mean</em> is the special case of the generalized perspective function with \(f(t) = t^\alpha \) and \(g(t) = t^\beta \). By Löwner’s theorem (Chapter&#160;4), the exponent ranges determine operator convexity or concavity of these power functions, and the following corollaries follow at once. </p>
-<div class="theorem_thmwrapper theorem-style-plain" id="thm:power_mean_concave">
-  <div class="theorem_thmheading">
-    <span class="theorem_thmcaption">
-    Theorem
+<div class="corollary_thmwrapper theorem-style-plain" id="cor:lieb_matrix">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    Corollary
     </span>
-    <span class="theorem_thmlabel">28</span>
-    <span class="theorem_thmtitle">Joint concavity of the operator power mean</span>
+    <span class="corollary_thmlabel">38</span>
+    <span class="corollary_thmtitle">Lieb’s concavity theorem — matrix form</span>
     <div class="thm_header_extras">
 
     
@@ -372,9 +332,9 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sect0006.html#thm:power_mean_concave">#</a>
+    <a class="icon proof" href="sect0008.html#cor:lieb_matrix">#</a>
     
-    <a class="icon proof" href="sect0006.html#a0000000083"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0008.html#a0000000100"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -390,11 +350,9 @@
         
         <ul class="uses">
           
-          <li><a href="sect0002.html#def:gen_perspective">Definition 8</a></li>
+          <li><a href="sect0008.html#inst:hstar_matrix">Proposition 36</a></li>
           
-          <li><a href="sect0006.html#thm:perspective_joint_concave">Theorem 27</a></li>
-          
-          <li><a href="sect0005.html#thm:loewner_concave">Theorem 24</a></li>
+          <li><a href="sect0007.html#thm:lieb">Corollary 34</a></li>
           
         </ul>
     
@@ -414,7 +372,7 @@
         
         <ul class="uses">
           
-          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/PowerMeanJointlyConcave" class="lean_decl">PowerMeanJointlyConcave</a></li>
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebConcavity_matrix" class="lean_decl">LiebConcavity_matrix</a></li>
           
         </ul>
     
@@ -424,9 +382,13 @@
     
         </div>
   </div>
-  <div class="theorem_thmcontent">
-  <p>    For \(0 {\lt} \alpha \leq 1\) and \(0 {\lt} \beta \leq 1\), the map \((L, R) \mapsto ((\cdot )^\alpha \triangle (\cdot )^\beta )(L, R)\) is jointly concave on \(\{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} \). </p>
-<div class="proof_wrapper" id="a0000000083">
+  <div class="corollary_thmcontent">
+  <p>    Let \(0 {\lt} s {\lt} 1\), and let \(K \in M_n(\mathbb {C})\). The map </p>
+<div class="displaymath" id="a0000000101">
+  \[  (A,\,  B) \; \longmapsto \;  \operatorname {re}\operatorname {tr}\! \bigl(A^s\,  K\,  B^{1-s}\,  K^*\bigr)  \]
+</div>
+<p> is jointly concave on \(\bigl\{ (A, B) \in M_n(\mathbb {C}) \times M_n(\mathbb {C}) \mid \operatorname {PosDef}(A),\;  \operatorname {PosSemidef}(B)\bigr\} \). </p>
+<div class="proof_wrapper" id="a0000000100">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -434,20 +396,20 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  Both \(t \mapsto t^\alpha \) and \(t \mapsto t^\beta \) are operator concave on \([0,\infty )\) when the exponents lie in \((0,1]\) by Löwner’s theorem (Theorem&#160;<a href="sect0005.html#thm:loewner_concave">24</a>); apply Theorem&#160;<a href="sect0006.html#thm:perspective_joint_concave">27</a>. </p>
+  <p>  Instantiate the abstract Lieb concavity theorem (Theorem&#160;<a href="sect0007.html#thm:lieb">34</a>) at the H\(^*\)-algebra \(M_n(\mathbb {C})\) with the Frobenius inner product, and use the identification \(\operatorname {re}\langle K,\,  A^s K B^{1-s} \rangle = \operatorname {re}\operatorname {tr}(A^s K B^{1-s} K^*)\) together with \(\operatorname {IsStrictlyPositive}(A) \leftrightarrow \operatorname {PosDef}(A)\) and \(0 \leq B \leftrightarrow \operatorname {PosSemidef}(B)\). </p>
 
   </div>
 </div>
 
   </div>
 </div>
-<div class="theorem_thmwrapper theorem-style-plain" id="thm:power_mean_convex">
-  <div class="theorem_thmheading">
-    <span class="theorem_thmcaption">
-    Theorem
+<div class="corollary_thmwrapper theorem-style-plain" id="cor:ando_matrix">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    Corollary
     </span>
-    <span class="theorem_thmlabel">29</span>
-    <span class="theorem_thmtitle">Joint convexity of the operator power mean</span>
+    <span class="corollary_thmlabel">39</span>
+    <span class="corollary_thmtitle">Ando’s convexity theorem — matrix form</span>
     <div class="thm_header_extras">
 
     
@@ -455,9 +417,9 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sect0006.html#thm:power_mean_convex">#</a>
+    <a class="icon proof" href="sect0008.html#cor:ando_matrix">#</a>
     
-    <a class="icon proof" href="sect0006.html#a0000000084"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0008.html#a0000000102"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -473,13 +435,9 @@
         
         <ul class="uses">
           
-          <li><a href="sect0002.html#def:gen_perspective">Definition 8</a></li>
+          <li><a href="sect0008.html#inst:hstar_matrix">Proposition 36</a></li>
           
-          <li><a href="sect0006.html#thm:perspective_joint_convex">Theorem 26</a></li>
-          
-          <li><a href="sect0005.html#thm:loewner_convex">Theorem 22</a></li>
-          
-          <li><a href="sect0005.html#thm:loewner_concave">Theorem 24</a></li>
+          <li><a href="sect0007.html#thm:ando">Theorem 35</a></li>
           
         </ul>
     
@@ -499,7 +457,7 @@
         
         <ul class="uses">
           
-          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/PowerMeanJointlyConvex" class="lean_decl">PowerMeanJointlyConvex</a></li>
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/AndoConvexity_matrix" class="lean_decl">AndoConvexity_matrix</a></li>
           
         </ul>
     
@@ -509,9 +467,13 @@
     
         </div>
   </div>
-  <div class="theorem_thmcontent">
-  <p>    For \(1 \leq \alpha \leq 2\) and \(0 {\lt} \beta \leq 1\), the map \((L, R) \mapsto ((\cdot )^\alpha \triangle (\cdot )^\beta )(L, R)\) is jointly convex on \(\{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} \). </p>
-<div class="proof_wrapper" id="a0000000084">
+  <div class="corollary_thmcontent">
+  <p>    Let \(q, r \in \mathbb {R}\) with \(1 \leq q \leq 2\), \(r {\gt} 0\), and \(q - r {\gt} 1\), and let \(K \in M_n(\mathbb {C})\). The map </p>
+<div class="displaymath" id="a0000000103">
+  \[  (A,\,  B) \; \longmapsto \;  \operatorname {re}\operatorname {tr}\! \bigl(A^{-r}\,  K\,  B^q\,  K^*\bigr)  \]
+</div>
+<p> is jointly convex on \(\bigl\{ (A, B) \in M_n(\mathbb {C}) \times M_n(\mathbb {C}) \mid \operatorname {PosDef}(A),\;  \operatorname {PosSemidef}(B)\bigr\} \). </p>
+<div class="proof_wrapper" id="a0000000102">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -519,13 +481,27 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  For \(\alpha \in [1,2]\) the function \(t \mapsto t^\alpha \) is operator convex on \([0,\infty )\) with \(0^\alpha = 0 \leq 0\) (Theorem&#160;<a href="sect0005.html#thm:loewner_convex">22</a>), and for \(\beta \in (0,1]\) the function \(t \mapsto t^\beta \) is operator concave (Theorem&#160;<a href="sect0005.html#thm:loewner_concave">24</a>); apply Theorem&#160;<a href="sect0006.html#thm:perspective_joint_convex">26</a>. </p>
+  <p>  Instantiate the abstract Ando convexity theorem (Theorem&#160;<a href="sect0007.html#thm:ando">35</a>) at the H\(^*\)-algebra \(M_n(\mathbb {C})\) with the Frobenius inner product, and use the identification \(\operatorname {re}\langle K,\,  A^{-r} K B^q \rangle = \operatorname {re}\operatorname {tr}(A^{-r} K B^q K^*)\) together with \(\operatorname {IsStrictlyPositive}(A) \leftrightarrow \operatorname {PosDef}(A)\) and \(0 \leq B \leftrightarrow \operatorname {PosSemidef}(B)\). </p>
 
   </div>
 </div>
 
   </div>
 </div>
+<dl class="bibliography">
+  <dt><a name="Ambrose1945">1</a></dt>
+  <dd><p>W.&#160;Ambrose, <em>Structure theorems for a special class of Banach algebras</em>, Trans. Amer. Math. Soc. <b class="bfseries">57</b> (1945), 364–386. </p>
+</dd>
+  <dt><a name="HansenPedersen1982">2</a></dt>
+  <dd><p>F.&#160;Hansen and G.&#160;K.&#160;Pedersen, <em>Jensen’s inequality for operators and Löwner’s theorem</em>, Math. Ann. <b class="bfseries">258</b> (1982), 229–241. </p>
+</dd>
+  <dt><a name="LiWu2012">3</a></dt>
+  <dd><p>X.&#160;Li and W.&#160;Wu, <em>Operator Jensen’s inequality on C\(^*\)-algebras</em>, Acta Math. Sinica <b class="bfseries">30</b> (2013), 35–50. </p>
+</dd>
+  <dt><a name="Loewner1934">4</a></dt>
+  <dd><p>K.&#160;Löwner, <em>Über monotone Matrixfunktionen</em>, Math. Z. <b class="bfseries">38</b> (1934), 177–216. </p>
+</dd>
+</dl>
 
 </div> <!--main-text -->
 </div> <!-- content-wrapper -->
@@ -537,11 +513,9 @@
 
   <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
 
-  <a href="sect0005.html" title="Löwner’s Theorem"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+  <a href="sect0007.html" title="Lieb’s Concavity and Ando’s Convexity"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
   <a href="index.html" title="LiebConcavity"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
-</a>
-  <a href="sect0007.html" title="Lieb’s Concavity and Ando’s Convexity"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>
 </nav>
 

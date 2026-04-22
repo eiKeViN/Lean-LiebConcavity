@@ -71,7 +71,7 @@ The canonical example is $H = M_n(\mathbb{C})$ with the Frobenius inner product
 $\langle A, B \rangle = \operatorname{tr}(A^* B)$.
 
 \begin{definition}[Left and right multiplication operators]
-  \label{def:lmul}
+  \label{def:mul_operators}
   \lean{Lmul}
   \leanok
   For an H$^*$-algebra $H$ and an element $a \in H$, the \emph{left multiplication
@@ -92,10 +92,10 @@ $a \mapsto R_a$ is a $*$-homomorphism $H \to (H \to_L H)^{\mathrm{op}}$
 (an anti-homomorphism on $H$, since $R_{ab} = R_b \circ R_a$).
 
 \begin{proposition}[CFC commutativity of $L$ and $R$]
-  \label{prop:lmul_map_cfc}
+  \label{prop:mul_operators_cfc}
   \lean{Lmul_map_cfc, Rmul_map_cfc}
   \leanok
-  \uses{def:lmul, def:hstar_algebra}
+  \uses{def:mul_operators, def:hstar_algebra}
   Let $H$ be an H$^*$-algebra, $a \in H$ self-adjoint, and $f : \mathbb{R} \to \mathbb{R}$
   continuous on $\sigma(a)$. Then:
   \[
@@ -110,11 +110,34 @@ $a \mapsto R_a$ is a $*$-homomorphism $H \to (H \to_L H)^{\mathrm{op}}$
   \]
   whenever $a \geq 0$ (for $r \geq 0$) or $a$ is strictly positive (for all $r$).
   \begin{proof}
-    \proves{prop:lmul_map_cfc}
+    \proves{prop:mul_operators_cfc}
     \leanok
+    \uses{prop:opstar_cfc}
     The maps $a \mapsto L_a$ and $a \mapsto R_a$ are star algebra homomorphisms into
     $(H \to_L H)$ and $(H \to_L H)^{\mathrm{op}}$ respectively, so the CFC
     intertwining property of star algebra homomorphisms gives $L_{f(a)} = f(L_a)$
     and $R_{f(a)} = f(R_a)$ directly.
+    For the $R_a$ branch, this uses the \texttt{opStar} isomorphism
+    (Proposition~\ref{prop:opstar_cfc}) to transport CFC from $A$ to $A^{\mathrm{op}}$.
   \end{proof}
 \end{proposition}
+
+\begin{theorem}[Generalized perspective at commuting rpow pair]
+  \label{thm:perspective_rpow_commute}
+  \lean{GenPerspective_of_rpow_commute}
+  \leanok
+  \uses{def:gen_perspective, lem:mul_rpow_commute}
+  Let $\mathcal{B}$ be an ordered unital C$^*$-algebra, $f, g : \mathbb{R} \to \mathbb{R}$,
+  and $L, R \in \mathcal{B}$ with $L$ strictly positive and $R \geq 0$.
+  If $L$ and $R$ commute, then
+  \[
+    (f \triangle g)(L, R) \;=\; R^f \cdot L^g,
+  \]
+  where $R^f$ and $L^g$ denote CFC powers.
+  \begin{proof}
+    \proves{thm:perspective_rpow_commute}
+    \leanok
+    Direct computation from the definition of the generalized perspective,
+    using \ref{lem:mul_rpow_commute} to simplify the commuting power expression.
+  \end{proof}
+\end{theorem}

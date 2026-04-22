@@ -38,8 +38,6 @@ noncomputable def FourierMatrix (ζ : ℂ) (A : Type*) [Ring A] [Algebra ℂ A]
 
 variable {ζ : ℂ} {m : ℕ}
 
-/-! ### Phase 1: Scalar helpers -/
-
 section Scalar
 
 variable {n : ℕ}
@@ -76,7 +74,7 @@ end Scalar
 
 variable {A : Type*} [Ring A] [StarRing A] [Algebra ℂ A] [StarModule ℂ A]
 
-private lemma smul_conj_mul (hζ : IsPrimitiveRoot ζ m) (hm : m ≠ 0)
+lemma smul_conj_mul (hζ : IsPrimitiveRoot ζ m) (hm : m ≠ 0)
     {a b : ℕ} {x : A} :
     star (ζ ^ a • 1) * x * (ζ ^ b • 1) = (ζ ^ ((b : ℤ) - (a : ℤ))) • x := by
   simp only [star_smul, star_one]
@@ -111,7 +109,7 @@ end Unitary
 
 section Fourier
 
-private lemma Fin_dvd_iff {i j : Fin m} :
+lemma Fin_dvd_iff {i j : Fin m} :
     (m : ℤ) ∣ (j.val - i.val) ↔ i = j := by
   constructor
   · intro hdvd
@@ -138,7 +136,7 @@ theorem geom_sum_primitive_root (hζ : IsPrimitiveRoot ζ m) (d : ℤ) :
 
 /-- Entry formula: conjugating `M` by `FourierMatrix ζ A k` scales entry `(i, j)` by
 `ζ^(k · (j − i))`. -/
-theorem FourierMatrix_conj_apply (hζ : IsPrimitiveRoot ζ m) (hm : m ≠ 0)
+lemma FourierMatrix_conj_apply (hζ : IsPrimitiveRoot ζ m) (hm : m ≠ 0)
     (M : Matrix (Fin m) (Fin m) A) {i j k : Fin m} :
     (star (FourierMatrix ζ A k) * M * FourierMatrix ζ A k) i j =
       ζ ^ (k.val * ((j.val : ℤ) - i.val)) • M i j := by

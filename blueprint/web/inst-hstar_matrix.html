@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Matrix Specializations</title>
+<link rel="prev" href="sect0007.html" title="Lieb’s Concavity and Ando’s Convexity" />
+<link rel="up" href="index.html" title="LiebConcavity" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">LiebConcavity</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">Infrastructure</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000009"><span class="toc_ref">1.1</span> <span class="toc_entry">OpStar Isomorphism</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000013"><span class="toc_ref">1.2</span> <span class="toc_entry">Unitary Conjugation</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000016"><span class="toc_ref">1.3</span> <span class="toc_entry">Diagonal CFC</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000021"><span class="toc_ref">1.4</span> <span class="toc_entry">Reindex as Star Algebra Equivalence</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">Definitions</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0002.html#a0000000023"><span class="toc_ref">2.1</span> <span class="toc_entry">Operator Convexity and Concavity</span></a>
+ </li>
+<li class="">
+  <a href="sect0002.html#a0000000024"><span class="toc_ref">2.2</span> <span class="toc_entry">Generalized Perspective Function</span></a>
+ </li>
+<li class="">
+  <a href="sect0002.html#a0000000025"><span class="toc_ref">2.3</span> <span class="toc_entry">H\(^*\)-Algebra</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">Supporting Results</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0003.html#a0000000026"><span class="toc_ref">3.1</span> <span class="toc_entry">Conjugate-Weighted Sums</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000027"><span class="toc_ref">3.2</span> <span class="toc_entry">Real Powers in C\(^*\)-Algebras</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000028"><span class="toc_ref">3.3</span> <span class="toc_entry">Fourier Averaging</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000029"><span class="toc_ref">3.4</span> <span class="toc_entry">Inner Product Monotonicity</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">Jensen’s Operator Inequality</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0004.html#a0000000030"><span class="toc_ref">4.1</span> <span class="toc_entry">Main Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0004.html#a0000000031"><span class="toc_ref">4.2</span> <span class="toc_entry">Sub-Unital Variant</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">Löwner’s Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">Generalized Perspective Functions</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html#a0000000032"><span class="toc_ref">6.1</span> <span class="toc_entry">Joint Convexity</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000033"><span class="toc_ref">6.2</span> <span class="toc_entry">Joint Concavity</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000034"><span class="toc_ref">6.3</span> <span class="toc_entry">Power Mean Monotonicity</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">Lieb’s Concavity and Ando’s Convexity</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0007.html#a0000000035"><span class="toc_ref">7.1</span> <span class="toc_entry">The Power Mean Evaluated at a Vector</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000036"><span class="toc_ref">7.2</span> <span class="toc_entry">General H\(^*\)-Algebra Versions</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000037"><span class="toc_ref">7.3</span> <span class="toc_entry">Lieb’s Extension Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000038"><span class="toc_ref">7.4</span> <span class="toc_entry">Lieb’s Concavity Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000039"><span class="toc_ref">7.5</span> <span class="toc_entry">Ando’s Convexity Theorem</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="inst-hstar_matrix.html"><span class="toc_ref">8</span> <span class="toc_entry">Matrix Specializations</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="inst:hstar_matrix">8 Matrix Specializations</h1>
+<p>The algebra \(M_n(\mathbb {C})\) of \(n \times n\) complex matrices, equipped with the Frobenius inner product \(\langle A, B \rangle = \operatorname {tr}(A^* B)\), is the canonical example of an H\(^*\)-algebra (Definition&#160;<a href="sect0002.html#def:hstar_algebra">9</a>). Under this identification, the inner product functional \(K \mapsto \operatorname {re}\langle K, T(K) \rangle \) appearing in the abstract results equals \(\operatorname {re}\operatorname {tr}(T(K) \cdot K^*)\), which for the operators arising in Lieb’s and Ando’s theorems takes the explicit trace form recorded below. This chapter collects the classical matrix-theoretic statements of Lieb’s concavity theorem, its extension, and Ando’s convexity theorem as corollaries of the abstract H\(^*\)-algebra results from the preceding chapter. </p>
+<p>[H\(^*\)-algebra instance for matrices]    The algebra \(M_n(\mathbb {C})\) of \(n \times n\) complex matrices, equipped with the Frobenius inner product \(\langle A, B \rangle = \operatorname {tr}(A^* B)\), is an H\(^*\)-algebra. </p>
+<div class="proof_wrapper" id="a0000000096">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Direct verification of the H\(^*\)-algebra axioms using the standard Frobenius inner product and matrix multiplication. </p>
+
+  </div>
+</div>
+
+<p>Throughout this chapter, \(n\) is a positive integer, \(A, B \in M_n(\mathbb {C})\), \(K \in M_n(\mathbb {C})\) is arbitrary, \(A^q\) denotes the matrix power via the continuous functional calculus, \(\operatorname {PosDef}(A)\) means \(A\) is positive definite, and \(\operatorname {PosSemidef}(B)\) means \(B\) is positive semidefinite. </p>
+<div class="corollary_thmwrapper theorem-style-plain" id="cor:lieb_extension_matrix">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    Corollary
+    </span>
+    <span class="corollary_thmlabel">36</span>
+    <span class="corollary_thmtitle">Lieb extension theorem — matrix form</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="inst-hstar_matrix.html#cor:lieb_extension_matrix">#</a>
+    
+    <a class="icon proof" href="inst-hstar_matrix.html#a0000000097"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="inst-hstar_matrix.html"> 8</a></li>
+          
+          <li><a href="sect0007.html#thm:lieb_extension">Theorem 33</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebExtension_matrix" class="lean_decl">LiebExtension_matrix</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="corollary_thmcontent">
+  <p>    Let \(p, q {\gt} 0\) with \(p + q \leq 1\), and let \(K \in M_n(\mathbb {C})\). The map </p>
+<div class="displaymath" id="a0000000098">
+  \[  (A,\,  B) \; \longmapsto \;  \operatorname {re}\operatorname {tr}\! \bigl(A^q\,  K\,  B^p\,  K^*\bigr)  \]
+</div>
+<p> is jointly concave on \(\bigl\{ (A, B) \in M_n(\mathbb {C}) \times M_n(\mathbb {C}) \mid \operatorname {PosDef}(A),\;  \operatorname {PosSemidef}(B)\bigr\} \). </p>
+<div class="proof_wrapper" id="a0000000097">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>  Instantiate the abstract Lieb extension theorem (Theorem&#160;<a href="sect0007.html#thm:lieb_extension">33</a>) at the H\(^*\)-algebra \(M_n(\mathbb {C})\) with the Frobenius inner product, and use the identification \(\operatorname {re}\langle K,\,  A^q K B^p \rangle = \operatorname {re}\operatorname {tr}(A^q K B^p K^*)\) together with \(\operatorname {IsStrictlyPositive}(A) \leftrightarrow \operatorname {PosDef}(A)\) and \(0 \leq B \leftrightarrow \operatorname {PosSemidef}(B)\). </p>
+
+  </div>
+</div>
+
+  </div>
+</div>
+<div class="corollary_thmwrapper theorem-style-plain" id="cor:lieb_matrix">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    Corollary
+    </span>
+    <span class="corollary_thmlabel">37</span>
+    <span class="corollary_thmtitle">Lieb’s concavity theorem — matrix form</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="inst-hstar_matrix.html#cor:lieb_matrix">#</a>
+    
+    <a class="icon proof" href="inst-hstar_matrix.html#a0000000099"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="inst-hstar_matrix.html"> 8</a></li>
+          
+          <li><a href="sect0007.html#thm:lieb">Corollary 34</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/LiebConcavity_matrix" class="lean_decl">LiebConcavity_matrix</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="corollary_thmcontent">
+  <p>    Let \(0 {\lt} s {\lt} 1\), and let \(K \in M_n(\mathbb {C})\). The map </p>
+<div class="displaymath" id="a0000000100">
+  \[  (A,\,  B) \; \longmapsto \;  \operatorname {re}\operatorname {tr}\! \bigl(A^s\,  K\,  B^{1-s}\,  K^*\bigr)  \]
+</div>
+<p> is jointly concave on \(\bigl\{ (A, B) \in M_n(\mathbb {C}) \times M_n(\mathbb {C}) \mid \operatorname {PosDef}(A),\;  \operatorname {PosSemidef}(B)\bigr\} \). </p>
+<div class="proof_wrapper" id="a0000000099">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>  Instantiate the abstract Lieb concavity theorem (Theorem&#160;<a href="sect0007.html#thm:lieb">34</a>) at the H\(^*\)-algebra \(M_n(\mathbb {C})\) with the Frobenius inner product, and use the identification \(\operatorname {re}\langle K,\,  A^s K B^{1-s} \rangle = \operatorname {re}\operatorname {tr}(A^s K B^{1-s} K^*)\) together with \(\operatorname {IsStrictlyPositive}(A) \leftrightarrow \operatorname {PosDef}(A)\) and \(0 \leq B \leftrightarrow \operatorname {PosSemidef}(B)\). </p>
+
+  </div>
+</div>
+
+  </div>
+</div>
+<div class="corollary_thmwrapper theorem-style-plain" id="cor:ando_matrix">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    Corollary
+    </span>
+    <span class="corollary_thmlabel">38</span>
+    <span class="corollary_thmtitle">Ando’s convexity theorem — matrix form</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="inst-hstar_matrix.html#cor:ando_matrix">#</a>
+    
+    <a class="icon proof" href="inst-hstar_matrix.html#a0000000101"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="inst-hstar_matrix.html"> 8</a></li>
+          
+          <li><a href="sect0007.html#thm:ando">Theorem 35</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://eiKeViN.github.io/Lean-LiebConcavity/docs/find/#doc/AndoConvexity_matrix" class="lean_decl">AndoConvexity_matrix</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="corollary_thmcontent">
+  <p>    Let \(q, r \in \mathbb {R}\) with \(1 \leq q \leq 2\), \(r {\gt} 0\), and \(q - r {\gt} 1\), and let \(K \in M_n(\mathbb {C})\). The map </p>
+<div class="displaymath" id="a0000000102">
+  \[  (A,\,  B) \; \longmapsto \;  \operatorname {re}\operatorname {tr}\! \bigl(A^{-r}\,  K\,  B^q\,  K^*\bigr)  \]
+</div>
+<p> is jointly convex on \(\bigl\{ (A, B) \in M_n(\mathbb {C}) \times M_n(\mathbb {C}) \mid \operatorname {PosDef}(A),\;  \operatorname {PosSemidef}(B)\bigr\} \). </p>
+<div class="proof_wrapper" id="a0000000101">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>  Instantiate the abstract Ando convexity theorem (Theorem&#160;<a href="sect0007.html#thm:ando">35</a>) at the H\(^*\)-algebra \(M_n(\mathbb {C})\) with the Frobenius inner product, and use the identification \(\operatorname {re}\langle K,\,  A^{-r} K B^q \rangle = \operatorname {re}\operatorname {tr}(A^{-r} K B^q K^*)\) together with \(\operatorname {IsStrictlyPositive}(A) \leftrightarrow \operatorname {PosDef}(A)\) and \(0 \leq B \leftrightarrow \operatorname {PosSemidef}(B)\). </p>
+
+  </div>
+</div>
+
+  </div>
+</div>
+<dl class="bibliography">
+  <dt><a name="Ambrose1945">1</a></dt>
+  <dd><p>W.&#160;Ambrose, <em>Structure theorems for a special class of Banach algebras</em>, Trans. Amer. Math. Soc. <b class="bfseries">57</b> (1945), 364–386. </p>
+</dd>
+  <dt><a name="HansenPedersen1982">2</a></dt>
+  <dd><p>F.&#160;Hansen and G.&#160;K.&#160;Pedersen, <em>Jensen’s inequality for operators and Löwner’s theorem</em>, Math. Ann. <b class="bfseries">258</b> (1982), 229–241. </p>
+</dd>
+  <dt><a name="LiWu2012">3</a></dt>
+  <dd><p>X.&#160;Li and W.&#160;Wu, <em>Operator Jensen’s inequality on C\(^*\)-algebras</em>, Acta Math. Sinica <b class="bfseries">30</b> (2013), 35–50. </p>
+</dd>
+  <dt><a name="Loewner1934">4</a></dt>
+  <dd><p>K.&#160;Löwner, <em>Über monotone Matrixfunktionen</em>, Math. Z. <b class="bfseries">38</b> (1934), 177–216. </p>
+</dd>
+</dl>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sect0007.html" title="Lieb’s Concavity and Ando’s Convexity"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="LiebConcavity"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

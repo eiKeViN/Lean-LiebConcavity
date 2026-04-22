@@ -1,11 +1,12 @@
 % Chapter 2: Supporting Results
 \chapter{Supporting Results}
 
-This chapter collects two auxiliary results that are used in later chapters but do not
-fit naturally into the main proof chain.  The first is a spectral containment lemma for
-conjugate-weighted sums, which is fully proved in Lean.  The second is a commutativity
-identity for real powers in a C$^*$-algebra, which is currently admitted pending
-upstream Mathlib infrastructure.
+This chapter collects auxiliary results used in later chapters.
+The first is a spectral containment lemma for conjugate-weighted sums.
+The second is a commutativity identity for real powers in a C$^*$-algebra.
+The third section develops the Fourier averaging machinery used in the proof
+of Jensen's operator inequality.
+The fourth records an inner product monotonicity lemma used in the Lieb and Ando results.
 
 \section{Conjugate-Weighted Sums}
 
@@ -55,5 +56,103 @@ upstream Mathlib infrastructure.
     \mathrm{cfc}(f, b)$ whenever $a$ and $b$ commute and $f$ is the function
     $t \mapsto t^r$.  This CFC multiplicativity for commuting pairs is not yet
     available in Mathlib, so the lemma is currently admitted as an axiom.
+  \end{proof}
+\end{lemma}
+
+\section{Fourier Averaging}
+
+Given a primitive $m$-th root of unity $\zeta \in \mathbb{C}$ (with $m \neq 0$),
+the Fourier diagonal matrices $V_k = \operatorname{diag}(\zeta^{ki})_{i=0}^{m-1}$
+for $k = 0, \ldots, m-1$ are unitaries, and their conjugate average extracts the
+diagonal of any matrix.
+
+\begin{definition}[Fourier diagonal matrix]
+  \label{def:fourier_matrix}
+  \lean{FourierMatrix}
+  \leanok
+  Let $\zeta \in \mathbb{C}$ and $A$ a $\mathbb{C}$-algebra.
+  For $m \in \mathbb{N}$ and $k : \operatorname{Fin}\,m$, the \emph{$k$-th Fourier
+  diagonal matrix} is
+  \[
+    V_k \;:=\; \operatorname{diag}\!\bigl((\zeta^{k\cdot i} : \mathbb{C}) \cdot 1_A\bigr)_{i=0}^{m-1}
+    \;\in\; M_m(A).
+  \]
+\end{definition}
+
+\begin{theorem}[Fourier matrix is unitary]
+  \label{thm:fourier_unitary}
+  \lean{FourierMatrix_mem_unitary}
+  \leanok
+  \uses{def:fourier_matrix}
+  If $\zeta$ is a primitive $m$-th root of unity and $m \neq 0$, then $V_k \in
+  \operatorname{unitary}(M_m(A))$ for every $k$.
+  \begin{proof}
+    \proves{thm:fourier_unitary}
+    \leanok
+    Entry-wise computation: $V_k^* V_k = I$ and $V_k V_k^* = I$ follow from
+    $\overline{\zeta^{ki}} \cdot \zeta^{ki} = 1$, which holds because $|\zeta| = 1$.
+  \end{proof}
+\end{theorem}
+
+\begin{theorem}[DFT orthogonality]
+  \label{thm:geom_sum}
+  \lean{geom_sum_primitive_root}
+  \leanok
+  Let $\zeta$ be a primitive $m$-th root of unity.  For any $d \in \mathbb{Z}$,
+  \[
+    \sum_{k=0}^{m-1} \zeta^{k\cdot d}
+    \;=\;
+    \begin{cases} m & \text{if } m \mid d, \\ 0 & \text{otherwise.} \end{cases}
+  \]
+  \begin{proof}
+    \proves{thm:geom_sum}
+    \leanok
+    Standard geometric series argument: if $m \nmid d$ then $\zeta^d \neq 1$, and the
+    sum equals $(\zeta^{md} - 1)/(\zeta^d - 1) = 0$.
+  \end{proof}
+\end{theorem}
+
+\begin{theorem}[Fourier averaging]
+  \label{thm:fourier_avg}
+  \lean{FourierAvg_eq_diagonal}
+  \leanok
+  \uses{def:fourier_matrix, thm:fourier_unitary, thm:geom_sum}
+  Let $\zeta$ be a primitive $m$-th root of unity, $m \neq 0$, and
+  $M \in M_m(A)$.  Then
+  \[
+    \frac{1}{m} \sum_{k=0}^{m-1} V_k^*\, M\, V_k
+    \;=\;
+    \operatorname{diagonal}(\operatorname{diag}(M)).
+  \]
+  \begin{proof}
+    \proves{thm:fourier_avg}
+    \leanok
+    \uses{prop:reindex_star_alg}
+    The $(i,j)$-entry of $\sum_k V_k^* M V_k$ equals
+    $M_{ij} \cdot \sum_k \zeta^{k(j-i)}$, which by \ref{thm:geom_sum} is
+    $m \cdot M_{ij}$ if $i = j$ and $0$ otherwise.
+    Dividing by $m$ gives $\operatorname{diagonal}(\operatorname{diag}(M))$.
+    The bridge between the $\operatorname{Fin}(n) \oplus \operatorname{Unit}$
+    index in Jensen's proof and $\operatorname{Fin}(n+1)$ used here goes
+    via \ref{prop:reindex_star_alg}.
+  \end{proof}
+\end{theorem}
+
+\section{Inner Product Monotonicity}
+
+\begin{lemma}[Monotonicity of the real inner product functional]
+  \label{lem:reapply_inner_mono}
+  \lean{reApplyInnerSelf_mono_right}
+  \leanok
+  Let $E$ be a Hilbert space over $\mathbb{k}$ and $S, T : E \to_L E$ bounded operators
+  with $S \leq T$.  Then for all $x \in E$,
+  \[
+    \operatorname{re}\langle x,\, S x\rangle \;\leq\; \operatorname{re}\langle x,\, T x\rangle.
+  \]
+  \begin{proof}
+    \proves{lem:reapply_inner_mono}
+    \leanok
+    $T - S \geq 0$ implies $\operatorname{re}\langle x, (T-S)x\rangle \geq 0$ by
+    positivity of the sesquilinear form, and linearity gives the result.
   \end{proof}
 \end{lemma}

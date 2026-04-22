@@ -52,6 +52,7 @@ Lemmas missing from Mathlib, organized by topic.
 - **`StarAlgHom/Diagonal.lean`** — `Matrix.diagonal` upgraded to a `StarAlgHom`; CFC on diagonal matrices; C\*-algebra instances on `Matrix n n A` scoped under `MatCStar`.
 - **`StarAlgHom/Unitary.lean`** — CFC commutes with unitary conjugation, at both general and C\*-algebra levels.
 - **`StarAlgHom/OpStar.lean`** — Bundled the map `a ↦ op(star a)` as a star-algebra equivalence `A ≃⋆ₐ[R] Aᵐᵒᵖ`; CFC and rpow commutativity across `MulOpposite`.
+- **`StarAlgHom/Reindex.lean`** — `Matrix.reindex e e` upgraded through the full equivalence hierarchy: `reindexRingEquiv` (`≃+*`), `reindexStarRingEquiv` (`≃⋆+*`), `reindexStarAlgEquiv` (`≃⋆ₐ[R]`).
 
 ## Sorries
 

@@ -8,13 +8,40 @@ Chapter~5 at the pair of bounded operators $(R_B, L_A)$ acting on $H$,
 and then reading off the resulting joint concavity or convexity of the
 real-part inner product functional $x \mapsto \operatorname{re}\langle x,\, (\cdot)\, x\rangle$.
 
+\section{The Power Mean Evaluated at a Vector}
+
+\begin{proposition}[Simplified formula for the operator power mean]
+  \label{prop:powermean_apply}
+  \lean{PowerMean_apply}
+  \leanok
+  \uses{thm:perspective_rpow_commute}
+  Let $H$ be an H$^*$-algebra, $\alpha, \beta \in \mathbb{R}$ with $\alpha \geq 0$ and
+  $\beta \neq 0$.  Let $A$ be strictly positive and $B \geq 0$.  Then for all $x \in H$,
+  \[
+    \Pi_{\alpha,\beta}(L_A, R_B)\,x \;=\; A^{\beta(1-\alpha)}\, x\, B^\alpha.
+  \]
+  \begin{proof}
+    \proves{prop:powermean_apply}
+    \leanok
+    \uses{thm:perspective_rpow_commute}
+    The power mean is defined as $\Pi_{\alpha,\beta}(L_A, R_B) =
+    ((\cdot)^\alpha \triangle (\cdot)^\beta)(R_B, L_A)$.
+    Since $L_A$ and $R_B$ commute and $R_B \geq 0$, $L_A$ is strictly positive,
+    the generalized perspective simplifies via \texttt{GenPerspective\_of\_rpow\_commute}
+    (which requires Lemma~\ref{lem:mul_rpow_commute}), giving
+    $(R_B)^\alpha \cdot (L_A)^{\beta(1-\alpha)}$.
+    Evaluating at $x$ and using $L_A^r\,x = A^r x$ and $R_B^r\,x = x\,B^r$
+    yields $A^{\beta(1-\alpha)}\,x\,B^\alpha$.
+  \end{proof}
+\end{proposition}
+
 \section{General H\texorpdfstring{$^*$}{*}-Algebra Versions}
 
 \begin{theorem}[Lieb concavity --- general form]
   \label{thm:lieb_general}
   \lean{LiebConcavity_general}
   \leanok
-  \uses{def:hstar_algebra, def:lmul}
+  \uses{def:hstar_algebra, def:mul_operators}
   Let $H$ be an H$^*$-algebra, $\alpha, \beta \in (0,1]$, and $x \in H$.
   Then the map
   \[
@@ -26,12 +53,12 @@ real-part inner product functional $x \mapsto \operatorname{re}\langle x,\, (\cd
   \begin{proof}
     \proves{thm:lieb_general}
     \leanok
-    \uses{thm:power_mean_concave, prop:lmul_map_cfc}
+    \uses{thm:power_mean_concave, prop:powermean_apply, lem:reapply_inner_mono}
     Consider the operator power mean $\Pi_{\alpha,\beta}(L_A, R_B)$ acting on
     $H \to_L H$, which by definition is the generalized perspective of the
     $\alpha$-power mean at the pair $(L_A, R_B)$.
     By the CFC commutativity of left and right multiplication
-    (Proposition~\ref{prop:lmul_map_cfc}), we have
+    (Proposition~\ref{prop:mul_operators_cfc}), we have
     $L_{A^{\beta(1-\alpha)}} = (L_A)^{\beta(1-\alpha)}$ and
     $R_{B^\alpha} = (R_B)^\alpha$, so the power mean evaluated at $x$ equals
     $A^{\beta(1-\alpha)}\, x\, B^\alpha$.
@@ -47,7 +74,7 @@ real-part inner product functional $x \mapsto \operatorname{re}\langle x,\, (\cd
   \label{thm:ando_general}
   \lean{AndoConvexity_general}
   \leanok
-  \uses{def:hstar_algebra, def:lmul}
+  \uses{def:hstar_algebra, def:mul_operators}
   Let $H$ be an H$^*$-algebra, $\alpha \in [1,2]$, $\beta \in (0,1]$, and $x \in H$.
   Then the map
   \[
@@ -59,9 +86,9 @@ real-part inner product functional $x \mapsto \operatorname{re}\langle x,\, (\cd
   \begin{proof}
     \proves{thm:ando_general}
     \leanok
-    \uses{thm:power_mean_convex, prop:lmul_map_cfc}
+    \uses{thm:power_mean_convex, prop:powermean_apply, lem:reapply_inner_mono}
     The argument is analogous to Theorem~\ref{thm:lieb_general}.
-    The same CFC commutativity identities (Proposition~\ref{prop:lmul_map_cfc})
+    The same CFC commutativity identities (Proposition~\ref{prop:mul_operators_cfc})
     identify the power mean evaluated at $x$ with
     $A^{\beta(1-\alpha)}\, x\, B^\alpha$.
     Since $\alpha \in [1,2]$, the power mean is jointly convex in operator order
@@ -77,7 +104,7 @@ real-part inner product functional $x \mapsto \operatorname{re}\langle x,\, (\cd
   \label{thm:lieb_extension}
   \lean{LiebExtension}
   \leanok
-  \uses{def:hstar_algebra, def:lmul}
+  \uses{def:hstar_algebra, def:mul_operators}
   Let $H$ be an H$^*$-algebra, $p, q > 0$ with $p + q \leq 1$, and $x \in H$.
   Then the map
   \[
@@ -105,7 +132,7 @@ real-part inner product functional $x \mapsto \operatorname{re}\langle x,\, (\cd
   \label{thm:lieb}
   \lean{LiebConcavity}
   \leanok
-  \uses{def:hstar_algebra, def:lmul}
+  \uses{def:hstar_algebra, def:mul_operators}
   Let $H$ be an H$^*$-algebra, $s \in (0,1)$, and $x \in H$.
   Then the map
   \[
@@ -129,7 +156,7 @@ real-part inner product functional $x \mapsto \operatorname{re}\langle x,\, (\cd
   \label{thm:ando}
   \lean{AndoConvexity}
   \leanok
-  \uses{def:hstar_algebra, def:lmul}
+  \uses{def:hstar_algebra, def:mul_operators}
   Let $H$ be an H$^*$-algebra, $q \in [1,2]$, $r > 0$ with $q - r > 1$,
   and $x \in H$.
   Then the map

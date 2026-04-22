@@ -20,7 +20,7 @@ requires `[CommSemiring R]` and `[DecidableEq]`. This file fills the gaps in the
 | `reindexAlgEquiv` | Mathlib | `[CommSemiring R]` | Yes | No |
 | `reindexRingEquiv` | Here | — | No | No |
 | `reindexStarRingEquiv` | Here | — | No | Yes |
-| `reindexStarAlgEquiv` | Here | `[SMul R A]` only | No | Yes |
+| `reindexStarAlgEquiv` | Here | none (R phantom, `[SMul R A]`) | No | Yes |
 
 ## Main declarations
 
@@ -39,7 +39,7 @@ section Ring
 
 variable (A : Type*) [NonUnitalNonAssocSemiring A]
 
-/-- `Matrix.reindex e e` as a `RingEquiv`. Requires no commutativity or `DecidableEq`. -/
+/-- `Matrix.reindex e e` as a `RingEquiv`. -/
 def reindexRingEquiv (e : m ≃ n) : Matrix m m A ≃+* Matrix n n A :=
   { Matrix.reindex e e with
     map_add' := fun _ _ => rfl
@@ -56,7 +56,7 @@ section StarRing
 
 variable (A : Type*) [NonUnitalNonAssocSemiring A] [Star A]
 
-/-- `Matrix.reindex e e` as a `StarRingEquiv`. Requires no commutativity or `DecidableEq`. -/
+/-- `Matrix.reindex e e` as a `StarRingEquiv`. -/
 def reindexStarRingEquiv (e : m ≃ n) : Matrix m m A ≃⋆+* Matrix n n A :=
   { reindexRingEquiv A e with
     map_star' := fun M => by ext; simp [Matrix.submatrix_apply] }
@@ -69,10 +69,9 @@ end StarRing
 
 section StarAlg
 
-variable (R A : Type*) [Semiring R] [NonUnitalNonAssocSemiring A] [Module R A] [Star A]
+variable (R A : Type*) [NonUnitalNonAssocSemiring A] [SMul R A] [Star A]
 
-/-- `Matrix.reindex e e` as a `StarAlgEquiv`. Requires only `[SMul R A]`; no commutativity
-or `DecidableEq` on `R` needed (contrast with `Matrix.reindexAlgEquiv`). -/
+/-- `Matrix.reindex e e` as a `StarAlgEquiv`. -/
 def reindexStarAlgEquiv (e : m ≃ n) : Matrix m m A ≃⋆ₐ[R] Matrix n n A :=
   { reindexStarRingEquiv A e with
     map_smul' := fun _ _ => rfl }

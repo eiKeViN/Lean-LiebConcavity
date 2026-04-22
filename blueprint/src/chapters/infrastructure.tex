@@ -1,0 +1,109 @@
+% Infrastructure chapter: ForMathlib supporting lemmas
+\chapter{Infrastructure}
+
+This chapter records Lean formalization infrastructure from the \texttt{ForMathlib}
+subdirectory.  These results are not part of the mathematical narrative but are needed
+as building blocks by later chapters.
+
+\section{OpStar Isomorphism}
+
+\begin{proposition}[CFC via opStar]
+  \label{prop:opstar_cfc}
+  \lean{opStar_map_cfc, op_rpow_eq_rpow_op_nonneg, op_rpow_eq_rpow_op_strictlyPositive}
+  \leanok
+  Let $A$ be an ordered unital C$^*$-algebra.  The \emph{opStar} map
+  $\varphi = \operatorname{op} \circ \star : A \to A^{\mathrm{op}}$ is a star algebra
+  isomorphism, and it intertwines the continuous functional calculus:
+  for any continuous $f$ and self-adjoint $a \in A$,
+  \[
+    \varphi(f(a)) = f(\varphi(a)).
+  \]
+  In particular, for $a \geq 0$ and $r \geq 0$, or for $a$ strictly positive and any
+  $r \in \mathbb{R}$:
+  \[
+    (a^r)^{\mathrm{op}} = (a^{\mathrm{op}})^r.
+  \]
+  \begin{proof}
+    \proves{prop:opstar_cfc}
+    \leanok
+    $\varphi$ is a star algebra homomorphism, so the CFC intertwining property applies
+    directly.
+  \end{proof}
+\end{proposition}
+
+\section{Unitary Conjugation}
+
+\begin{theorem}[CFC commutes with unitary conjugation]
+  \label{thm:cfc_unitary_conj}
+  \lean{CStarAlgebra.cfc_unitary_conj'}
+  \leanok
+  Let $A$ be a unital C$^*$-algebra, $u \in A$ unitary, and $f : \mathbb{R} \to \mathbb{R}$
+  continuous.  For any self-adjoint $a \in A$,
+  \[
+    f(u^* a\, u) = u^*\, f(a)\, u.
+  \]
+  \begin{proof}
+    \proves{thm:cfc_unitary_conj}
+    \leanok
+    Unitary conjugation $x \mapsto u^* x u$ is a star algebra automorphism, so the
+    CFC intertwining property gives $f(u^* a u) = u^* f(a) u$.
+  \end{proof}
+\end{theorem}
+
+\section{Diagonal CFC}
+
+\begin{theorem}[CFC distributes over diagonal matrices]
+  \label{thm:cfc_diagonal}
+  \lean{MatCStar.cfc_diagonal}
+  \leanok
+  Let $d : \operatorname{Fin}\,n \to \mathbb{R}$ and $f : \mathbb{R} \to \mathbb{R}$
+  continuous.  Then
+  \[
+    f\!\bigl(\operatorname{diagonal}(d)\bigr)
+    \;=\;
+    \operatorname{diagonal}(f \circ d),
+  \]
+  where the CFC is taken in $M_n(\mathbb{C})$.
+  \begin{proof}
+    \proves{thm:cfc_diagonal}
+    \leanok
+    Diagonal matrices in $M_n(\mathbb{C})$ form a commutative C$^*$-subalgebra
+    isomorphic to $\mathbb{C}^n$, and the CFC on a diagonal matrix acts entry-wise.
+  \end{proof}
+\end{theorem}
+
+\begin{theorem}[Order on diagonal matrices is entry-wise]
+  \label{thm:diagonal_le_diagonal}
+  \lean{MatCStar.diagonal_le_diagonal_iff}
+  \leanok
+  For $d, e : \operatorname{Fin}\,n \to \mathbb{R}$,
+  \[
+    \operatorname{diagonal}(d) \leq \operatorname{diagonal}(e)
+    \;\iff\;
+    \forall i,\; d(i) \leq e(i),
+  \]
+  where the order on $M_n(\mathbb{C})$ is the Loewner (positive semidefinite) order.
+  \begin{proof}
+    \proves{thm:diagonal_le_diagonal}
+    \leanok
+    A diagonal matrix is positive semidefinite iff all diagonal entries are nonneg,
+    and $\operatorname{diagonal}(e) - \operatorname{diagonal}(d) =
+    \operatorname{diagonal}(e - d)$, so the characterization follows.
+  \end{proof}
+\end{theorem}
+
+\section{Reindex as Star Algebra Equivalence}
+
+\begin{proposition}[Reindex as a star algebra equivalence]
+  \label{prop:reindex_star_alg}
+  \lean{Matrix.reindexStarAlgEquiv}
+  \leanok
+  For finite types $m \simeq n$ and a star algebra $A$, the map
+  $\operatorname{reindex}\, e\, e : M_m(A) \to M_n(A)$ induced by a bijection $e : m \simeq n$
+  is a star algebra equivalence.
+  \begin{proof}
+    \proves{prop:reindex_star_alg}
+    \leanok
+    Direct verification: reindexing preserves ring operations, star, and scalar action.
+  \end{proof}
+\end{proposition}

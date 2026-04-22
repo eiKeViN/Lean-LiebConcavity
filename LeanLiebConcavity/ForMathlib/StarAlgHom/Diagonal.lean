@@ -148,7 +148,7 @@ theorem isSelfAdjoint_diagonal_sum_elim {m : ℕ} {a : Fin m → A} {c : A}
   isSelfAdjoint_diagonal_iff.mpr (fun i => i.casesOn hsa (fun _ => hsc))
 
 /-- `Matrix.diagonalStarAlgHom` commutes with CFC. -/
-theorem Matrix.diagonalStarAlgHom_map_cfc {f : ℝ → ℝ} {d : n → A}
+theorem diagonalStarAlgHom_map_cfc {f : ℝ → ℝ} {d : n → A}
     (hf : ContinuousOn f (⋃ i, spectrum ℝ (d i)))
     (hd : ∀ i, IsSelfAdjoint (d i)) :
     Matrix.diagonalStarAlgHom ℝ (cfc f d) = cfc f (Matrix.diagonalStarAlgHom ℝ d) :=
@@ -160,20 +160,20 @@ theorem Matrix.diagonalStarAlgHom_map_cfc {f : ℝ → ℝ} {d : n → A}
 
 /-- `Matrix.diagonal` commutes with CFC:
 `diagonal (cfc f d) = cfc f (diagonal d)`. -/
-theorem Matrix.diagonal_map_cfc {f : ℝ → ℝ} {d : n → A}
+theorem diagonal_map_cfc {f : ℝ → ℝ} {d : n → A}
     (hf : ContinuousOn f (⋃ i, spectrum ℝ (d i)))
     (hd : ∀ i, IsSelfAdjoint (d i)) :
     Matrix.diagonal (cfc f d) = cfc f (Matrix.diagonal d) := by
   simpa only [Matrix.diagonalStarAlgHom_apply] using
-    Matrix.diagonalStarAlgHom_map_cfc hf hd
+    diagonalStarAlgHom_map_cfc hf hd
 
 /-- CFC acts entry-wise on diagonal matrices:
 `cfc f (diagonal d) = diagonal (fun i => cfc f (d i))`. -/
-lemma cfc_diagonal {f : ℝ → ℝ} {d : n → A}
+theorem cfc_diagonal {f : ℝ → ℝ} {d : n → A}
     (hf : ContinuousOn f (⋃ i, spectrum ℝ (d i)))
     (hd : ∀ i, IsSelfAdjoint (d i)) :
     cfc f (Matrix.diagonal d) = Matrix.diagonal (fun i => cfc f (d i)) := by
-  rw [← Matrix.diagonal_map_cfc hf hd,
+  rw [← diagonal_map_cfc hf hd,
       cfc_map_pi (S := ℝ) f d hf (Pi.isSelfAdjoint.mpr hd) hd]
 
 omit [PartialOrder A] [StarOrderedRing A] in

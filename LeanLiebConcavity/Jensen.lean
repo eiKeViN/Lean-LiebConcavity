@@ -372,9 +372,8 @@ private theorem V_mem_unitary {n : ℕ} (k : Fin (n + 1)) :
   have hF : FourierMatrix (Theta n) A k ∈ unitary _ :=
     FourierMatrix_mem_unitary (Theta_isPrimitiveRoot n) (Nat.succ_ne_zero n)
   have hmem := Unitary.map_mem (StarAlgHomClass.toStarAlgHom φ.symm) hF
-  rw [← reindex_V_eq_FourierMatrix] at hmem
-  have : (StarAlgHomClass.toStarAlgHom φ.symm) (φ (V k)) = V k := φ.symm_apply_apply (V k)
-  rwa [this] at hmem
+  have hinv : (StarAlgHomClass.toStarAlgHom φ.symm) (φ (V k)) = V k := φ.symm_apply_apply (V k)
+  rwa [← reindex_V_eq_FourierMatrix, hinv] at hmem
 
 /-- The Fourier average of `M` equals `diagonal (Matrix.diag M)`. -/
 private theorem V_avg_diag {n : ℕ}
