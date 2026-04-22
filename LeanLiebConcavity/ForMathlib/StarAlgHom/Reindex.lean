@@ -5,44 +5,82 @@ Authors: Keyu Zhao
 -/
 module
 
-public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
+public import Mathlib.LinearAlgebra.Matrix.Reindex
+public import Mathlib.Algebra.Star.StarAlgHom
 
 /-!
-# `Matrix.reindex` as a star algebra equivalence
+# `Matrix.reindex` as ring/star-ring/star-algebra equivalences
 
-`Matrix.reindex e e` is a ring equivalence, but Mathlib does not bundle it as a
-`StarAlgEquiv`. This file provides that upgrade.
+Mathlib provides `Matrix.reindexLinearEquiv` and `Matrix.reindexAlgEquiv`, but the latter
+requires `[CommSemiring R]` and `[DecidableEq]`. This file fills the gaps in the hierarchy:
+
+| Variant | This file? | Assumptions on `R` | `DecidableEq`? | Star? |
+|---------|------------|--------------------|----------------|-------|
+| `reindexLinearEquiv` | Mathlib | `[Semiring R]` | No | No |
+| `reindexAlgEquiv` | Mathlib | `[CommSemiring R]` | Yes | No |
+| `reindexRingEquiv` | Here | — | No | No |
+| `reindexStarRingEquiv` | Here | — | No | Yes |
+| `reindexStarAlgEquiv` | Here | `[SMul R A]` only | No | Yes |
 
 ## Main declarations
 
+- `Matrix.reindexRingEquiv`: `Matrix.reindex e e` as a `RingEquiv`.
+- `Matrix.reindexStarRingEquiv`: `Matrix.reindex e e` as a `StarRingEquiv`.
 - `Matrix.reindexStarAlgEquiv`: `Matrix.reindex e e` as a `StarAlgEquiv`.
-- `Matrix.reindexStarAlgEquiv_apply`: simp lemma unfolding to `submatrix`.
 -/
 
 @[expose] public section
 
 namespace Matrix
 
-variable {m n : Type*} (R A : Type*)
-variable [Fintype m] [Fintype n] [Semiring R] [AddCommMonoid A] [Mul A] [Module R A] [Star A]
+variable {m n : Type*} [Fintype m] [Fintype n]
 
-/-- For square matrices with coefficients in a star module over a semiring, the natural
-map that reindexes a matrix's rows and columns with equivalent types,
-`Matrix.reindex`, is an equivalence of star algebras. -/
-def reindexStarAlgEquiv (e : m ≃ n) : Matrix m m A ≃⋆ₐ[R] Matrix n n A :=
+section Ring
+
+variable (A : Type*) [NonUnitalNonAssocSemiring A]
+
+/-- `Matrix.reindex e e` as a `RingEquiv`. Requires no commutativity or `DecidableEq`. -/
+def reindexRingEquiv (e : m ≃ n) : Matrix m m A ≃+* Matrix n n A :=
   { Matrix.reindex e e with
     map_add' := fun _ _ => rfl
-    map_smul' := fun _ _ => rfl
-    map_mul' M N := by
-      ext
-      simp_rw [mul_apply]
-      refine Fintype.sum_equiv e _ _ ?_
-      intro k; simp
-    map_star' M := by
-      ext; simp [Matrix.submatrix_apply] }
+    map_mul' := fun M N => by
+      ext; simp_rw [mul_apply]; exact Fintype.sum_equiv e _ _ fun k => by simp }
+
+@[simp]
+theorem reindexRingEquiv_apply (e : m ≃ n) (M : Matrix m m A) :
+    reindexRingEquiv A e M = M.submatrix e.symm e.symm := rfl
+
+end Ring
+
+section StarRing
+
+variable (A : Type*) [NonUnitalNonAssocSemiring A] [Star A]
+
+/-- `Matrix.reindex e e` as a `StarRingEquiv`. Requires no commutativity or `DecidableEq`. -/
+def reindexStarRingEquiv (e : m ≃ n) : Matrix m m A ≃⋆+* Matrix n n A :=
+  { reindexRingEquiv A e with
+    map_star' := fun M => by ext; simp [Matrix.submatrix_apply] }
+
+@[simp]
+theorem reindexStarRingEquiv_apply (e : m ≃ n) (M : Matrix m m A) :
+    reindexStarRingEquiv A e M = M.submatrix e.symm e.symm := rfl
+
+end StarRing
+
+section StarAlg
+
+variable (R A : Type*) [Semiring R] [NonUnitalNonAssocSemiring A] [Module R A] [Star A]
+
+/-- `Matrix.reindex e e` as a `StarAlgEquiv`. Requires only `[SMul R A]`; no commutativity
+or `DecidableEq` on `R` needed (contrast with `Matrix.reindexAlgEquiv`). -/
+def reindexStarAlgEquiv (e : m ≃ n) : Matrix m m A ≃⋆ₐ[R] Matrix n n A :=
+  { reindexStarRingEquiv A e with
+    map_smul' := fun _ _ => rfl }
 
 @[simp]
 theorem reindexStarAlgEquiv_apply (e : m ≃ n) (M : Matrix m m A) :
     reindexStarAlgEquiv R A e M = M.submatrix e.symm e.symm := rfl
+
+end StarAlg
 
 end Matrix

@@ -1,5 +1,4 @@
 import LeanLiebConcavity.ConjugateWeightedSum
-import LeanLiebConcavity.FourierAveraging
 import LeanLiebConcavity.Defs
 import LeanLiebConcavity.ForMathlib
 import LeanLiebConcavity.ForMathlib.Continuity
@@ -17,6 +16,7 @@ import LeanLiebConcavity.ForMathlib.StarAlgHom.Diagonal
 import LeanLiebConcavity.ForMathlib.StarAlgHom.OpStar
 import LeanLiebConcavity.ForMathlib.StarAlgHom.Reindex
 import LeanLiebConcavity.ForMathlib.StarAlgHom.Unitary
+import LeanLiebConcavity.FourierAveraging
 import LeanLiebConcavity.HStarAlgebra
 import LeanLiebConcavity.Jensen
 import LeanLiebConcavity.Lieb
