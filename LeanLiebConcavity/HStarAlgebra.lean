@@ -55,10 +55,8 @@ variable (𝕜 : Type*) [RCLike 𝕜]
 
 class HStarAlgebra (H : Type*) extends
     NormedRing H, InnerProductSpace 𝕜 H, Algebra 𝕜 H, StarRing H where
-  inner_mul_left : ∀ (a x y : H), inner (a * x) y = inner x (star a * y)
-  inner_mul_right : ∀ (a x y : H), inner (x * a) y = inner x (y * star a)
-
-export HStarAlgebra (inner_mul_left inner_mul_right)
+  protected inner_mul_left : ∀ (a x y : H), inner (a * x) y = inner x (star a * y)
+  protected inner_mul_right : ∀ (a x y : H), inner (x * a) y = inner x (y * star a)
 
 variable {H : Type*} [HStarAlgebra 𝕜 H]
 local notation "⟪" x ", " y "⟫" => inner 𝕜 x y
@@ -66,16 +64,17 @@ local notation "⟪" x ", " y "⟫" => inner 𝕜 x y
 @[simp]
 theorem inner_left_mul_eq (a x y : H) :
     ⟪a * x, y⟫ = ⟪x, star a * y⟫ :=
-  inner_mul_left a x y
+  HStarAlgebra.inner_mul_left a x y
 
 @[simp]
 theorem inner_right_mul_eq (a x y : H) :
     ⟪x, a * y⟫ = ⟪star a * x, y⟫ := by
   rw [inner_left_mul_eq, star_star]
+
 @[simp]
 theorem inner_mul_left_eq (a x y : H) :
     ⟪x * a, y⟫ = ⟪x, y * star a⟫ :=
-  inner_mul_right a x y
+  HStarAlgebra.inner_mul_right a x y
 
 @[simp]
 theorem inner_mul_right_eq (a x y : H) :

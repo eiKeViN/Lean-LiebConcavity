@@ -5,7 +5,6 @@ Authors: Keyu Zhao
 -/
 module
 
-public import Mathlib.RingTheory.RootsOfUnity.Complex
 public import LeanLiebConcavity.Defs
 public import LeanLiebConcavity.ConjugateWeightedSum
 public import LeanLiebConcavity.ForMathlib.StarAlgHom.Diagonal
@@ -302,13 +301,11 @@ section Defs
 open Complex
 
 private abbrev Theta (n : ℕ) : ℂ :=
-  exp (2 * Real.pi * Complex.I / (n + 1 : ℂ))
+  exp (2 * ↑Real.pi * Complex.I / ↑(n + 1))
 
 private lemma Theta_isPrimitiveRoot (n : ℕ) :
-    IsPrimitiveRoot (Theta n) (n + 1) := by
-  have : Theta n = exp (2 * ↑Real.pi * Complex.I / ↑(n + 1)) := by
-    simp only [Nat.cast_add, Nat.cast_one]
-  simpa only [this] using isPrimitiveRoot_exp (n + 1) (by omega)
+    IsPrimitiveRoot (Theta n) (n + 1) :=
+  isPrimitiveRoot_exp (n + 1) (by positivity)
 
 /-- The `k`-th Fourier diagonal matrix over `Fin n ⊕ Unit`.
 Entry at `inl j` is `θ^(k*j) • 1`, entry at `inr ()` is `θ^(k*n) • 1`. -/
@@ -329,13 +326,12 @@ private abbrev SumUnitEquiv (n : ℕ) : Fin n ⊕ Unit ≃ Fin (n + 1) :=
 private lemma SumUnitEquiv_symm_castSucc {n : ℕ} (i : Fin n) :
     (SumUnitEquiv n).symm (Fin.castSucc i) = Sum.inl i := by
   apply (SumUnitEquiv n).injective
-  simp [Fin.castAdd]
+  simp
 
 private lemma SumUnitEquiv_symm_last {n : ℕ} :
     (SumUnitEquiv n).symm (Fin.last n) = Sum.inr () := by
   apply (SumUnitEquiv n).injective
-  simp only [Equiv.symm_trans_apply, finSumFinEquiv_symm_last]
-  rfl
+  simp; rfl
 
 open Matrix
 
@@ -439,12 +435,12 @@ theorem JensenOperator_convex_general
       {a | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} := by
     apply hconv.1.sum_mem
     · intro k _; positivity
-    · simp [Finset.sum_const]; field_simp
+    · simp; field_simp
     · exact fun k _ => hXa_conj k
   let ld := fun i => cfc f ((X a).diag i) -- LHS diag
   let rd := (X <| fun i => cfc f (a i)).diag -- RHS diag
   have ld_last : ld (Sum.inr ()) = cfc f (∑ i, star (b i) * a i * b i) := by
-    simp only [ld]; congr 1; exact StarU_Diag_U_last a b
+    dsimp only [ld]; congr 1; exact StarU_Diag_U_last a b
   have rd_last : rd (Sum.inr ()) = ∑ i, star (b i) * cfc f (a i) * b i :=
     StarU_Diag_U_last (fun i => cfc f (a i)) b
   -- main assembly: ineq at last entry follows from ineq at entire diagonal
@@ -456,16 +452,15 @@ theorem JensenOperator_convex_general
       = star (v k) * X (fun i => cfc f (a i)) * v k := by
     intro k
     let U := u * v k
-    have hU_mem : U ∈ unitary (Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A) :=
-      mul_mem (U_mem_unitary hb) (V_mem_unitary k)
+    have hU_mem : U ∈ unitary _ := mul_mem (U_mem_unitary hb) (V_mem_unitary k)
     calc cfc f (star (v k) * X a * v k)
       = cfc f ((star (v k) * star u) * Diag a * (u * v k)) := by grind only
     _ = cfc f (star U * Diag a * U) := by simp only [star_mul, U]
     _ = star U * cfc f (Diag a) * U :=
           CStarAlgebra.cfc_unitary_conj' (u := ⟨U, hU_mem⟩) (a := Diag a)
-            (hf := hf.mono (Diag_spectrum_subset ha_spec))
-            (ha := Diag_isSelfAdjoint ha)
-            (hφa := Diag_isSelfAdjoint ha |>.conjugate' U)
+            (hf.mono (Diag_spectrum_subset ha_spec))
+            (Diag_isSelfAdjoint ha)
+            (Diag_isSelfAdjoint ha |>.conjugate' U)
     _ = (star (v k) * star u) * Diag (fun i => cfc f (a i)) * (u * v k) := by
           rw [star_mul, ← Diag_cfc_contI hf ha ha_spec]
     _ = star (v k) * X (fun i => cfc f (a i)) * v k := by
@@ -484,7 +479,7 @@ theorem JensenOperator_convex_general
           set_option backward.isDefEq.respectTransparency false in
           apply hconv.map_sum_le
           · intro k _; positivity
-          · simp [Finset.sum_const]; field_simp
+          · simp; field_simp
           · exact fun k _ => hXa_conj k
     _ = ∑ k, (1 / (↑(n + 2) : ℝ)) • (star (v k) * X (fun i => cfc f (a i)) * v k) := by
           simp_rw [hcfc_push]
@@ -526,14 +521,12 @@ theorem JensenOperator_convex_general_sub
   -- extends `a` by a zero entry
   let a' : Fin (n + 2) → A := Fin.snoc a 0
   have ha' : ∀ i, IsSelfAdjoint (a' i) := fun i =>
-    i.lastCases (by simp [a', Fin.snoc_last]) (fun j => by simp [a', Fin.snoc_castSucc, ha j])
+    i.lastCases (by simp [a']) (fun j => by simp [a', ha j])
   have ha'_spec : ∀ i, spectrum ℝ (a' i) ⊆ I := fun i =>
     i.lastCases
       (by
-        simp only [a', Fin.snoc_last]
-        rcases subsingleton_or_nontrivial A with hS | hN
-        · simp [spectrum.of_subsingleton]
-        · rw [spectrum.zero_eq]; exact Set.singleton_subset_iff.mpr hI)
+        dsimp only [a']
+        rcases subsingleton_or_nontrivial A <;> simp [hI])
       (fun j => by simp only [Fin.snoc_castSucc, ha_spec j, a'])
   -- final helper lemmas
   have lhs_eq : ∑ i, star (b' i) * a' i * b' i = ∑ i, star (b i) * a i * b i :=
@@ -578,8 +571,8 @@ theorem JensenOperator_convex
       star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ := by
   have := JensenOperator_convex_general (n := 1) hf hf_opconvex
     (a := ![a₁, a₂]) (b := ![b₁, b₂])
-    (by intro i; fin_cases i <;> simp_all only [zero_eta, mk_one, cons_val_zero, cons_val_one])
-    (by intro i; fin_cases i <;> simp_all only [zero_eta, mk_one, cons_val_zero, cons_val_one])
+    (by intro i; fin_cases i <;> simp_all)
+    (by intro i; fin_cases i <;> simp_all)
     (by simpa only [Nat.reduceAdd, sum_univ_two] using hb)
   simpa only [Nat.reduceAdd, sum_univ_two] using this
 
@@ -595,8 +588,8 @@ theorem JensenOperator_convex_sub
       star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ := by
   have := JensenOperator_convex_general_sub hI hf hf_opconvex
     (a := ![a₁, a₂]) (b := ![b₁, b₂])
-    (by intro i; fin_cases i <;> simp_all only [zero_eta, mk_one, cons_val_zero, cons_val_one])
-    (by intro i; fin_cases i <;> simp_all only [zero_eta, mk_one, cons_val_zero, cons_val_one])
+    (by intro i; fin_cases i <;> simp_all)
+    (by intro i; fin_cases i <;> simp_all)
     (by simpa only [Nat.succ_eq_add_one, Nat.reduceAdd, sum_univ_two] using hb)
   simpa only [Nat.succ_eq_add_one, Nat.reduceAdd, sum_univ_two] using this
 
