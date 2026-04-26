@@ -22,8 +22,8 @@ The induced norm also makes it a normed ring.
 
 - `HStarAlgebra`: typeclass extending `InnerProductSpace 𝕜 H`, `Semiring H`, `StarRing H`
   with the H*-algebra axiom.
-- `lmulStarAlgHom`: left multiplication as a star algebra homomorphism `H →⋆ₐ[𝕜] (H →L[𝕜] H)`.
-- `rmulStarAlgHom`: right mulitplication as a star algebra homomorphism `H →⋆ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ`
+- `LmulStarAlgHom`: left multiplication as a star algebra homomorphism `H →⋆ₐ[𝕜] (H →L[𝕜] H)`.
+- `RmulStarAlgHom`: right mulitplication as a star algebra homomorphism `H →⋆ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ`
 
 ## Main results
 
@@ -33,8 +33,8 @@ The induced norm also makes it a normed ring.
 - `Lmul_isStrictlyPositive`, `Rmul_isStrictlyPositive`: strict positivity is preserved.
 
 ### CFC commutativity: `L_{f(a)} = f(Lₐ)`, `R_{f(a)} = f(Rₐ)`
-- `Lmul_map_cfc`: `lmulStarAlgHom (cfc f a) = cfc f (lmulStarAlgHom a)` for continuous `f`.
-- `Rmul_map_cfc`: the same for `rmulStarAlgHom` (in `(H →L[𝕜] H)ᵐᵒᵖ`).
+- `Lmul_map_cfc`: `LmulStarAlgHom (cfc f a) = cfc f (LmulStarAlgHom a)` for continuous `f`.
+- `Rmul_map_cfc`: the same for `RmulStarAlgHom` (in `(H →L[𝕜] H)ᵐᵒᵖ`).
 - `Lmul_rpow_nonneg_apply`: `(Lmul a)^r x = a^r * x` for `0 ≤ r`, `0 ≤ a`.
 - `Lmul_rpow_strictlyPositive_apply`: `(Lmul a)^r x = a^r * x` for any `r`, strictly positive `a`.
 - `Rmul` analogues.
@@ -339,22 +339,22 @@ theorem Rmul_star (a : H) :
     simp only [Rmul_apply, inner_mul_left_eq, star_star]
 
 /-- Left multiplication as a star algebra homomorphism `H →⋆ₐ[𝕜] (H →L[𝕜] H)`. -/
-def lmulStarAlgHom : H →⋆ₐ[𝕜] (H →L[𝕜] H) :=
+def LmulStarAlgHom : H →⋆ₐ[𝕜] (H →L[𝕜] H) :=
   { LmulAlgHom 𝕜 with
     map_star' := Lmul_star 𝕜 }
 
 /-- Right multiplication as a star algebra homomorphism `H →⋆ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ`. -/
-def rmulStarAlgHom : H →⋆ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ :=
+def RmulStarAlgHom : H →⋆ₐ[𝕜] (H →L[𝕜] H)ᵐᵒᵖ :=
   { RmulAlgHom 𝕜 with
     map_star' := fun a => congrArg op (Rmul_star 𝕜 a) }
 
 theorem Lmul_isSelfAdjoint {a : H} (ha : IsSelfAdjoint a) :
-    IsSelfAdjoint (lmulStarAlgHom 𝕜 a) :=
-  ha.map (lmulStarAlgHom 𝕜)
+    IsSelfAdjoint (LmulStarAlgHom 𝕜 a) :=
+  ha.map (LmulStarAlgHom 𝕜)
 
 theorem Rmul_isSelfAdjoint_op {a : H} (ha : IsSelfAdjoint a) :
-    IsSelfAdjoint (rmulStarAlgHom 𝕜 a) :=
-  ha.map (rmulStarAlgHom 𝕜)
+    IsSelfAdjoint (RmulStarAlgHom 𝕜 a) :=
+  ha.map (RmulStarAlgHom 𝕜)
 
 theorem Rmul_isSelfAdjoint {a : H} (ha : IsSelfAdjoint a) :
     IsSelfAdjoint (Rmul 𝕜 a) := by
@@ -396,8 +396,8 @@ variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H) IsSelfAdjoint]
 theorem Lmul_map_cfc (f : ℝ → ℝ) (a : H)
     (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
     (ha : IsSelfAdjoint a := by cfc_tac) :
-    lmulStarAlgHom 𝕜 (cfc f a) = cfc f (lmulStarAlgHom 𝕜 a) :=
-  (@lmulStarAlgHom 𝕜 _ H _ _).map_cfc f a hf (@Lmul_continuous 𝕜 _ H _) ha <|
+    LmulStarAlgHom 𝕜 (cfc f a) = cfc f (LmulStarAlgHom 𝕜 a) :=
+  (@LmulStarAlgHom 𝕜 _ H _ _).map_cfc f a hf (@Lmul_continuous 𝕜 _ H _) ha <|
     @Lmul_isSelfAdjoint 𝕜 _ H _ _ a ha
 
 variable [PartialOrder H] [StarOrderedRing H]
@@ -456,8 +456,8 @@ variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H)ᵐᵒᵖ IsSelfAdjoi
 theorem Rmul_map_cfc (f : ℝ → ℝ) (a : H)
     (hf : ContinuousOn f (spectrum ℝ a) := by cfc_cont_tac)
     (ha : IsSelfAdjoint a := by cfc_tac) :
-    rmulStarAlgHom 𝕜 (cfc f a) = cfc f (rmulStarAlgHom 𝕜 a) :=
-  (@rmulStarAlgHom 𝕜 _ H _ _).map_cfc _ _ hf (@RmulAlgHom_continuous 𝕜 _ H _) ha <|
+    RmulStarAlgHom 𝕜 (cfc f a) = cfc f (RmulStarAlgHom 𝕜 a) :=
+  (@RmulStarAlgHom 𝕜 _ H _ _).map_cfc _ _ hf (@RmulAlgHom_continuous 𝕜 _ H _) ha <|
     @Rmul_isSelfAdjoint_op 𝕜 _ H _ _ a ha
 
 variable [PartialOrder H] [StarOrderedRing H]
@@ -465,8 +465,8 @@ variable [PartialOrder H] [StarOrderedRing H]
 /-- Right multiplication commutes with nonneg real powers in `(H →L[𝕜] H)ᵐᵒᵖ`:
 `op(Rₐ) ^ r = op R_{a ^ r}`. -/
 theorem Rmul_rpow_nonneg_op {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
-    cfc (fun x : ℝ ↦ x ^ r) (rmulStarAlgHom 𝕜 a)
-      = rmulStarAlgHom 𝕜 (cfc (fun x : ℝ ↦ x ^ r) a) :=
+    cfc (fun x : ℝ ↦ x ^ r) (RmulStarAlgHom 𝕜 a)
+      = RmulStarAlgHom 𝕜 (cfc (fun x : ℝ ↦ x ^ r) a) :=
   Rmul_map_cfc 𝕜 (· ^ r) a (by cfc_cont_tac) (ha.isSelfAdjoint) |>.symm
 
 variable [StarModule ℝ (H →L[𝕜] H)] [StarOrderedRing (H →L[𝕜] H)]
