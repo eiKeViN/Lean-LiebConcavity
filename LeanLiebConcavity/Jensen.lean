@@ -20,13 +20,9 @@ Li–Wu (2014) via unitary conjugation in block matrices.
 
 ## Main results
 
-- `JensenOperator_convex_general`: if `f` is operator convex on `I` (with suitable
-  continuity/boundary conditions), then for `b : Fin n → A` with `∑ star (b i) * b i = 1`
-  and each `a i` self-adjoint with `spectrum ℝ (a i) ⊆ I`,
-  `f (∑ star (b i) * a i * b i) ≤ ∑ star (b i) * f (a i) * b i`.
-- `JensenOperator_convex/_concave`: the standard single-element forms.
-- `JensenOperator_convex_nonneg/_concave_nonneg`: versions for
-  operator convex/concave functions on `[0, ∞)`.
+- `JensenOperator_convex_general`: the general form with n-ary sums.
+- `JensenOperator_convex/_concave`: the standard binary sum forms.
+- `JensenOperator_convex_nonneg/_concave_nonneg`: versions on `[0, ∞)`.
 
 ## References
 
@@ -110,12 +106,12 @@ private lemma U_star_mul_self' {n : ℕ} {b : Fin n → A}
   refine ⟨?_tl, ?_tr, ?_bl, ?_br⟩
   · -- Top-left: (δ - P) * (δ - P) + P = δ,  where P_{ij} = b i * star (b j)
     ext i j
-    simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply,
-      neg_mul, mul_neg, neg_neg, Matrix.one_apply]
+    simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply,
+      neg_mul, mul_neg, neg_neg]
     open Finset in
-    simp only [U_tl_entry i j, sum_add_distrib, sum_sub_distrib, ← sum_mul, ← mul_sum, hb,
-              sum_ite_eq, sum_ite_eq', mem_univ, univ_unique, sum_const, card_singleton,
-              if_true, sub_add_cancel, one_smul, mul_one]
+    simp only [U_tl_entry i j, sum_add_distrib, sum_sub_distrib, ← sum_mul, ← mul_sum,
+      sum_ite_eq, sum_ite_eq', mem_univ, univ_unique, sum_const, card_singleton,
+      hb, if_true, sub_add_cancel, one_smul, mul_one]
   · -- Top-right: (δ - P) * Y + (-Y_col) * 0 = 0
     -- Goal: ∑ x, (if i = x then 1 - b i * star(b x) else -(b i * star(b x))) * b x = 0
     ext i (_ : Unit)
@@ -127,11 +123,9 @@ private lemma U_star_mul_self' {n : ℕ} {b : Fin n → A}
       intro x; split_ifs with h
       · subst h; simp only [sub_mul, one_mul, mul_assoc]
       · simp only [neg_mul, mul_assoc, zero_sub]
-    simp_rw [this, Finset.sum_sub_distrib,
-      Finset.sum_ite_eq, Finset.mem_univ, if_true,
-      ← Finset.mul_sum, hb, mul_one, sub_self, Matrix.zero_apply]
+    simp_rw [this, Finset.sum_sub_distrib, Finset.sum_ite_eq, Finset.mem_univ,
+      if_true, ← Finset.mul_sum, hb, mul_one, sub_self, Matrix.zero_apply]
   · -- Bottom-left: Z' * (δ - P) + 0 * (-Z') = 0
-    -- Goal: ∑ x, star(b x) * (if x = j then 1 - b x * star(b j) else -(b x * star(b j))) = 0
     ext (_ : Unit) j
     simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply,
               zero_mul, Finset.sum_const_zero, add_zero]
@@ -141,13 +135,12 @@ private lemma U_star_mul_self' {n : ℕ} {b : Fin n → A}
       intro x; split_ifs with h
       · subst h; simp only [mul_sub, mul_one, mul_assoc]
       · simp only [mul_neg, mul_assoc, zero_sub]
-    simp_rw [this, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ, if_true,
-             ← Finset.sum_mul, hb, one_mul, sub_self, Matrix.zero_apply]
+    simp_rw [this, Finset.sum_sub_distrib, Finset.sum_ite_eq', Finset.mem_univ,
+      if_true, ← Finset.sum_mul, hb, one_mul, sub_self, Matrix.zero_apply]
   · -- Bottom-right: Z' * Y + 0 * 0 = 1
     ext (_ : Unit) (_ : Unit)
-    simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply,
-              hb, Finset.univ_unique, mul_zero]
-    simp only [Finset.sum_const_zero, add_zero, Matrix.one_apply_eq]
+    simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply_eq,
+      Finset.univ_unique, mul_zero, Finset.sum_const_zero, add_zero, hb]
 
 /-- `u * star u = 1` when `∑ star (b i) * b i = 1`. -/
 private lemma U_mul_star_self' {n : ℕ} {b : Fin n → A}
@@ -192,14 +185,12 @@ private lemma U_mul_star_self' {n : ℕ} {b : Fin n → A}
   · -- Bottom-right: Z * (-Y) + 0 * 0 = 1
     ext (_ : Unit) (_ : Unit)
     simp only [Matrix.add_apply, Matrix.mul_apply, Matrix.of_apply, Matrix.one_apply_eq,
-              neg_mul, mul_neg, neg_neg, zero_mul, Finset.sum_const_zero, add_zero,]
-    exact hb
+              neg_mul, mul_neg, neg_neg, zero_mul, Finset.sum_const_zero, add_zero, hb]
 
 /-- `U b` is a member of the unitary subgroup. -/
 private theorem U_mem_unitary {n : ℕ} {b : Fin (n + 1) → A}
     (hb : ∑ i, star (b i) * b i = 1) :
-    U b ∈
-      unitary (Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A) :=
+    U b ∈ unitary _ :=
   Unitary.mem_iff.mpr ⟨U_star_mul_self' hb, U_mul_star_self' hb⟩
 
 end Unitary
@@ -412,10 +403,7 @@ theorem JensenOperator_convex_general
     (hb : ∑ i, star (b i) * b i = 1) :
     cfc f (∑ i, star (b i) * a i * b i) ≤
       ∑ i, star (b i) * cfc f (a i) * b i := by
-  have hconv : ConvexOn ℝ
-      {a : Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A |
-        IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I}
-      (cfc f) :=
+  have hconv : ConvexOn ℝ {a | IsSelfAdjoint a ∧ spectrum ℝ a ⊆ I} (cfc f) :=
     @hf_opconvex (Matrix (Fin (n + 1) ⊕ Unit) (Fin (n + 1) ⊕ Unit) A) _ _ _
   -- set ups
   let u := U b
@@ -440,7 +428,8 @@ theorem JensenOperator_convex_general
   let ld := fun i => cfc f ((X a).diag i) -- LHS diag
   let rd := (X <| fun i => cfc f (a i)).diag -- RHS diag
   have ld_last : ld (Sum.inr ()) = cfc f (∑ i, star (b i) * a i * b i) := by
-    dsimp only [ld]; congr 1; exact StarU_Diag_U_last a b
+    unfold ld
+    congr 1; exact StarU_Diag_U_last a b
   have rd_last : rd (Sum.inr ()) = ∑ i, star (b i) * cfc f (a i) * b i :=
     StarU_Diag_U_last (fun i => cfc f (a i)) b
   -- main assembly: ineq at last entry follows from ineq at entire diagonal
@@ -508,7 +497,8 @@ theorem JensenOperator_convex_general_sub
   have hc_nonneg : 0 ≤ c := CFC.sqrt_nonneg _
   have hc_sa : IsSelfAdjoint c := IsSelfAdjoint.of_nonneg hc_nonneg
   have hc_sq : star c * c = 1 - ∑ i, star (b i) * b i := by
-    rw [hc_sa.star_eq]; exact CFC.sqrt_mul_sqrt_self _
+    rw [hc_sa.star_eq]
+    exact CFC.sqrt_mul_sqrt_self _
   -- extends `b`: b' = Fin.snoc b c satisfies ∑ star(b' i) * b' i = 1
   let b' : Fin (n + 2) → A := Fin.snoc b c
   have hb' : ∑ i, star (b' i) * b' i = 1 :=
@@ -520,14 +510,14 @@ theorem JensenOperator_convex_general_sub
       _ = 1 := by rw [hc_sq]; abel
   -- extends `a` by a zero entry
   let a' : Fin (n + 2) → A := Fin.snoc a 0
-  have ha' : ∀ i, IsSelfAdjoint (a' i) := fun i =>
-    i.lastCases (by simp [a']) (fun j => by simp [a', ha j])
-  have ha'_spec : ∀ i, spectrum ℝ (a' i) ⊆ I := fun i =>
-    i.lastCases
-      (by
-        dsimp only [a']
-        rcases subsingleton_or_nontrivial A <;> simp [hI])
-      (fun j => by simp only [Fin.snoc_castSucc, ha_spec j, a'])
+  have ha' : ∀ i, IsSelfAdjoint (a' i) :=
+    fun i => i.lastCases (by simp [a']) (fun j => by simp [a', ha j])
+  have ha'_spec : ∀ i, spectrum ℝ (a' i) ⊆ I :=
+    fun i => i.lastCases
+        (by
+          unfold a'
+          rcases subsingleton_or_nontrivial A <;> simp [hI])
+        (fun j => by simp only [Fin.snoc_castSucc, ha_spec j, a'])
   -- final helper lemmas
   have lhs_eq : ∑ i, star (b' i) * a' i * b' i = ∑ i, star (b i) * a i * b i :=
     calc ∑ i, star (b' i) * a' i * b' i
@@ -593,7 +583,7 @@ theorem JensenOperator_convex_sub
     (by simpa only [Nat.succ_eq_add_one, Nat.reduceAdd, sum_univ_two] using hb)
   simpa only [Nat.succ_eq_add_one, Nat.reduceAdd, sum_univ_two] using this
 
-/-! ## Concave versions (derived by negation) -/
+/-! ## Concave versions -/
 
 theorem JensenOperator_concave
     (hf : ContinuousOn f I) (hf_opconcave : OperatorConcaveOn.{u} I f)
@@ -623,10 +613,12 @@ theorem JensenOperator_concave_sub
 
 open Set
 
-/-! ### Nonnegative versions -/
+/-! ### Nonnegative versions
 
-/-- A version applies to nonnegative elements of the C* algebra,
-which is useful for our application. -/
+Versions apply to nonnegative elements of the C*-algebra,
+which is useful for our application.
+-/
+
 theorem JensenOperator_convex_nonneg
     (hf : ContinuousOn f (Ici 0) ∧ f 0 ≤ 0) (hf_opconvex : OperatorConvexOn.{u} (Ici 0) f)
     (ha : 0 ≤ a₁ ∧ 0 ≤ a₂)
@@ -634,8 +626,9 @@ theorem JensenOperator_convex_nonneg
     cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) ≤
       star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ :=
   JensenOperator_convex_sub
-    (Set.self_mem_Ici)
-    hf hf_opconvex
+    Set.self_mem_Ici
+    hf
+    hf_opconvex
     ⟨IsSelfAdjoint.of_nonneg ha.1, IsSelfAdjoint.of_nonneg ha.2⟩
     ⟨fun _ h => spectrum_nonneg_of_nonneg ha.1 h, fun _ h => spectrum_nonneg_of_nonneg ha.2 h⟩
     hb
@@ -647,8 +640,9 @@ theorem JensenOperator_concave_nonneg
       star b₁ * cfc f a₁ * b₁ + star b₂ * cfc f a₂ * b₂ ≤
       cfc f (star b₁ * a₁ * b₁ + star b₂ * a₂ * b₂) :=
   JensenOperator_concave_sub
-    (Set.self_mem_Ici)
-    hf hf_opconcave
+    Set.self_mem_Ici
+    hf
+    hf_opconcave
     ⟨IsSelfAdjoint.of_nonneg ha.1, IsSelfAdjoint.of_nonneg ha.2⟩
     ⟨fun _ h => spectrum_nonneg_of_nonneg ha.1 h, fun _ h => spectrum_nonneg_of_nonneg ha.2 h⟩
     hb

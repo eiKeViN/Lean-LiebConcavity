@@ -91,9 +91,6 @@ noncomputable section
 /-!
 ## `MatCStar` namespace
 
-Open with `open MatCStar` to activate C⋆-algebra instances on `Matrix n n A`
-(operator norm, CFC) by borrowing from CStarMatrix without polluting the global instance.
-
 TODO : replaces ℝ and ℂ and `IsSelfAdjoint` by more general type
 -/
 
