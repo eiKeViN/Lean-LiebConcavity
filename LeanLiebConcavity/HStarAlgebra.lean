@@ -310,11 +310,11 @@ theorem Rmul_nonneg {a : H} (ha : 0 ≤ a) : 0 ≤ Rmul 𝕜 a := by
 
 theorem Lmul_isStrictlyPositive {a : H} (ha : IsStrictlyPositive a) :
     IsStrictlyPositive (Lmul 𝕜 a) :=
-  ⟨Lmul_nonneg 𝕜 ha.nonneg, Lmul_isUnit 𝕜 ha.isUnit⟩
+  IsStrictlyPositive.iff_of_unital.mp ⟨Lmul_nonneg 𝕜 ha.nonneg, Lmul_isUnit 𝕜 ha.isUnit⟩
 
 theorem Rmul_isStrictlyPositive {a : H} (ha : IsStrictlyPositive a) :
     IsStrictlyPositive (Rmul 𝕜 a) :=
-  ⟨Rmul_nonneg 𝕜 ha.nonneg, Rmul_isUnit 𝕜 ha.isUnit⟩
+  IsStrictlyPositive.iff_of_unital.mp ⟨Rmul_nonneg 𝕜 ha.nonneg, Rmul_isUnit 𝕜 ha.isUnit⟩
 
 end nonneg
 
