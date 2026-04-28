@@ -9,7 +9,7 @@ public import Mathlib.Analysis.InnerProductSpace.Defs
 public import Mathlib.Analysis.InnerProductSpace.Positive
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 public import LeanLiebConcavity.ForMathlib.Continuity
-import LeanLiebConcavity.ForMathlib.StarAlgHom.OpStar
+public import LeanLiebConcavity.ForMathlib.StarAlgHom.OpStar
 
 /-!
 # H*-algebra (Ambrose 1945)
@@ -370,22 +370,10 @@ variable [CompleteSpace H] [Algebra ℝ H] [IsScalarTower ℝ 𝕜 H]
 variable [ContinuousFunctionalCalculus ℝ H IsSelfAdjoint]
 
 -- instantiating for efficiency concern
-local instance : Module 𝕜 H := NormedSpace.toModule
-local instance : Ring (H →L[𝕜] H) := ContinuousLinearMap.ring
-local instance : Module 𝕜 (H →L[𝕜] H) := ContinuousLinearMap.module
 local instance : SMul ℝ (H →L[𝕜] H) := ContinuousLinearMap.instSMul
+local instance : Module ℝ (H →L[𝕜] H) := ContinuousLinearMap.module
 local instance : Algebra ℝ (H →L[𝕜] H) := ContinuousLinearMap.algebra
-local instance : TopologicalSpace (H →L[𝕜] H) := ContinuousLinearMap.topologicalSpace
-local instance : PartialOrder (H →L[𝕜] H) := ContinuousLinearMap.instLoewnerPartialOrder
-noncomputable local instance : StarRing (H →L[𝕜] H) := ContinuousLinearMap.instStarRingId
-
-local instance : Ring (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
-local instance : SMul ℝ (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
-local instance : Module 𝕜 (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
-local instance : Algebra ℝ (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
-local instance : PartialOrder (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
-local instance : TopologicalSpace (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
-noncomputable local instance : StarRing (H →L[𝕜] H)ᵐᵒᵖ := inferInstance
+local instance : ContinuousStar (H →L[𝕜] H) := CStarRing.to_normedStarGroup.to_continuousStar
 
 section Left
 
@@ -410,8 +398,7 @@ theorem Lmul_rpow_nonneg' {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by c
 theorem Lmul_rpow_nonneg_apply' {r : ℝ} {a : H} (x : H)
     (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
     (cfc (fun x : ℝ ↦ x ^ r) (Lmul 𝕜 a)) x = cfc (fun x : ℝ ↦ x ^ r) a * x := by
-  rw [Lmul_rpow_nonneg' 𝕜 hr]
-  simp only [Lmul_apply]
+  rw [Lmul_rpow_nonneg' 𝕜 hr, Lmul_apply]
 
 variable [NonnegSpectrumClass ℝ H]
 
@@ -431,10 +418,14 @@ theorem Lmul_rpow_strictlyPositive_apply'
 
 variable [StarOrderedRing (H →L[𝕜] H)] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
 
+-- instantiating for efficiency concern
+noncomputable local instance : Pow H ℝ := CFC.instPowReal
+noncomputable local instance : Pow (H →L[𝕜] H) ℝ := CFC.instPowReal
+
 /-- `Lₐ ^ r` acts on `x` is `a ^ r * x` for nonnegative power. -/
 theorem Lmul_rpow_nonneg_apply
     {r : ℝ} {a : H} (x : H) (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
-    ((Lmul 𝕜 a) ^ r) x = a ^ r * x := by
+    ((Lmul 𝕜 a) ^ r) x = (a ^ r) * x := by
   rw [CFC.rpow_eq_cfc_real ha, CFC.rpow_eq_cfc_real <| Lmul_nonneg 𝕜 ha]
   exact Lmul_rpow_nonneg_apply' 𝕜 x hr ha
 
@@ -472,7 +463,7 @@ theorem Rmul_rpow_nonneg_op {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by
 variable [StarModule ℝ (H →L[𝕜] H)] [StarOrderedRing (H →L[𝕜] H)]
 variable [ContinuousFunctionalCalculus ℝ (H →L[𝕜] H) IsSelfAdjoint]
 
--- Right multiplication commutes with nonneg real powers: `Rₐ ^ r = R_{a ^ r}`.
+/-- Right multiplication commutes with nonneg real powers: `Rₐ ^ r = R_{a ^ r}`. -/
 theorem Rmul_rpow_nonneg'
     {r : ℝ} {a : H} (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
     cfc (fun x : ℝ ↦ x ^ r) (Rmul 𝕜 a) = Rmul 𝕜 (cfc (fun x : ℝ ↦ x ^ r) a) := by
@@ -487,6 +478,10 @@ theorem Rmul_rpow_nonneg_apply'
   simp only [Rmul_apply]
 
 variable [NonnegSpectrumClass ℝ H] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
+
+-- instantiating for efficiency concern
+noncomputable local instance : Pow H ℝ := CFC.instPowReal
+noncomputable local instance : Pow (H →L[𝕜] H) ℝ := CFC.instPowReal
 
 /-- `Rₐ ^ r` acts on `x` is `x * a ^ r` for nonneg power. -/
 theorem Rmul_rpow_nonneg_apply
