@@ -474,8 +474,7 @@ theorem Rmul_rpow_nonneg'
 theorem Rmul_rpow_nonneg_apply'
     {r : ℝ} {a : H} (x : H) (hr : 0 ≤ r) (ha : 0 ≤ a := by cfc_tac) :
     (cfc (fun x : ℝ ↦ x ^ r) (Rmul 𝕜 a)) x = x * cfc (fun x : ℝ ↦ x ^ r) a := by
-  rw [Rmul_rpow_nonneg' 𝕜 hr]
-  simp only [Rmul_apply]
+  rw [Rmul_rpow_nonneg' 𝕜 hr, Rmul_apply]
 
 variable [NonnegSpectrumClass ℝ H] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
 
