@@ -502,8 +502,7 @@ theorem Rmul_rpow_strictlyPositive'
 theorem Rmul_rpow_strictlyPositive_apply'
     (r : ℝ) {a : H} (x : H) (ha : IsStrictlyPositive a := by cfc_tac) :
     (cfc (fun y : ℝ ↦ y ^ r) (Rmul 𝕜 a)) x = x * cfc (fun y : ℝ ↦ y ^ r) a := by
-  rw [Rmul_rpow_strictlyPositive' 𝕜 ha]
-  simp only [Rmul_apply]
+  rw [Rmul_rpow_strictlyPositive' 𝕜 ha, Rmul_apply]
 
 /-- `Rₐ ^ r` acts on `x` is `x * a ^ r` for any `r : ℝ`, when `a` is strictly positive. -/
 theorem Rmul_rpow_strictlyPositive_apply
