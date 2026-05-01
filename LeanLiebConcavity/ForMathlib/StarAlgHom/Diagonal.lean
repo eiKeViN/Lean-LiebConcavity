@@ -44,19 +44,17 @@ theorem isUnit_diagonal_iff {d : n → α} :
     have hli := congr_fun (congr_fun u.mul_inv i) i
     have hri := congr_fun (congr_fun u.inv_mul i) i
     simp_rw [hu, mul_apply, diagonal_apply, one_apply, ite_mul,
-      zero_mul, Finset.sum_ite_eq, Finset.mem_univ, if_true] at hli
+      zero_mul, Finset.sum_ite_eq, Finset.mem_univ] at hli
     simp_rw [hu, mul_apply, diagonal_apply, one_apply, mul_ite,
-      mul_zero, Finset.sum_ite_eq', Finset.mem_univ, if_true] at hri
+      mul_zero, Finset.sum_ite_eq', Finset.mem_univ] at hri
     exact ⟨⟨d i, u.inv i i, hli, hri⟩, rfl⟩
   · intro h
     refine ⟨⟨diagonal d, diagonal (fun i => (h i).unit.inv), ?_, ?_⟩, rfl⟩
     all_goals
     ext i j
-    simp only [Units.inv_eq_val_inv, mul_diagonal, diagonal_apply, ite_mul,
-      zero_mul, one_apply]
-    split_ifs with hij
-    · subst hij
-      first | exact (h i).unit.mul_inv | exact (h i).unit.inv_mul
+    simp_rw [mul_diagonal, diagonal_apply, ite_mul, zero_mul, one_apply]
+    split_ifs with hij; subst hij
+    · first | exact (h i).unit.mul_inv | exact (h i).unit.inv_mul
     · rfl
 
 end Invertible
@@ -73,7 +71,7 @@ def diagonalStarAlgHom : StarAlgHom R (n → α) (Matrix n n α) :=
 
 @[simp]
 theorem diagonalStarAlgHom_apply (v : n → α) :
-    diagonalStarAlgHom R v = diagonal v := by simp [diagonalStarAlgHom]
+    diagonalStarAlgHom R v = diagonal v := rfl
 
 /-- `Matrix.diagonalStarAlgHom` is continuous -/
 theorem diagonalStarAlgHom_continuous [TopologicalSpace α] [ContinuousAdd α] :

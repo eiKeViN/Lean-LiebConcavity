@@ -50,12 +50,11 @@ The fourth records an inner product monotonicity lemma used in the Lieb and Ando
   where the powers are taken via the continuous functional calculus.
   \begin{proof}
     \proves{lem:mul_rpow_commute}
-    \emph{Admitted.}  This identity would follow from the fact that the continuous
-    functional calculus distributes over multiplication for commuting elements.
-    Specifically, one would need that $\mathrm{cfc}(f, ab) = \mathrm{cfc}(f, a)\,
-    \mathrm{cfc}(f, b)$ whenever $a$ and $b$ commute and $f$ is the function
-    $t \mapsto t^r$.  This CFC multiplicativity for commuting pairs is not yet
-    available in Mathlib, so the lemma is currently admitted as an axiom.
+    \emph{Assumed without proof.}  This identity would follow from the fact that the continuous
+    functional calculus distributes over multiplication for commuting elements:
+    $f(ab) = f(a)\,f(b)$ whenever $a$ and $b$ commute and $f(t) = t^r$.
+    This CFC multiplicativity for commuting pairs is not yet available in Mathlib,
+    so the lemma is left unproved pending Mathlib support.
   \end{proof}
 \end{lemma}
 
@@ -71,10 +70,10 @@ diagonal of any matrix.
   \lean{FourierMatrix}
   \leanok
   Let $\zeta \in \mathbb{C}$ and $A$ a $\mathbb{C}$-algebra.
-  For $m \in \mathbb{N}$ and $k : \operatorname{Fin}\,m$, the \emph{$k$-th Fourier
+  For $m \in \mathbb{N}$ and $k \in \{0,\ldots,m-1\}$, the \emph{$k$-th Fourier
   diagonal matrix} is
   \[
-    V_k \;:=\; \operatorname{diag}\!\bigl((\zeta^{k\cdot i} : \mathbb{C}) \cdot 1_A\bigr)_{i=0}^{m-1}
+    V_k \;:=\; \operatorname{diag}\!\bigl(\zeta^{k i} \cdot 1_A\bigr)_{i=0}^{m-1}
     \;\in\; M_m(A).
   \]
 \end{definition}
@@ -132,9 +131,8 @@ diagonal of any matrix.
     $M_{ij} \cdot \sum_k \zeta^{k(j-i)}$, which by \ref{thm:geom_sum} is
     $m \cdot M_{ij}$ if $i = j$ and $0$ otherwise.
     Dividing by $m$ gives $\operatorname{diagonal}(\operatorname{diag}(M))$.
-    The bridge between the $\operatorname{Fin}(n) \oplus \operatorname{Unit}$
-    index in Jensen's proof and $\operatorname{Fin}(n+1)$ used here goes
-    via \ref{prop:reindex_star_alg}.
+    The identification of the index set $\{0,\ldots,n\} \sqcup \{*\}$ used in Jensen's proof
+    with $\{0,\ldots,n+1\}$ goes via \ref{prop:reindex_star_alg}.
   \end{proof}
 \end{theorem}
 

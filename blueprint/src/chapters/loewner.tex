@@ -34,16 +34,6 @@ required Mathlib lemmas are available.
   \end{proof}
 \end{theorem}
 
-\begin{remark}
-  This is a classical result.  L\"{o}wner~\cite{Loewner1934} characterized operator
-  monotone functions on $[0, \infty)$; operator convexity of $t^r$ for $1 \leq r \leq 2$
-  follows from the integral representation of operator convex functions and is treated in
-  detail by Hansen--Pedersen~\cite{HansenPedersen1982}.  The Lean formalization is
-  currently a \texttt{sorry} stub; it depends on Mathlib CFC infrastructure for real
-  powers ($\mathtt{NNReal.rpow}$ and the associated ordered CFC lemmas) that is actively
-  being developed.
-\end{remark}
-
 \begin{theorem}[Operator concavity of the power function]
   \label{thm:loewner_concave}
   \lean{PowerOperatorConcave}
@@ -63,12 +53,3 @@ required Mathlib lemmas are available.
     \emph{Admitted (sorry).}
   \end{proof}
 \end{theorem}
-
-\begin{remark}
-  Operator monotonicity of $t \mapsto t^r$ for $0 < r \leq 1$ on $[0,\infty)$ is the
-  central result of L\"{o}wner~\cite{Loewner1934}.  Operator concavity for the same
-  range of exponents is a direct consequence; see Hansen--Pedersen~\cite{HansenPedersen1982}
-  for the precise connection between operator monotonicity and operator concavity.  As
-  with \autoref{thm:loewner_convex}, the Lean proof is deferred pending the requisite
-  Mathlib CFC infrastructure for real powers.
-\end{remark}

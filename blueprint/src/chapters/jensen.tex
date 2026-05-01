@@ -39,15 +39,14 @@ We follow the unitary-averaging proof of Li and Wu~\cite{LiWu2012}.
     \leanok
     \uses{lem:conj_sum_spectrum, thm:fourier_avg, thm:cfc_unitary_conj, thm:cfc_diagonal, thm:diagonal_le_diagonal}
     We follow the unitary-averaging argument of Li and Wu.
-    Write $m = n + 2$ and form the diagonal block element
-    $D = \operatorname{diag}(a_0, \ldots, a_n, a_n) \in M_m(\mathcal{B})$
-    (the last slot is a duplicate of $a_n$, introduced to make the matrix square).
+    Write $m = n + 2$, set $a_{n+1} := a_n$, and form the diagonal block element
+    $D = \operatorname{diag}(a_0, \ldots, a_{n+1}) \in M_m(\mathcal{B})$.
     Because each $a_i$ has spectrum in $I$, the element $D$ is self-adjoint with
     spectrum in $I$ by \ref{lem:conj_sum_spectrum}.
     Next, using the $b_i$ and the constraint $\sum b_i^* b_i = 1$, one constructs a
     unitary $U \in M_m(\mathcal{B})$ whose last column is $(b_0, \ldots, b_n, 0)^T$;
-    the remaining columns are filled in by a Gram--Schmidt procedure on the rows of
-    $\mathcal{B}^m$.
+    the remaining columns are chosen so that $U$ is unitary, e.g.\ by extending
+    $(b_0,\ldots,b_n,0)^T$ to a unitary via a standard completion procedure.
     A direct computation shows that the bottom-right corner of $U^* D U$ equals
     $\sum_i b_i^* a_i b_i$.
 

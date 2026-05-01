@@ -7,12 +7,12 @@ as building blocks by later chapters.
 
 \section{OpStar Isomorphism}
 
-\begin{proposition}[CFC via opStar]
+\begin{proposition}[CFC via the opposite-algebra isomorphism]
   \label{prop:opstar_cfc}
   \lean{opStar_map_cfc, op_rpow_eq_rpow_op_nonneg, op_rpow_eq_rpow_op_strictlyPositive}
   \leanok
-  Let $A$ be an ordered unital C$^*$-algebra.  The \emph{opStar} map
-  $\varphi = \operatorname{op} \circ \star : A \to A^{\mathrm{op}}$ is a star algebra
+  Let $A$ be an ordered unital C$^*$-algebra.  The map
+  $\varphi : A \to A^{\mathrm{op}}$, $a \mapsto a^*$, is a star algebra
   isomorphism, and it intertwines the continuous functional calculus:
   for any continuous $f$ and self-adjoint $a \in A$,
   \[
@@ -56,12 +56,12 @@ as building blocks by later chapters.
   \label{thm:cfc_diagonal}
   \lean{MatCStar.cfc_diagonal}
   \leanok
-  Let $d : \operatorname{Fin}\,n \to \mathbb{R}$ and $f : \mathbb{R} \to \mathbb{R}$
+  Let $d_0,\ldots,d_{n-1} \in \mathbb{R}$ and $f : \mathbb{R} \to \mathbb{R}$
   continuous.  Then
   \[
-    f\!\bigl(\operatorname{diagonal}(d)\bigr)
+    f\!\bigl(\operatorname{diagonal}(d_0,\ldots,d_{n-1})\bigr)
     \;=\;
-    \operatorname{diagonal}(f \circ d),
+    \operatorname{diagonal}(f(d_0),\ldots,f(d_{n-1})),
   \]
   where the CFC is taken in $M_n(\mathbb{C})$.
   \begin{proof}
@@ -76,19 +76,18 @@ as building blocks by later chapters.
   \label{thm:diagonal_le_diagonal}
   \lean{MatCStar.diagonal_le_diagonal_iff}
   \leanok
-  For $d, e : \operatorname{Fin}\,n \to \mathbb{R}$,
+  For $d_0,\ldots,d_{n-1},\, e_0,\ldots,e_{n-1} \in \mathbb{R}$,
   \[
-    \operatorname{diagonal}(d) \leq \operatorname{diagonal}(e)
+    \operatorname{diagonal}(d_0,\ldots,d_{n-1}) \leq \operatorname{diagonal}(e_0,\ldots,e_{n-1})
     \;\iff\;
-    \forall i,\; d(i) \leq e(i),
+    \forall i,\; d_i \leq e_i,
   \]
   where the order on $M_n(\mathbb{C})$ is the Loewner (positive semidefinite) order.
   \begin{proof}
     \proves{thm:diagonal_le_diagonal}
     \leanok
     A diagonal matrix is positive semidefinite iff all diagonal entries are nonneg,
-    and $\operatorname{diagonal}(e) - \operatorname{diagonal}(d) =
-    \operatorname{diagonal}(e - d)$, so the characterization follows.
+    and the difference of diagonal matrices is diagonal, so the characterization follows.
   \end{proof}
 \end{theorem}
 
@@ -98,9 +97,9 @@ as building blocks by later chapters.
   \label{prop:reindex_star_alg}
   \lean{Matrix.reindexStarAlgEquiv}
   \leanok
-  For finite types $m \simeq n$ and a star algebra $A$, the map
-  $\operatorname{reindex}\, e\, e : M_m(A) \to M_n(A)$ induced by a bijection $e : m \simeq n$
-  is a star algebra equivalence.
+  For finite index sets $m$, $n$ of equal cardinality, a bijection $e : m \to n$,
+  and a star algebra $A$, the map $M_m(A) \to M_n(A)$ given by
+  $(M_{ij}) \mapsto (M_{e^{-1}(i),\,e^{-1}(j)})$ is a star algebra equivalence.
   \begin{proof}
     \proves{prop:reindex_star_alg}
     \leanok
