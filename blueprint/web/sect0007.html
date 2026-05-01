@@ -153,14 +153,14 @@
 
 <div class="main-text">
 <h1 id="a0000000008">7 Lieb’s Concavity and Ando’s Convexity</h1>
-<p>This chapter contains the main results of the project. Working in an abstract H\(^*\)-algebra \(H\), we derive Lieb’s concavity theorem and Ando’s convexity theorem by instantiating the operator power mean from Chapter&#160;5 at the pair of bounded operators \((R_B, L_A)\) acting on \(H\), and then reading off the resulting joint concavity or convexity of the real-part inner product functional \(x \mapsto \operatorname {re}\langle x,\,  (\cdot )\,  x\rangle \). </p>
+<p>This chapter contains the main results of the project. Working in an abstract H\(^*\)-algebra \(H\), we derive Lieb’s concavity theorem and Ando’s convexity theorem by specializing the operator power mean from Chapter&#160;5 to the pair of bounded operators \((R_B, L_A)\) acting on \(H\), and then reading off the resulting joint concavity or convexity of the functional \(T \mapsto \operatorname {re}\langle x,\,  T x\rangle \). </p>
 <h1 id="a0000000036">7.1 The Power Mean Evaluated at a Vector</h1>
 <div class="proposition_thmwrapper theorem-style-plain" id="prop:powermean_apply">
   <div class="proposition_thmheading">
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">30</span>
+    <span class="proposition_thmlabel">28</span>
     <span class="proposition_thmtitle">Simplified formula for the operator power mean</span>
     <div class="thm_header_extras">
 
@@ -171,7 +171,7 @@
 
     <a class="icon proof" href="sect0007.html#prop:powermean_apply">#</a>
     
-    <a class="icon proof" href="sect0007.html#a0000000085"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0007.html#a0000000083"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -189,7 +189,11 @@
           
           <li><a href="sect0002.html#thm:perspective_rpow_commute">Theorem 12</a></li>
           
+          <li><a href="sect0002.html#prop:mul_operators_cfc">Proposition 11</a></li>
+          
           <li><a href="sect0002.html#thm:perspective_rpow_commute">Theorem 12</a></li>
+          
+          <li><a href="sect0002.html#prop:mul_operators_cfc">Proposition 11</a></li>
           
         </ul>
     
@@ -221,10 +225,10 @@
   </div>
   <div class="proposition_thmcontent">
   <p>    Let \(H\) be an H\(^*\)-algebra, \(\alpha , \beta \in \mathbb {R}\) with \(\alpha \geq 0\) and \(\beta \neq 0\). Let \(A\) be strictly positive and \(B \geq 0\). Then for all \(x \in H\), </p>
-<div class="displaymath" id="a0000000086">
+<div class="displaymath" id="a0000000084">
   \[  \Pi _{\alpha ,\beta }(L_A, R_B)\, x \; =\;  A^{\beta (1-\alpha )}\,  x\,  B^\alpha .  \]
 </div>
-<div class="proof_wrapper" id="a0000000085">
+<div class="proof_wrapper" id="a0000000083">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -232,7 +236,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  The power mean is defined as \(\Pi _{\alpha ,\beta }(L_A, R_B) = ((\cdot )^\alpha \triangle (\cdot )^\beta )(R_B, L_A)\). Since \(L_A\) and \(R_B\) commute and \(R_B \geq 0\), \(L_A\) is strictly positive, the generalized perspective simplifies via <span class="ttfamily">GenPerspective_of_rpow_commute</span> (which requires Lemma&#160;<a href="sect0003.html#lem:mul_rpow_commute">14</a>), giving \((R_B)^\alpha \cdot (L_A)^{\beta (1-\alpha )}\). Evaluating at \(x\) and using \(L_A^r\, x = A^r x\) and \(R_B^r\, x = x\, B^r\) yields \(A^{\beta (1-\alpha )}\, x\, B^\alpha \). </p>
+  <p>  The power mean is defined as \(\Pi _{\alpha ,\beta }(L_A, R_B) = ((\cdot )^\alpha \triangle (\cdot )^\beta )(R_B, L_A)\). Since \(L_A\) and \(R_B\) commute and \(R_B \geq 0\), \(L_A\) is strictly positive, the generalized perspective simplifies by Theorem&#160;<a href="sect0002.html#thm:perspective_rpow_commute">12</a> (which requires Lemma&#160;<a href="sect0003.html#lem:mul_rpow_commute">14</a>), giving \((R_B)^\alpha \cdot (L_A)^{\beta (1-\alpha )}\). Evaluating at \(x\) and using \(L_A^r\, x = A^r x\) and \(R_B^r\, x = x\, B^r\) yields \(A^{\beta (1-\alpha )}\, x\, B^\alpha \). </p>
 
   </div>
 </div>
@@ -245,7 +249,7 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">31</span>
+    <span class="theorem_thmlabel">29</span>
     <span class="theorem_thmtitle">Lieb concavity — general form</span>
     <div class="thm_header_extras">
 
@@ -256,7 +260,7 @@
 
     <a class="icon proof" href="sect0007.html#thm:lieb_general">#</a>
     
-    <a class="icon proof" href="sect0007.html#a0000000087"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0007.html#a0000000085"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -274,11 +278,9 @@
           
           <li><a href="sect0002.html#def:hstar_algebra">Definition 9</a></li>
           
-          <li><a href="sect0002.html#def:mul_operators">Definition 10</a></li>
+          <li><a href="sect0006.html#thm:power_mean_concave">Theorem 26</a></li>
           
-          <li><a href="sect0006.html#thm:power_mean_concave">Theorem 28</a></li>
-          
-          <li><a href="sect0007.html#prop:powermean_apply">Proposition 30</a></li>
+          <li><a href="sect0007.html#prop:powermean_apply">Proposition 28</a></li>
           
           <li><a href="sect0003.html#lem:reapply_inner_mono">Lemma 19</a></li>
           
@@ -312,11 +314,11 @@
   </div>
   <div class="theorem_thmcontent">
   <p>    Let \(H\) be an H\(^*\)-algebra, \(\alpha , \beta \in (0,1]\), and \(x \in H\). Then the map </p>
-<div class="displaymath" id="a0000000088">
+<div class="displaymath" id="a0000000086">
   \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{\beta (1-\alpha )}\,  x\,  B^{\alpha } \bigr\rangle  \]
 </div>
 <p> is jointly concave on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
-<div class="proof_wrapper" id="a0000000087">
+<div class="proof_wrapper" id="a0000000085">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -324,7 +326,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  Consider the operator power mean \(\Pi _{\alpha ,\beta }(L_A, R_B)\) acting on \(H \to _L H\), which by definition is the generalized perspective of the \(\alpha \)-power mean at the pair \((L_A, R_B)\). By the CFC commutativity of left and right multiplication (Proposition&#160;<a href="sect0002.html#prop:mul_operators_cfc">11</a>), we have \(L_{A^{\beta (1-\alpha )}} = (L_A)^{\beta (1-\alpha )}\) and \(R_{B^\alpha } = (R_B)^\alpha \), so the power mean evaluated at \(x\) equals \(A^{\beta (1-\alpha )}\,  x\,  B^\alpha \). Joint concavity of \((A, B) \mapsto \Pi _{\alpha ,\beta }(L_A, R_B)\) in the operator order on \(H \to _L H\) then follows from Theorem&#160;<a href="sect0006.html#thm:power_mean_concave">28</a>. Finally, the map \(T \mapsto \operatorname {re}\langle x, T x\rangle \) is linear and hence preserves concavity, yielding the stated result. </p>
+  <p>  Consider the operator power mean \(\Pi _{\alpha ,\beta }(L_A, R_B)\) acting on \(H \to _L H\), which by definition is the generalized perspective of the \(\alpha \)-power mean at the pair \((L_A, R_B)\). By the CFC commutativity of left and right multiplication (Proposition&#160;<a href="sect0002.html#prop:mul_operators_cfc">11</a>), we have \(L_{A^{\beta (1-\alpha )}} = (L_A)^{\beta (1-\alpha )}\) and \(R_{B^\alpha } = (R_B)^\alpha \), so the power mean evaluated at \(x\) equals \(A^{\beta (1-\alpha )}\,  x\,  B^\alpha \). Joint concavity of \((A, B) \mapsto \Pi _{\alpha ,\beta }(L_A, R_B)\) in the operator order on \(H \to _L H\) then follows from Theorem&#160;<a href="sect0006.html#thm:power_mean_concave">26</a>. Finally, the map \(T \mapsto \operatorname {re}\langle x, T x\rangle \) is linear and hence preserves concavity, yielding the stated result. </p>
 
   </div>
 </div>
@@ -336,7 +338,7 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">32</span>
+    <span class="theorem_thmlabel">30</span>
     <span class="theorem_thmtitle">Ando convexity — general form</span>
     <div class="thm_header_extras">
 
@@ -347,7 +349,7 @@
 
     <a class="icon proof" href="sect0007.html#thm:ando_general">#</a>
     
-    <a class="icon proof" href="sect0007.html#a0000000089"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0007.html#a0000000087"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -365,11 +367,9 @@
           
           <li><a href="sect0002.html#def:hstar_algebra">Definition 9</a></li>
           
-          <li><a href="sect0002.html#def:mul_operators">Definition 10</a></li>
+          <li><a href="sect0006.html#thm:power_mean_convex">Theorem 27</a></li>
           
-          <li><a href="sect0006.html#thm:power_mean_convex">Theorem 29</a></li>
-          
-          <li><a href="sect0007.html#prop:powermean_apply">Proposition 30</a></li>
+          <li><a href="sect0007.html#prop:powermean_apply">Proposition 28</a></li>
           
           <li><a href="sect0003.html#lem:reapply_inner_mono">Lemma 19</a></li>
           
@@ -403,11 +403,11 @@
   </div>
   <div class="theorem_thmcontent">
   <p>    Let \(H\) be an H\(^*\)-algebra, \(\alpha \in [1,2]\), \(\beta \in (0,1]\), and \(x \in H\). Then the map </p>
-<div class="displaymath" id="a0000000090">
+<div class="displaymath" id="a0000000088">
   \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{\beta (1-\alpha )}\,  x\,  B^{\alpha } \bigr\rangle  \]
 </div>
 <p> is jointly convex on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
-<div class="proof_wrapper" id="a0000000089">
+<div class="proof_wrapper" id="a0000000087">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -415,7 +415,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  The argument is analogous to Theorem&#160;<a href="sect0007.html#thm:lieb_general">31</a>. The same CFC commutativity identities (Proposition&#160;<a href="sect0002.html#prop:mul_operators_cfc">11</a>) identify the power mean evaluated at \(x\) with \(A^{\beta (1-\alpha )}\,  x\,  B^\alpha \). Since \(\alpha \in [1,2]\), the power mean is jointly convex in operator order by Theorem&#160;<a href="sect0006.html#thm:power_mean_convex">29</a>, and linearity of \(T \mapsto \operatorname {re}\langle x, T x\rangle \) propagates convexity to the scalar functional. </p>
+  <p>  The argument is analogous to Theorem&#160;<a href="sect0007.html#thm:lieb_general">29</a>. The same CFC commutativity identities (Proposition&#160;<a href="sect0002.html#prop:mul_operators_cfc">11</a>) identify the power mean evaluated at \(x\) with \(A^{\beta (1-\alpha )}\,  x\,  B^\alpha \). Since \(\alpha \in [1,2]\), the power mean is jointly convex in operator order by Theorem&#160;<a href="sect0006.html#thm:power_mean_convex">27</a>, and linearity of \(T \mapsto \operatorname {re}\langle x, T x\rangle \) propagates convexity to the scalar functional. </p>
 
   </div>
 </div>
@@ -428,7 +428,7 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">33</span>
+    <span class="theorem_thmlabel">31</span>
     <span class="theorem_thmtitle">Lieb’s Extension Theorem</span>
     <div class="thm_header_extras">
 
@@ -439,7 +439,7 @@
 
     <a class="icon proof" href="sect0007.html#thm:lieb_extension">#</a>
     
-    <a class="icon proof" href="sect0007.html#a0000000091"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0007.html#a0000000089"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -457,9 +457,7 @@
           
           <li><a href="sect0002.html#def:hstar_algebra">Definition 9</a></li>
           
-          <li><a href="sect0002.html#def:mul_operators">Definition 10</a></li>
-          
-          <li><a href="sect0007.html#thm:lieb_general">Theorem 31</a></li>
+          <li><a href="sect0007.html#thm:lieb_general">Theorem 29</a></li>
           
         </ul>
     
@@ -491,11 +489,11 @@
   </div>
   <div class="theorem_thmcontent">
   <p>    Let \(H\) be an H\(^*\)-algebra, \(p, q {\gt} 0\) with \(p + q \leq 1\), and \(x \in H\). Then the map </p>
-<div class="displaymath" id="a0000000092">
+<div class="displaymath" id="a0000000090">
   \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{q}\,  x\,  B^{p} \bigr\rangle  \]
 </div>
 <p> is jointly concave on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
-<div class="proof_wrapper" id="a0000000091">
+<div class="proof_wrapper" id="a0000000089">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -503,7 +501,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  Set \(\alpha := p\) and \(\beta := q / (1 - p)\). The hypothesis \(p + q \leq 1\) with \(p, q {\gt} 0\) ensures \(\beta \leq 1\), so \((\alpha , \beta ) \in (0,1] \times (0,1]\), and one computes \(\beta (1-\alpha ) = q\). The result therefore follows from Theorem&#160;<a href="sect0007.html#thm:lieb_general">31</a> with these parameter choices. </p>
+  <p>  Set \(\alpha := p\) and \(\beta := q / (1 - p)\). The hypothesis \(p + q \leq 1\) with \(p, q {\gt} 0\) ensures \(\beta \leq 1\), so \((\alpha , \beta ) \in (0,1] \times (0,1]\), and one computes \(\beta (1-\alpha ) = q\). The result therefore follows from Theorem&#160;<a href="sect0007.html#thm:lieb_general">29</a> with these parameter choices. </p>
 
   </div>
 </div>
@@ -516,7 +514,7 @@
     <span class="corollary_thmcaption">
     Corollary
     </span>
-    <span class="corollary_thmlabel">34</span>
+    <span class="corollary_thmlabel">32</span>
     <span class="corollary_thmtitle">Lieb’s Concavity Theorem</span>
     <div class="thm_header_extras">
 
@@ -527,7 +525,7 @@
 
     <a class="icon proof" href="sect0007.html#thm:lieb">#</a>
     
-    <a class="icon proof" href="sect0007.html#a0000000093"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0007.html#a0000000091"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -545,9 +543,7 @@
           
           <li><a href="sect0002.html#def:hstar_algebra">Definition 9</a></li>
           
-          <li><a href="sect0002.html#def:mul_operators">Definition 10</a></li>
-          
-          <li><a href="sect0007.html#thm:lieb_extension">Theorem 33</a></li>
+          <li><a href="sect0007.html#thm:lieb_extension">Theorem 31</a></li>
           
         </ul>
     
@@ -579,11 +575,11 @@
   </div>
   <div class="corollary_thmcontent">
   <p>    Let \(H\) be an H\(^*\)-algebra, \(s \in (0,1)\), and \(x \in H\). Then the map </p>
-<div class="displaymath" id="a0000000094">
+<div class="displaymath" id="a0000000092">
   \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{s}\,  x\,  B^{1-s} \bigr\rangle  \]
 </div>
 <p> is jointly concave on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
-<div class="proof_wrapper" id="a0000000093">
+<div class="proof_wrapper" id="a0000000091">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -591,7 +587,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  Apply Theorem&#160;<a href="sect0007.html#thm:lieb_extension">33</a> with \(q := s\) and \(p := 1 - s\), noting that \(p, q {\gt} 0\) and \(p + q = 1 \leq 1\). </p>
+  <p>  Apply Theorem&#160;<a href="sect0007.html#thm:lieb_extension">31</a> with \(q := s\) and \(p := 1 - s\), noting that \(p, q {\gt} 0\) and \(p + q = 1 \leq 1\). </p>
 
   </div>
 </div>
@@ -604,7 +600,7 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">35</span>
+    <span class="theorem_thmlabel">33</span>
     <span class="theorem_thmtitle">Ando’s Convexity Theorem</span>
     <div class="thm_header_extras">
 
@@ -615,7 +611,7 @@
 
     <a class="icon proof" href="sect0007.html#thm:ando">#</a>
     
-    <a class="icon proof" href="sect0007.html#a0000000095"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0007.html#a0000000093"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -633,9 +629,7 @@
           
           <li><a href="sect0002.html#def:hstar_algebra">Definition 9</a></li>
           
-          <li><a href="sect0002.html#def:mul_operators">Definition 10</a></li>
-          
-          <li><a href="sect0007.html#thm:ando_general">Theorem 32</a></li>
+          <li><a href="sect0007.html#thm:ando_general">Theorem 30</a></li>
           
         </ul>
     
@@ -667,11 +661,11 @@
   </div>
   <div class="theorem_thmcontent">
   <p>    Let \(H\) be an H\(^*\)-algebra, \(q \in [1,2]\), \(r {\gt} 0\) with \(q - r {\gt} 1\), and \(x \in H\). Then the map </p>
-<div class="displaymath" id="a0000000096">
+<div class="displaymath" id="a0000000094">
   \[  (A, B) \; \longmapsto \;  \operatorname {re}\bigl\langle x,\;  A^{-r}\,  x\,  B^{q} \bigr\rangle  \]
 </div>
 <p> is jointly convex on \(\{ (A, B) \in H \times H \mid A \text{ strictly positive},\,  B \geq 0\} \). </p>
-<div class="proof_wrapper" id="a0000000095">
+<div class="proof_wrapper" id="a0000000093">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -679,7 +673,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  Set \(\alpha := q\) and \(\beta := r / (q - 1)\). The hypothesis \(q - r {\gt} 1\) with \(r {\gt} 0\) and \(q \in [1,2]\) ensures \(\beta \in (0,1]\), and one computes \(\beta (1-\alpha ) = -r\). The result follows from Theorem&#160;<a href="sect0007.html#thm:ando_general">32</a> with these parameter choices. </p>
+  <p>  Set \(\alpha := q\) and \(\beta := r / (q - 1)\). The hypothesis \(q - r {\gt} 1\) with \(r {\gt} 0\) and \(q \in [1,2]\) ensures \(\beta \in (0,1]\), and one computes \(\beta (1-\alpha ) = -r\). The result follows from Theorem&#160;<a href="sect0007.html#thm:ando_general">30</a> with these parameter choices. </p>
 
   </div>
 </div>

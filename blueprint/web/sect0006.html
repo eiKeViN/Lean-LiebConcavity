@@ -153,14 +153,14 @@
 
 <div class="main-text">
 <h1 id="a0000000007">6 Generalized Perspective Functions</h1>
-<p>This chapter establishes the joint convexity and joint concavity of the generalized perspective function \((f \triangle g)\) defined in Chapter&#160;1 (see Definition&#160;<a href="sect0002.html#def:gen_perspective">8</a>). The two main theorems — Theorem&#160;<a href="sect0006.html#thm:perspective_joint_convex">26</a> and Theorem&#160;<a href="sect0006.html#thm:perspective_joint_concave">27</a> — are abstract C\(^*\)-algebra results that simultaneously generalize Lieb’s concavity theorem and Ando’s convexity theorem. The power-mean corollaries that close the chapter are the specializations used in Chapter&#160;6. </p>
+<p>This chapter establishes the joint convexity and joint concavity of the generalized perspective function \((f \triangle g)\) defined in Chapter&#160;1 (see Definition&#160;<a href="sect0002.html#def:gen_perspective">8</a>). The two main theorems — Theorem&#160;<a href="sect0006.html#thm:perspective_joint_convex">24</a> and Theorem&#160;<a href="sect0006.html#thm:perspective_joint_concave">25</a> — are abstract C\(^*\)-algebra results that simultaneously generalize Lieb’s concavity theorem and Ando’s convexity theorem. The power-mean corollaries that close the chapter are the specializations used in Chapter&#160;6. </p>
 <h1 id="a0000000033">6.1 Joint Convexity</h1>
 <div class="theorem_thmwrapper theorem-style-plain" id="thm:perspective_joint_convex">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">26</span>
+    <span class="theorem_thmlabel">24</span>
     <span class="theorem_thmtitle">Joint convexity of the generalized perspective function</span>
     <div class="thm_header_extras">
 
@@ -171,7 +171,7 @@
 
     <a class="icon proof" href="sect0006.html#thm:perspective_joint_convex">#</a>
     
-    <a class="icon proof" href="sect0006.html#a0000000076"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0006.html#a0000000074"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -232,10 +232,10 @@
 </li>
 </ul>
 <p> Then the map \((L, R) \mapsto (f \triangle g)(L, R)\) is jointly convex on the set </p>
-<div class="displaymath" id="a0000000077">
+<div class="displaymath" id="a0000000075">
   \[  \{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} .  \]
 </div>
-<div class="proof_wrapper" id="a0000000076">
+<div class="proof_wrapper" id="a0000000074">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -243,16 +243,16 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  Fix pairs \((L_1, R_1)\) and \((L_2, R_2)\) in the domain and weights \(a, b \geq 0\) with \(a + b = 1\). Let \(R := a R_1 + b R_2\) and write \(G := \operatorname {cfc}(g)\) for the operator \(g\) applied via the continuous functional calculus. Define bounded operators </p>
-<div class="displaymath" id="a0000000078">
-  \[  T_1 := \bigl(a\,  G(R_1)\bigr)^{1/2} G(R)^{-1/2}, \qquad T_2 := \bigl(b\,  G(R_2)\bigr)^{1/2} G(R)^{-1/2}.  \]
+  <p>  Fix pairs \((L_1, R_1)\) and \((L_2, R_2)\) in the domain and weights \(a, b \geq 0\) with \(a + b = 1\). Let \(R := a R_1 + b R_2\). Define bounded operators </p>
+<div class="displaymath" id="a0000000076">
+  \[  T_1 := \bigl(a\,  g(R_1)\bigr)^{1/2} g(R)^{-1/2}, \qquad T_2 := \bigl(b\,  g(R_2)\bigr)^{1/2} g(R)^{-1/2}.  \]
 </div>
-<p> Because \(g\) is operator concave, the operator concavity inequality gives \(a\,  G(R_1) + b\,  G(R_2) \leq G(R)\), and therefore </p>
-<div class="displaymath" id="a0000000079">
-  \[  T_1^* T_1 + T_2^* T_2 = G(R)^{-1/2}(a\,  G(R_1) + b\,  G(R_2))G(R)^{-1/2} \leq \mathrm{id}.  \]
+<p> Because \(g\) is operator concave, the operator concavity inequality gives \(a\,  g(R_1) + b\,  g(R_2) \leq g(R)\), and therefore </p>
+<div class="displaymath" id="a0000000077">
+  \[  T_1^* T_1 + T_2^* T_2 = g(R)^{-1/2}(a\,  g(R_1) + b\,  g(R_2))g(R)^{-1/2} \leq \mathrm{id}.  \]
 </div>
 <p> That is, the pair \((T_1, T_2)\) is <em>sub-unital</em> in the sense required by the sub-unital Jensen inequality (Theorem&#160;<a href="sect0004.html#thm:jensen_sub">21</a>). Applying Theorem&#160;<a href="sect0004.html#thm:jensen_sub">21</a> to the operator-convex function \(f\) with arguments \(G(R)^{-1/2} L_i\,  G(R)^{-1/2}\) and operators \(T_i\), then conjugating by \(G(R)^{1/2}\) and collecting terms, yields </p>
-<div class="displaymath" id="a0000000080">
+<div class="displaymath" id="a0000000078">
   \[  a\, (f \triangle g)(L_1, R_1) + b\, (f \triangle g)(L_2, R_2) \; \geq \;  (f \triangle g)(aL_1 + bL_2,\,  R).  \]
 </div>
 <p> (The condition \(f(0) \leq 0\) absorbs the sub-unital defect term in Jensen’s inequality.) This is precisely the joint convexity inequality. </p>
@@ -268,7 +268,7 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">27</span>
+    <span class="theorem_thmlabel">25</span>
     <span class="theorem_thmtitle">Joint concavity of the generalized perspective function</span>
     <div class="thm_header_extras">
 
@@ -279,7 +279,7 @@
 
     <a class="icon proof" href="sect0006.html#thm:perspective_joint_concave">#</a>
     
-    <a class="icon proof" href="sect0006.html#a0000000081"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0006.html#a0000000079"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -299,7 +299,7 @@
           
           <li><a href="sect0002.html#def:gen_perspective">Definition 8</a></li>
           
-          <li><a href="sect0006.html#thm:perspective_joint_convex">Theorem 26</a></li>
+          <li><a href="sect0006.html#thm:perspective_joint_convex">Theorem 24</a></li>
           
         </ul>
     
@@ -338,10 +338,10 @@
 </li>
 </ul>
 <p> Then the map \((L, R) \mapsto (f \triangle g)(L, R)\) is jointly concave on the set </p>
-<div class="displaymath" id="a0000000082">
+<div class="displaymath" id="a0000000080">
   \[  \{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} .  \]
 </div>
-<div class="proof_wrapper" id="a0000000081">
+<div class="proof_wrapper" id="a0000000079">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -349,7 +349,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  Observe that \((-f) \triangle g = -(f \triangle g)\) and that \(-f\) is operator convex with \((-f)(0) \leq 0\); apply Theorem&#160;<a href="sect0006.html#thm:perspective_joint_convex">26</a> to \(-f\) and negate to obtain joint concavity of \(f \triangle g\). </p>
+  <p>  Observe that \((-f) \triangle g = -(f \triangle g)\) and that \(-f\) is operator convex with \((-f)(0) \leq 0\); apply Theorem&#160;<a href="sect0006.html#thm:perspective_joint_convex">24</a> to \(-f\) and negate to obtain joint concavity of \(f \triangle g\). </p>
 
   </div>
 </div>
@@ -363,7 +363,7 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">28</span>
+    <span class="theorem_thmlabel">26</span>
     <span class="theorem_thmtitle">Joint concavity of the operator power mean</span>
     <div class="thm_header_extras">
 
@@ -374,7 +374,7 @@
 
     <a class="icon proof" href="sect0006.html#thm:power_mean_concave">#</a>
     
-    <a class="icon proof" href="sect0006.html#a0000000083"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0006.html#a0000000081"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -392,9 +392,9 @@
           
           <li><a href="sect0002.html#def:gen_perspective">Definition 8</a></li>
           
-          <li><a href="sect0006.html#thm:perspective_joint_concave">Theorem 27</a></li>
+          <li><a href="sect0006.html#thm:perspective_joint_concave">Theorem 25</a></li>
           
-          <li><a href="sect0005.html#thm:loewner_concave">Theorem 24</a></li>
+          <li><a href="sect0005.html#thm:loewner_concave">Theorem 23</a></li>
           
         </ul>
     
@@ -426,7 +426,7 @@
   </div>
   <div class="theorem_thmcontent">
   <p>    For \(0 {\lt} \alpha \leq 1\) and \(0 {\lt} \beta \leq 1\), the map \((L, R) \mapsto ((\cdot )^\alpha \triangle (\cdot )^\beta )(L, R)\) is jointly concave on \(\{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} \). </p>
-<div class="proof_wrapper" id="a0000000083">
+<div class="proof_wrapper" id="a0000000081">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -434,7 +434,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  Both \(t \mapsto t^\alpha \) and \(t \mapsto t^\beta \) are operator concave on \([0,\infty )\) when the exponents lie in \((0,1]\) by Löwner’s theorem (Theorem&#160;<a href="sect0005.html#thm:loewner_concave">24</a>); apply Theorem&#160;<a href="sect0006.html#thm:perspective_joint_concave">27</a>. </p>
+  <p>  Both \(t \mapsto t^\alpha \) and \(t \mapsto t^\beta \) are operator concave on \([0,\infty )\) when the exponents lie in \((0,1]\) by Löwner’s theorem (Theorem&#160;<a href="sect0005.html#thm:loewner_concave">23</a>); apply Theorem&#160;<a href="sect0006.html#thm:perspective_joint_concave">25</a>. </p>
 
   </div>
 </div>
@@ -446,7 +446,7 @@
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">29</span>
+    <span class="theorem_thmlabel">27</span>
     <span class="theorem_thmtitle">Joint convexity of the operator power mean</span>
     <div class="thm_header_extras">
 
@@ -457,7 +457,7 @@
 
     <a class="icon proof" href="sect0006.html#thm:power_mean_convex">#</a>
     
-    <a class="icon proof" href="sect0006.html#a0000000084"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sect0006.html#a0000000082"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -475,11 +475,11 @@
           
           <li><a href="sect0002.html#def:gen_perspective">Definition 8</a></li>
           
-          <li><a href="sect0006.html#thm:perspective_joint_convex">Theorem 26</a></li>
+          <li><a href="sect0006.html#thm:perspective_joint_convex">Theorem 24</a></li>
           
           <li><a href="sect0005.html#thm:loewner_convex">Theorem 22</a></li>
           
-          <li><a href="sect0005.html#thm:loewner_concave">Theorem 24</a></li>
+          <li><a href="sect0005.html#thm:loewner_concave">Theorem 23</a></li>
           
         </ul>
     
@@ -511,7 +511,7 @@
   </div>
   <div class="theorem_thmcontent">
   <p>    For \(1 \leq \alpha \leq 2\) and \(0 {\lt} \beta \leq 1\), the map \((L, R) \mapsto ((\cdot )^\alpha \triangle (\cdot )^\beta )(L, R)\) is jointly convex on \(\{  (L, R) \in \mathcal{B} \times \mathcal{B} \mid 0 \leq L,\  R \text{ strictly positive} \} \). </p>
-<div class="proof_wrapper" id="a0000000084">
+<div class="proof_wrapper" id="a0000000082">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -519,7 +519,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  For \(\alpha \in [1,2]\) the function \(t \mapsto t^\alpha \) is operator convex on \([0,\infty )\) with \(0^\alpha = 0 \leq 0\) (Theorem&#160;<a href="sect0005.html#thm:loewner_convex">22</a>), and for \(\beta \in (0,1]\) the function \(t \mapsto t^\beta \) is operator concave (Theorem&#160;<a href="sect0005.html#thm:loewner_concave">24</a>); apply Theorem&#160;<a href="sect0006.html#thm:perspective_joint_convex">26</a>. </p>
+  <p>  For \(\alpha \in [1,2]\) the function \(t \mapsto t^\alpha \) is operator convex on \([0,\infty )\) with \(0^\alpha = 0 \leq 0\) (Theorem&#160;<a href="sect0005.html#thm:loewner_convex">22</a>), and for \(\beta \in (0,1]\) the function \(t \mapsto t^\beta \) is operator concave (Theorem&#160;<a href="sect0005.html#thm:loewner_concave">23</a>); apply Theorem&#160;<a href="sect0006.html#thm:perspective_joint_convex">24</a>. </p>
 
   </div>
 </div>

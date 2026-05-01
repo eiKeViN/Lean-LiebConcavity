@@ -161,7 +161,7 @@
     Proposition
     </span>
     <span class="proposition_thmlabel">1</span>
-    <span class="proposition_thmtitle">CFC via opStar</span>
+    <span class="proposition_thmtitle">CFC via the opposite-algebra isomorphism</span>
     <div class="thm_header_extras">
 
     
@@ -202,7 +202,7 @@
         </div>
   </div>
   <div class="proposition_thmcontent">
-  <p>   Let \(A\) be an ordered unital C\(^*\)-algebra. The <em>opStar</em> map \(\varphi = \operatorname {op} \circ \star : A \to A^{\mathrm{op}}\) is a star algebra isomorphism, and it intertwines the continuous functional calculus: for any continuous \(f\) and self-adjoint \(a \in A\), </p>
+  <p>   Let \(A\) be an ordered unital C\(^*\)-algebra. The map \(\varphi : A \to A^{\mathrm{op}}\), \(a \mapsto a^*\), is a star algebra isomorphism, and it intertwines the continuous functional calculus: for any continuous \(f\) and self-adjoint \(a \in A\), </p>
 <div class="displaymath" id="a0000000012">
   \[  \varphi (f(a)) = f(\varphi (a)).  \]
 </div>
@@ -332,9 +332,9 @@
         </div>
   </div>
   <div class="theorem_thmcontent">
-  <p>   Let \(d : \operatorname {Fin}\, n \to \mathbb {R}\) and \(f : \mathbb {R} \to \mathbb {R}\) continuous. Then </p>
+  <p>   Let \(d_0,\ldots ,d_{n-1} \in \mathbb {R}\) and \(f : \mathbb {R} \to \mathbb {R}\) continuous. Then </p>
 <div class="displaymath" id="a0000000019">
-  \[  f\! \bigl(\operatorname {diagonal}(d)\bigr) \; =\;  \operatorname {diagonal}(f \circ d),  \]
+  \[  f\! \bigl(\operatorname {diagonal}(d_0,\ldots ,d_{n-1})\bigr) \; =\;  \operatorname {diagonal}(f(d_0),\ldots ,f(d_{n-1})),  \]
 </div>
 <p> where the CFC is taken in \(M_n(\mathbb {C})\). </p>
 <div class="proof_wrapper" id="a0000000018">
@@ -395,9 +395,9 @@
         </div>
   </div>
   <div class="theorem_thmcontent">
-  <p>   For \(d, e : \operatorname {Fin}\, n \to \mathbb {R}\), </p>
+  <p>   For \(d_0,\ldots ,d_{n-1},\,  e_0,\ldots ,e_{n-1} \in \mathbb {R}\), </p>
 <div class="displaymath" id="a0000000021">
-  \[  \operatorname {diagonal}(d) \leq \operatorname {diagonal}(e) \; \iff \;  \forall i,\;  d(i) \leq e(i),  \]
+  \[  \operatorname {diagonal}(d_0,\ldots ,d_{n-1}) \leq \operatorname {diagonal}(e_0,\ldots ,e_{n-1}) \; \iff \;  \forall i,\;  d_i \leq e_i,  \]
 </div>
 <p> where the order on \(M_n(\mathbb {C})\) is the Loewner (positive semidefinite) order. </p>
 <div class="proof_wrapper" id="a0000000020">
@@ -408,7 +408,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p> A diagonal matrix is positive semidefinite iff all diagonal entries are nonneg, and \(\operatorname {diagonal}(e) - \operatorname {diagonal}(d) = \operatorname {diagonal}(e - d)\), so the characterization follows. </p>
+  <p> A diagonal matrix is positive semidefinite iff all diagonal entries are nonneg, and the difference of diagonal matrices is diagonal, so the characterization follows. </p>
 
   </div>
 </div>
@@ -459,7 +459,7 @@
         </div>
   </div>
   <div class="proposition_thmcontent">
-  <p>   For finite types \(m \simeq n\) and a star algebra \(A\), the map \(\operatorname {reindex}\,  e\,  e : M_m(A) \to M_n(A)\) induced by a bijection \(e : m \simeq n\) is a star algebra equivalence. </p>
+  <p>   For finite index sets \(m\), \(n\) of equal cardinality, a bijection \(e : m \to n\), and a star algebra \(A\), the map \(M_m(A) \to M_n(A)\) given by \((M_{ij}) \mapsto (M_{e^{-1}(i),\, e^{-1}(j)})\) is a star algebra equivalence. </p>
 <div class="proof_wrapper" id="a0000000023">
   <div class="proof_heading">
     <span class="proof_caption">

@@ -272,7 +272,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p> <em>Admitted.</em> This identity would follow from the fact that the continuous functional calculus distributes over multiplication for commuting elements. Specifically, one would need that \(\mathrm{cfc}(f, ab) = \mathrm{cfc}(f, a)\,  \mathrm{cfc}(f, b)\) whenever \(a\) and \(b\) commute and \(f\) is the function \(t \mapsto t^r\). This CFC multiplicativity for commuting pairs is not yet available in Mathlib, so the lemma is currently admitted as an axiom. </p>
+  <p> <em>Assumed without proof.</em> This identity would follow from the fact that the continuous functional calculus distributes over multiplication for commuting elements: \(f(ab) = f(a)\, f(b)\) whenever \(a\) and \(b\) commute and \(f(t) = t^r\). This CFC multiplicativity for commuting pairs is not yet available in Mathlib, so the lemma is left unproved pending Mathlib support. </p>
 
   </div>
 </div>
@@ -321,9 +321,9 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   Let \(\zeta \in \mathbb {C}\) and \(A\) a \(\mathbb {C}\)-algebra. For \(m \in \mathbb {N}\) and \(k : \operatorname {Fin}\, m\), the <em>\(k\)-th Fourier diagonal matrix</em> is </p>
+  <p>   Let \(\zeta \in \mathbb {C}\) and \(A\) a \(\mathbb {C}\)-algebra. For \(m \in \mathbb {N}\) and \(k \in \{ 0,\ldots ,m-1\} \), the <em>\(k\)-th Fourier diagonal matrix</em> is </p>
 <div class="displaymath" id="a0000000053">
-  \[  V_k \; :=\;  \operatorname {diag}\! \bigl((\zeta ^{k\cdot i} : \mathbb {C}) \cdot 1_A\bigr)_{i=0}^{m-1} \; \in \;  M_m(A).  \]
+  \[  V_k \; :=\;  \operatorname {diag}\! \bigl(\zeta ^{k i} \cdot 1_A\bigr)_{i=0}^{m-1} \; \in \;  M_m(A).  \]
 </div>
 
   </div>
@@ -550,7 +550,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>  The \((i,j)\)-entry of \(\sum _k V_k^* M V_k\) equals \(M_{ij} \cdot \sum _k \zeta ^{k(j-i)}\), which by <a href="sect0003.html#thm:geom_sum">17</a> is \(m \cdot M_{ij}\) if \(i = j\) and \(0\) otherwise. Dividing by \(m\) gives \(\operatorname {diagonal}(\operatorname {diag}(M))\). The bridge between the \(\operatorname {Fin}(n) \oplus \operatorname {Unit}\) index in Jensen’s proof and \(\operatorname {Fin}(n+1)\) used here goes via <a href="sect0001.html#prop:reindex_star_alg">5</a>. </p>
+  <p>  The \((i,j)\)-entry of \(\sum _k V_k^* M V_k\) equals \(M_{ij} \cdot \sum _k \zeta ^{k(j-i)}\), which by <a href="sect0003.html#thm:geom_sum">17</a> is \(m \cdot M_{ij}\) if \(i = j\) and \(0\) otherwise. Dividing by \(m\) gives \(\operatorname {diagonal}(\operatorname {diag}(M))\). The identification of the index set \(\{ 0,\ldots ,n\}  \sqcup \{ *\} \) used in Jensen’s proof with \(\{ 0,\ldots ,n+1\} \) goes via <a href="sect0001.html#prop:reindex_star_alg">5</a>. </p>
 
   </div>
 </div>
