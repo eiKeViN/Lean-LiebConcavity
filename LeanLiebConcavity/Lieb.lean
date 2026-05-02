@@ -213,27 +213,21 @@ section Matrix
 
 The specialized matrix theorems follow from instantiating the abstract theorems with the
 relevant instances packaged in `FrobeniusMat.lean`.
-
-Must be called inside `FrobeniusMat` to ensure fixed instances on matrices.
 -/
 
+open Matrix
+
 --- open the packed instances on Matrix n n ℂ
-open FrobeniusMat Matrix
+open scoped FrobeniusMat
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
-
---- set_option trace.Meta.synthInstance true
---- set_option trace.Meta.isDefEq true
 
 /-- `Matrix n n ℂ` abbrev -/
 local notation "M[" n "]" => Matrix n n ℂ
 
+/- The rooted reason for `backward.isDefEq.respectTransparency` false throughout:
+need it to instantiate `CompleteSpace (Matrix n n ℂ)`. -/
 set_option backward.isDefEq.respectTransparency false
-/-
-The rooted reason for `backward.isDefEq.respectTransparency` false throughout:
-need it to instantiate `CompleteSpace (Matrix n n ℂ)`,
-which in turn is needed by the star/adjoint on `M[n] →L[ℂ] M[n]`.
--/
 
 /-- **Lieb's Extension Theorem** for matrices [Nik2013, Thm 1.2(b)]:
 `(A, B) ↦ re ((A ^ q * K * B ^ p * Kᴴ).trace)` is jointly concave in `(A, B)`
