@@ -364,6 +364,8 @@ end StarAlgHom
 
 section CFC
 
+noncomputable section
+
 /-! ### CFC commutation: `L_{f(a)} = f(Lₐ)`, `R_{f(a)} = f(Rₐ)` -/
 
 variable [CompleteSpace H] [Algebra ℝ H] [IsScalarTower ℝ 𝕜 H]
@@ -419,8 +421,8 @@ theorem Lmul_rpow_strictlyPositive_apply'
 variable [StarOrderedRing (H →L[𝕜] H)] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
 
 -- instantiating for efficiency concern
-noncomputable local instance : Pow H ℝ := CFC.instPowReal
-noncomputable local instance : Pow (H →L[𝕜] H) ℝ := CFC.instPowReal
+local instance (priority := high) : Pow H ℝ := CFC.instPowReal
+local instance (priority := high) : Pow (H →L[𝕜] H) ℝ := CFC.instPowReal
 
 /-- `Lₐ ^ r` acts on `x` is `a ^ r * x` for nonnegative power. -/
 theorem Lmul_rpow_nonneg_apply
@@ -479,8 +481,8 @@ theorem Rmul_rpow_nonneg_apply'
 variable [NonnegSpectrumClass ℝ H] [NonnegSpectrumClass ℝ (H →L[𝕜] H)]
 
 -- instantiating for efficiency concern
-noncomputable local instance : Pow H ℝ := CFC.instPowReal
-noncomputable local instance : Pow (H →L[𝕜] H) ℝ := CFC.instPowReal
+local instance (priority := high) : Pow H ℝ := CFC.instPowReal
+local instance (priority := high) : Pow (H →L[𝕜] H) ℝ := CFC.instPowReal
 
 /-- `Rₐ ^ r` acts on `x` is `x * a ^ r` for nonneg power. -/
 theorem Rmul_rpow_nonneg_apply
@@ -511,5 +513,7 @@ theorem Rmul_rpow_strictlyPositive_apply
   exact Rmul_rpow_strictlyPositive_apply' 𝕜 r x ha
 
 end Right
+
+end -- noncomputable
 
 end CFC
