@@ -1,3 +1,4 @@
+# Compile blueprint and deploy to GitHub Pages
 name: Compile blueprint
 
 on:
