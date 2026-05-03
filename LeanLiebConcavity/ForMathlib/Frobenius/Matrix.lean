@@ -24,7 +24,7 @@ the caller need to activate them by `open FrobeniusMat`.
 
 namespace FrobeniusMat
 
-/-! ## Norm, Inner product, CFC-necessities -/
+/-! ## Norm, Inner product, Order, CFC-necessities -/
 attribute [scoped instance]
   Matrix.frobeniusSeminormedAddCommGroup
   Matrix.frobeniusNormedAddCommGroup
