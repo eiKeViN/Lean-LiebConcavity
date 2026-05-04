@@ -55,6 +55,14 @@ jobs:
           homepage: home_page
           deploy: false
 
+      - name: Copy docs and blueprint into Jekyll site
+        if: github.event_name == 'push'
+        run: |
+          cp -r home_page/docs home_page/_site/docs
+          cp -r home_page/blueprint home_page/_site/blueprint
+          cp home_page/blueprint.pdf home_page/_site/blueprint.pdf
+        shell: bash
+
       - name: Upload Pages artifact
         if: github.event_name == 'push'
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
