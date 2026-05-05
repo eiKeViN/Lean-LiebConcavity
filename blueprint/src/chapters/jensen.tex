@@ -18,8 +18,8 @@ We follow the unitary-averaging proof of Li and Wu~\cite{LiWu2012}.
   \lean{JensenOperator_convex_general}
   \leanok
   \uses{def:operator_convex}
-  Let $\mathcal{B}$ be an ordered unital C$^*$-algebra, $I \subseteq \mathbb{R}$ an
-  interval, and $f : \mathbb{R} \to \mathbb{R}$ a continuous operator convex function on
+  Let $\mathcal{B}$ be an ordered unital C$^*$-algebra, $I \subseteq \mathbb{R}$ (not necessarily an
+  interval), and $f : \mathbb{R} \to \mathbb{R}$ a continuous operator convex function on
   $I$.
   Let $a_0, \ldots, a_n \in \mathcal{B}$ be self-adjoint elements with
   $\sigma(a_i) \subseteq I$ for each $i$, and let $b_0, \ldots, b_n \in \mathcal{B}$
@@ -39,44 +39,63 @@ We follow the unitary-averaging proof of Li and Wu~\cite{LiWu2012}.
     \leanok
     \uses{lem:conj_sum_spectrum, thm:fourier_avg, thm:cfc_unitary_conj, thm:cfc_diagonal, thm:diagonal_le_diagonal}
     We follow the unitary-averaging argument of Li and Wu.
+
     Write $m = n + 2$, set $a_{n+1} := a_n$, and form the diagonal block element
     $D = \operatorname{diag}(a_0, \ldots, a_{n+1}) \in M_m(\mathcal{B})$.
-    Because each $a_i$ has spectrum in $I$, the element $D$ is self-adjoint with
+    By \ref{thm:cfc_diagonal} the continuous functional calculus commutes with block-diagonal
+    structure, so $f(D) = \operatorname{diag}(f(a_0), \ldots, f(a_{n+1}))$.
+    Because each $a_i$ has spectrum in $I$, the block element $D$ is self-adjoint with
     spectrum in $I$ by \ref{lem:conj_sum_spectrum}.
-    Next, using the $b_i$ and the constraint $\sum b_i^* b_i = 1$, one constructs a
-    unitary $U \in M_m(\mathcal{B})$ whose last column is $(b_0, \ldots, b_n, 0)^T$;
-    the remaining columns are chosen so that $U$ is unitary, e.g.\ by extending
-    $(b_0,\ldots,b_n,0)^T$ to a unitary via a standard completion procedure.
-    A direct computation shows that the bottom-right corner of $U^* D U$ equals
-    $\sum_i b_i^* a_i b_i$.
 
-    Now fix $\omega = e^{2\pi i / m}$, a primitive $m$-th root of unity, and let
-    $V_k = \operatorname{diag}(1, \omega^k, \omega^{2k}, \ldots, \omega^{(m-1)k})$ for
-    $k = 0, \ldots, m-1$.
-    Each $V_k$ is a unitary diagonal matrix in $M_m(\mathcal{B})$, and the Fourier
-    average
+    Next, using the $b_i$ and the constraint $\sum_{i=0}^n b_i^* b_i = 1$, one constructs
+    an explicit $(m \times m)$ matrix $U \in M_m(\mathcal{B})$ whose last column is
+    $(b_0, \ldots, b_n, 0)^T$ and whose remaining columns are determined so that
+    $U^* U = U U^* = 1$, i.e. $U$ is unitary.
+    A direct computation using $\sum_i b_i^* b_i = 1$ shows that the bottom-right
+    corner of $U^* D U$ equals $\sum_{i=0}^n b_i^* a_i b_i$.
+    Since $U$ is unitary, $U^* D U$ is self-adjoint with spectrum equal to that of $D$,
+    hence contained in $I$.
+
+    Fix $\omega = e^{2\pi i/m}$, a primitive $m$-th root of unity, and for
+    $k = 0, \ldots, m-1$ let
+    $V_k = \operatorname{diag}(1, \omega^k, \omega^{2k}, \ldots, \omega^{(m-1)k}) \in M_m(\mathcal{B})$.
+    Each $V_k$ is unitary (scalar multiples of the identity on each diagonal block).
+    By \ref{thm:fourier_avg} we therefore have
     \[
       \frac{1}{m} \sum_{k=0}^{m-1} V_k^*\,(U^* D U)\,V_k
+      \;=\; \operatorname{diag}\!\bigl((U^* D U)_{00},\, \ldots,\, (U^* D U)_{m-1,m-1}\bigr),
     \]
-    equals the ``diagonal part'' of $U^* D U$, i.e.\ the block-diagonal matrix whose
-    $j$-th diagonal entry is the $(j,j)$-entry of $U^* D U$.
-    In particular its bottom-right corner is $\sum_i b_i^* a_i b_i$.
+    whose bottom-right corner is still $\sum_{i=0}^n b_i^* a_i b_i$.
 
-    Applying operator convexity of $f$ to the averaged expression --- which is a convex
-    combination of unitarily conjugated copies of $D$, each with spectrum in $I$ ---
-    and then extracting the bottom-right $(1,1)$-corner (a positive linear map that
-    preserves the order) yields
+    Applying the same Fourier averaging to $U^* f(D) U$ and using \ref{thm:cfc_unitary_conj}
+    (which gives $f(U^* D U) = U^* f(D) U$ for unitary $U$) together with \ref{thm:cfc_diagonal}
+    yields
     \[
-      f\!\left(\sum_i b_i^* a_i b_i\right)
-      \;\leq\;
-      \frac{1}{m}\sum_{k=0}^{m-1} V_k^*\,(U^* f(D) U)\,V_k\bigg|_{\mathrm{br}}
-      \;=\;
-      \sum_i b_i^*\, f(a_i)\, b_i,
+      \frac{1}{m} \sum_{k=0}^{m-1} V_k^*\,(U^* f(D) U)\,V_k\bigg|_{\mathrm{br}}
+      \;=\; \sum_{i=0}^n b_i^*\, f(a_i)\, b_i.
     \]
-    where the last equality uses the fact that
-    $f(D) = \operatorname{diag}(f(a_0),\ldots,f(a_n),f(a_n))$
-    (the continuous functional calculus commutes with block-diagonal structure) and
-    the same Fourier averaging extracts the diagonal.
+
+    The Fourier average $\frac{1}{m}\sum_k V_k^*(U^* D U)V_k$ is a convex combination
+    (uniform weights $\frac{1}{m}$) of elements $W_k^* D W_k$ with $W_k = U V_k$ unitary,
+    each having spectrum in $I$.
+    Operator convexity of $f$ on $M_m(\mathcal{B})$ (which follows from operator convexity
+    on $\mathcal{B}$ since $f$ is assumed $\mathcal{B}$-convex of all orders) therefore gives
+    \[
+      f\!\left(\frac{1}{m}\sum_{k=0}^{m-1} V_k^*(U^* D U)V_k\right)
+      \;\leq\;
+      \frac{1}{m}\sum_{k=0}^{m-1} f\!\bigl(V_k^*(U^* D U)V_k\bigr)
+      \;=\;
+      \frac{1}{m}\sum_{k=0}^{m-1} V_k^*(U^* f(D) U)V_k,
+    \]
+    where the last equality uses \ref{thm:cfc_unitary_conj} applied to $U$ and each $V_k$.
+
+    Applying \ref{thm:diagonal_le_diagonal} to the inequality above and substituting the identities above, specializing to 
+    botom-right corner yields the inequality
+    \[
+      f\!\left(\sum_{i=0}^{n} b_i^* a_i b_i\right)
+      \;\leq\;
+      \sum_{i=0}^{n} b_i^*\, f(a_i)\, b_i.
+    \]
   \end{proof}
 \end{theorem}
 
