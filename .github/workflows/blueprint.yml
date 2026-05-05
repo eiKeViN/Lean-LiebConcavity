@@ -52,3 +52,7 @@ jobs:
         with:
           blueprint: true
           homepage: home_page
+
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'push'
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
