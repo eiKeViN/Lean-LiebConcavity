@@ -207,13 +207,14 @@ so its curried CLM `H →L[𝕜] H →L[𝕜] H` is automatically continuous.
 /-- The map `a ↦ Lₐ` is continuous w.r.t. the operator norm -/
 theorem Lmul_continuous :
     Continuous (fun a : H => Lmul 𝕜 a : H → H →L[𝕜] H) :=
-  isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H) |>.toContinuousLinearMap.continuous
+  (isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H)).toContinuousLinearMap.continuous
 
 /-- The map `a ↦ r_a` is continuous w.r.t. the operator norm -/
 theorem Rmul_continuous :
     Continuous (fun a : H => Rmul 𝕜 a : H → H →L[𝕜] H) :=
   ContinuousLinearMap.flip
-    (isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H)).toContinuousLinearMap |>.continuous
+    (isBoundedBilinearMap_mul (𝕜 := 𝕜) (A := H)).toContinuousLinearMap
+    |>.continuous
 
 /-- The map `a ↦ op(Rₐ)` into the opposite algebra is continuous w.r.t. the operator norm -/
 theorem RmulAlgHom_continuous :
@@ -300,13 +301,11 @@ theorem Rmul_isPositive {a : H} (ha : 0 ≤ a) : (Rmul 𝕜 a).IsPositive := by
       rw [Rmul_add, ContinuousLinearMap.add_apply, inner_add_left, map_add RCLike.re]
       exact add_nonneg ihb ihc
 
-theorem Lmul_nonneg {a : H} (ha : 0 ≤ a) : 0 ≤ Lmul 𝕜 a := by
-  rw [ContinuousLinearMap.nonneg_iff_isPositive (Lmul 𝕜 a)]
-  exact Lmul_isPositive 𝕜 ha
+theorem Lmul_nonneg {a : H} (ha : 0 ≤ a) : 0 ≤ Lmul 𝕜 a :=
+  (Lmul _ a).nonneg_iff_isPositive.mpr (Lmul_isPositive _ ha)
 
-theorem Rmul_nonneg {a : H} (ha : 0 ≤ a) : 0 ≤ Rmul 𝕜 a := by
-  rw [ContinuousLinearMap.nonneg_iff_isPositive (Rmul 𝕜 a)]
-  exact Rmul_isPositive 𝕜 ha
+theorem Rmul_nonneg {a : H} (ha : 0 ≤ a) : 0 ≤ Rmul 𝕜 a :=
+  (Rmul _ a).nonneg_iff_isPositive.mpr (Rmul_isPositive _ ha)
 
 theorem Lmul_isStrictlyPositive {a : H} (ha : IsStrictlyPositive a) :
     IsStrictlyPositive (Lmul 𝕜 a) :=
